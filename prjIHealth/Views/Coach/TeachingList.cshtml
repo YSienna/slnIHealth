@@ -1,0 +1,930 @@
+﻿@model IEnumerable<prjIHealth.ViewModels.CTeachingListViewModel>
+@{
+    IHealthContext db = new IHealthContext();
+}
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /*教練專區導覽列*/
+        .blog__btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #1c1c1c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #b2b2b2;
+            padding: 14px 20px 12px;
+            border-radius: 25px;
+        }
+
+            .blog__btn:visited {
+                color: #1c1c1c;
+            }
+
+            .blog__btn:hover {
+                border: 1px solid #6F4315;
+                color: #6F4315;
+            }
+
+            .blog__btn:active {
+                color: black;
+                font-weight: 800;
+            }
+
+        .sidebar__item ul li a {
+            margin-bottom: 1vh;
+        }
+
+        .sidebar__item {
+            border: 1px solid lightgray;
+            box-shadow: 2px 2px 5px lightgray;
+            padding: 20px;
+            margin-right: 30px;
+            margin-bottom: 20px;
+        }
+
+            .sidebar__item h5 {
+                text-align: center;
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #452A0D;
+                color: white;
+            }
+
+            .sidebar__item li:hover {
+                transition: .2s;
+                background-color: #EDE8E2;
+            }
+
+            .sidebar__item i {
+                margin-right: 8px;
+            }
+
+        .liThis {
+            background-color: #EFEDED;
+        }
+
+        /*列表*/
+        .btn-success {
+            background-color: #7FAD39;
+            border: none;
+        }
+
+            .btn-success:disabled {
+                background-color: gray;
+            }
+
+        .btnDone {
+            background-color: #40561C;
+        }
+
+            .btnDone:hover {
+                background-color: #4F6C24;
+            }
+
+        .divLink {
+            display: flex;
+            justify-items: center;
+            height: 70px;
+        }
+
+        .divOther {
+            padding: 0px;
+        }
+
+            .divOther span {
+                color: gray;
+                line-height: 70px;
+            }
+
+            .divOther i {
+                color: gray;
+            }
+
+        .divUrl {
+            margin-left: 10px;
+            padding: 15px;
+            line-height: 40px;
+            border: 1px solid gray;
+            border-radius: 20px;
+        }
+
+            .divUrl i {
+                color: lightgray;
+            }
+
+            .divUrl span {
+                color: dimgray;
+                text-decoration: none;
+                transition: .3s;
+            }
+
+                .divUrl span:hover {
+                    color: black;
+                    cursor:pointer;
+                }
+
+        .tdBtns {
+            text-align: right;
+        }
+
+        .selStatus {
+            background-color: #343a40;
+            color: white;
+            font-weight: 700;
+            border: none;
+        }
+
+        .tdStatus {
+            font-weight: 700;
+        }
+
+        /*排課紀錄*/
+        .h5Records {
+            color: #7fad39
+        }
+
+        .selTime, .selStatus {
+            display: inline !important;
+        }
+
+        .nice-select {
+            display: none !important;
+        }
+
+        /*行事曆*/
+        .divDate {
+            width: 70%;
+            margin: 20px auto;
+            padding: 0px 100px;
+            display: flex;
+        }
+
+            .divDate button {
+                width: 30px;
+                margin: 0px 10px;
+                background-color: whitesmoke;
+                border: 1px solid white;
+                border-radius: 50px;
+            }
+
+                .divDate button:hover {
+                    border: 1px solid #7FAD39;
+                }
+
+        #inputMon {
+            display: inline;
+            width: 300px;
+        }
+
+        .divDL {
+            text-align: right;
+            margin-bottom: 10px;
+            position: absolute;
+            right: 15px;
+            top: 35px;
+        }
+
+        #tableCal {
+            width: 100%;
+            border: 1px solid #BFBFBF;
+        }
+
+            #tableCal thead {
+                background-color: #404040;
+                color: white;
+                font-family: Consolas;
+                font-size: 18px;
+                text-align: center;
+            }
+
+            #tableCal tbody {
+                font-size: 18px;
+                text-align: center;
+                color: #7fad39;
+            }
+
+                #tableCal tbody tr {
+                    height: 120px;
+                }
+
+                    #tableCal tbody tr td {
+                        vertical-align: top;
+                        transition: .2s;
+                    }
+
+            #tableCal th, #tableCal td, .orig {
+                border: 1px solid #BFBFBF;
+                width: 120px;
+            }
+
+        .false {
+            background-color: #F3F3F3;
+        }
+
+        .true {
+            background-color: white;
+        }
+
+        .today {
+            background-color: #EFF5E6;
+        }
+
+        .color1 {
+            background-color: #005F73;
+        }
+
+        .color2 {
+            background-color: #0A9396;
+        }
+
+        .color3 {
+            background-color: #94D2BD;
+        }
+
+        .color4 {
+            background-color: #B5A882;
+        }
+
+        .color5 {
+            background-color: #EE9B00;
+        }
+
+        .color6 {
+            background-color: #CA6702;
+        }
+
+        .color7 {
+            background-color: #007A24;
+        }
+
+        .color8 {
+            background-color: #6CA25A;
+        }
+
+        .color9 {
+            background-color: #870005;
+        }
+
+        .color10 {
+            background-color: #003039;
+        }
+
+        .divRecord {
+            display: inline-block;
+            margin: 0px;
+            width: 100%;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 300;
+            color: white;
+        }
+    </style>
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/banner/banner_coach.png">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">教課列表</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Student/CoachList">Home</a>
+                        <span>Coach</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            @*教練專區左側導覽列*@
+            <div class="col-lg-3 col-md-5">
+                <div class="sidebar" style="position:sticky;top:150px;">
+                    <div class="sidebar__item">
+                        <h5>教練專區</h5>
+                        <ul>
+                            <li><a href="~/Coach/CreateResume"><i class="fa-solid fa-pen"></i>履歷管理</a></li>
+                            <li><a href="~/Coach/RecruitmentList" class="aLimit"><i class="fa-solid fa-user-check"></i>招生紀錄</a></li>
+                            <li class="liThis"><a href="~/Coach/TeachingList" class="aLimit"><i class="fa-solid fa-dumbbell"></i>教課列表</a></li>
+                        </ul>
+                    </div>
+                    <a href="~/Member/Edit" class="blog__btn"><span class="arrow_right"></span>會員專區</a>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-7">
+                @*※※※會員專區View內容請從此開始※※※*@
+                <table class="table reveal_b1">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>
+                                No.
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.MemberName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FCourseName)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FAvailableTimeNum)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FCourseTotal)
+                            </th>
+                            <th>
+                                剩餘
+                            </th>
+                            <th class="thStatus">
+                                <select class="selStatus" id="selStatus">
+                                    <option>@Html.DisplayNameFor(model => model.Status)</option>
+                                    <option value="55">進行中</option>
+                                    <option value="56">已結束</option>
+                                </select>
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int count = 0;
+                            foreach (var item in Model)
+                            {
+                                count++;
+                                <tr id="tr_@item.FCourseId">
+                                    <td>
+                                        @count
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.MemberName) (@item.MemberId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FCourseName)
+                                    </td>
+                                    <td>
+                                        @db.TAvailableTimes.FirstOrDefault(at => at.FAvailableTimeNum == item.FAvailableTimeNum).FAvailableTime
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FCourseTotal)
+                                    </td>
+                                    @{
+                                        int total = (int)item.FCourseTotal;
+                                        int done = db.TReservations.Where(r => r.FCourseId == item.FCourseId && r.FStatusNumber == 61).Count();
+                                        int remain = total - done;
+                                        <td id="remain_@item.FCourseId">
+                                            @remain
+                                        </td>
+                                    }
+                                    <td id="status_@item.FCourseId" class="tdStatus">
+                                        @Html.DisplayFor(modelItem => item.Status)
+                                    </td>
+                                    <td class="tdBtns">
+                                        <button class="btn btn-success" data-toggle="modal" data-target="#addModal_@item.FCourseId"><i class="fa-solid fa-eye"></i>&nbsp&nbsp排課紀錄</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <div class="divLink reveal_b2">
+                    <div class="divOther"><i class="fa-solid fa-magnifying-glass"></i><span>&nbsp;&nbsp;想一覽所有課程？</span></div>
+                    <div class="divUrl"><i class="fa-solid fa-arrow-right-long"></i><span data-toggle="modal" data-target="#addModal_cal">&nbsp;&nbsp;查看<b>課程行事曆</b></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@{
+    foreach (var item in Model)
+    {
+        <!-- Modal --排課紀錄-->
+        <div class="modal fade" id="addModal_@item.FCourseId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title h5Records" id="exampleModalLabel"><b>排課紀錄</b><span></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                No.
+                                            </th>
+                                            <th>
+                                                上課日期
+                                            </th>
+                                            <th>
+                                                上課時間
+                                            </th>
+                                            <th>
+                                                排課狀態
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int rCount = 0;
+                                            foreach (var r in item.Reservations.Where(r => r.FCourseId == item.FCourseId))
+                                            {
+                                                rCount++;
+                                                <tr>
+                                                    <td>
+                                                        @rCount
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            string Year = r.CourseDate.Substring(0, 4);
+                                                            string Mon = r.CourseDate.Substring(4, 2);
+                                                            string Date = r.CourseDate.Substring(6, 2);
+                                                            <input type="date" id="date_@r.FReservationId" value="@Year-@Mon-@Date" disabled />
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @{
+                                                            <select id="sel_@r.FReservationId" class="selTime custom-select" disabled>
+                                                                <option value="9">09:00</option>
+                                                                <option value="10">10:00</option>
+                                                                <option value="11">11:00</option>
+                                                                <option value="12">12:00</option>
+                                                                <option value="13">13:00</option>
+                                                                <option value="14">14:00</option>
+                                                                <option value="15">15:00</option>
+                                                                <option value="16">16:00</option>
+                                                                <option value="17">17:00</option>
+                                                                <option value="18">18:00</option>
+                                                                <option value="19">19:00</option>
+                                                                <option value="20">20:00</option>
+                                                                <option value="21">21:00</option>
+                                                            </select>
+                                                        }
+                                                    </td>
+                                                    <td id="status_@r.FReservationId" class="tdStatus">
+                                                        @r.Status
+                                                    </td>
+                                                    <td class="tdBtns">
+                                                        <button class="btn btn-success btnEdit" id="edit_@r.FReservationId">
+                                                            <i class="fa-solid fa-pen-to-square"></i>&nbsp;&nbsp;變更時間
+                                                        </button>
+                                                        <button class="btn btn-success btnEdit" id="submit_@r.FReservationId" style="display:none">
+                                                            <i class="fa-solid fa-check"></i>&nbsp;&nbsp;完成變更
+                                                        </button>
+                                                        <button class="btn btn-success btnDone" id="cancel_@r.FReservationId" style="display:none">
+                                                            <i class="fa-solid fa-xmark"></i>&nbsp;&nbsp;取消
+                                                        </button>
+                                                        <button class="btn btn-success btnDone" id="done_@r.FReservationId">
+                                                            <i class="fa-solid fa-calendar-check"></i>&nbsp;&nbsp;完成
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btnClose" id="btnClose" data-dismiss="modal">關閉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+<!--Modal-Calendar-->
+<div class="modal fade" id="addModal_cal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="overflow: auto">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title h5Records"><b>課程行事曆</b><span></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="divDate">
+                        <button id="btnPre"><i class="fa-solid fa-caret-left"></i></button>
+                        <input type="month" id="inputMon" />
+                        <button id="btnNext"><i class="fa-solid fa-caret-right"></i></button>
+                    </div>
+                    <div class="divDL">
+                        <button type="button" class="btn btn-success" id="btnDownload"><i class="fa-solid fa-download"></i>&nbsp;&nbsp;Download</button>
+                    </div>
+                    <div class="result">
+                        <div class="divCal">
+                            <div>
+                                <table id="tableCal">
+                                    <thead>
+                                        <tr id="trHead">
+                                            <th colspan="7" id="thYearMon"></th>
+                                        </tr>
+                                        <tr>
+                                            <th>Sun</th>
+                                            <th>Mon</th>
+                                            <th>Tue</th>
+                                            <th>Wed</th>
+                                            <th>Thu</th>
+                                            <th>Fri</th>
+                                            <th>Sat</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btnClose" id="btnClose" data-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{
+    <!--Modal-課程資料-->
+    foreach (var item in Model)
+    {
+        <div class="modal fade modal_@item.FCourseId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title h5Records"><b>@item.FCourseName</b><span></span></h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <dl class="row">
+                            <dt class="col-4">會員編號： </dt>
+                            <dd class="col-8">@item.MemberId</dd>
+                            <dt class="col-4">會員姓名： </dt>
+                            <dd class="col-8">@item.MemberName</dd>
+                            <dt class="col-4">聯絡電話： </dt>
+                            <dd class="col-8">@item.MemberPhone</dd>
+                            <dt class="col-4">總堂數： </dt>
+                            <dd class="col-8">@item.FCourseTotal</dd>
+                            <dt class="col-4">預設上課時段： </dt>
+                            <dd class="col-8">@db.TAvailableTimes.FirstOrDefault(at => at.FAvailableTimeNum == item.FAvailableTimeNum).FAvailableTime</dd>
+                            <dt class="col-4">課程狀態： </dt>
+                            <dd class="col-8">@item.Status</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+
+@section Scripts{
+    @{
+        //課程狀態變更
+        foreach (var course in Model)
+        {
+            //修改課程狀態顏色
+            if (course.Course.FStatusNumber == 55)
+            {
+                <script>
+                    $(`#status_@course.FCourseId`).css("color", "#39ADA1");
+                </script>
+            }
+            else
+            {
+                <script>
+                    $(`#status_@course.FCourseId`).css("color", "silver");
+                </script>
+            }
+
+            foreach (var r in course.Reservations)
+            {           
+                string time = r.CourseTime.Substring(0, 2);
+                if (time.StartsWith("0"))
+                {
+                    time = time.Substring(1, 1);
+                }
+
+                //顯示排課狀態
+                if (r.FStatusNumber == 60)
+                {
+                    <script>
+                        $(`#status_@r.FReservationId`).css("color", "#39ADA1");
+                    </script>
+                }
+                else
+                {
+                    <script>
+                        $(`#status_@r.FReservationId`).css("color", "silver");
+                    </script>
+                }
+                <script>
+                //顯示排課時間
+                $(`#sel_${@r.FReservationId}`).val(`${@time}`);
+
+                if (@r.FStatusNumber== 61) {
+                    $(`#done_@r.FReservationId`).hide();
+                    $(`#edit_@r.FReservationId`).hide();
+                    }
+
+                //完成排課
+                $(`#done_@r.FReservationId`).click((evt) => {
+                    evt.preventDefault();
+                    SwalGreen.fire({
+                        title: '確認已完成此次課程？',
+                        icon: 'question',
+                        confirmButtonText: '確定',
+                        cancelButtonText: '取消',
+                        showCancelButton: true,
+                        showCloseButton: true
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.get("@Url.Content("~/Coach/ReservationDone")", { "id": "@r.FReservationId" },
+                                function (response) {
+                                    if (response == "Success") {
+                                        SwalGreen.fire({
+                                            icon: 'success',
+                                            title: '已完成'
+                                        })
+                                        $(`#status_@r.FReservationId`).text("已完成").css("color", "silver");
+                                        $(`#done_@r.FReservationId`).hide();
+                                        $(`#edit_@r.FReservationId`).hide();
+
+                                        //剩餘堂數變更
+                                        let remain = parseInt($(`#remain_@r.FCourseId`).text()) - 1;
+                                        $(`#remain_@r.FCourseId`).text(`${remain}`);
+                                        if ($(`#remain_@r.FCourseId`).text() == "0") {
+                                            $(`#status_@r.FCourseId`).text("已結束").css("color","silver");
+                                        }
+                                    }
+                                })
+                        }
+                    })
+                })
+
+                //開放變更時間
+                $(`#edit_@r.FReservationId`).click((evt) => {
+                    evt.preventDefault();
+                    $(`#date_@r.FReservationId`).prop("disabled", false);
+                    $(`#sel_@r.FReservationId`).prop("disabled", false);
+                    $(`#edit_@r.FReservationId`).css("display", "none");
+                    $(`#cancel_@r.FReservationId`).show();
+                    $(`#submit_@r.FReservationId`).show();
+                    $(`#done_@r.FReservationId`).css("display", "none");
+                })
+
+                //取消
+                $(`#cancel_@r.FReservationId`).click((evt) => {
+                    evt.preventDefault();
+                    $(`#date_@r.FReservationId`).prop("disabled", true);
+                    $(`#sel_@r.FReservationId`).prop("disabled", true);
+                    $(`#edit_@r.FReservationId`).show();
+                    $(`#cancel_@r.FReservationId`).css("display", "none");
+                    $(`#submit_@r.FReservationId`).css("display", "none");
+                    $(`#done_@r.FReservationId`).show();
+                })
+
+                //完成變更
+                $(`#submit_@r.FReservationId`).click((evt) => {
+                    evt.preventDefault();
+                    let date = $(`#date_@r.FReservationId`).val();
+                    let time = $(`#sel_@r.FReservationId`).val();
+                    $.get("@Url.Content("~/Coach/EditReservation")", { "id": "@r.FReservationId","date":`${date}`,"time":`${time}`},
+                                    function (response) {
+                                        if (response == "Success") {
+                                            SwalGreen.fire({
+                                                icon: 'success',
+                                                title: '已完成變更'
+                                            })
+                                            $(`#edit_@r.FReservationId`).prop("disabled", false).show();
+                                            $(`#submit_@r.FReservationId`).css("display", "none");
+                                            $(`#cancel_@r.FReservationId`).css("display", "none");
+                                            $(`#done_@r.FReservationId`).show();
+                                            $(`#date_@r.FReservationId`).prop("disabled", true);
+                                            $(`#sel_@r.FReservationId`).prop("disabled", true);
+                                            CreateCalendar();
+                                            GetReservations();
+                                        }
+                                        else {
+                                            SwalGreen.fire({
+                                                icon: 'error',
+                                                title: '變更失敗',
+                                                text:'該日該時段已額滿，請選擇其他時段。'
+                                            })
+                                        }
+                                    })
+                })
+                </script>
+            }
+        }
+    }
+    <script>
+
+    //篩選課程狀態
+    let filter = $("#selStatus");
+    filter.change(() => {
+        if (filter.val() == "狀態") {
+            $("tbody tr").show();
+        }
+        if (filter.val() == 55) {
+            $.getJSON("@Url.Content("~/Coach/GetCourseInProcess")", { "id": "55" },
+                function (data) {
+                    $.each(data, function (index, course) {
+                        $(`#tr_${course}`).show();
+                    });
+                })
+            $.getJSON("@Url.Content("~/Coach/GetCourseDone")", { "id": "56" },
+                function (data) {
+                    $.each(data, function (index, course) {
+                        $(`#tr_${course}`).hide();
+                    });
+                })
+        }
+        if (filter.val() == 56) {
+             $.getJSON("@Url.Content("~/Coach/GetCourseInProcess")", { "id": "55" },
+                function (data) {
+                    $.each(data, function (index, course) {
+                        $(`#tr_${course}`).hide();
+                    });
+                })
+            $.getJSON("@Url.Content("~/Coach/GetCourseDone")", { "id": "56" },
+                function (data) {
+                    $.each(data, function (index, course) {
+                        $(`#tr_${course}`).show();
+                    });
+                })
+        }
+    })
+    </script>
+    <script src="https://superal.github.io/canvas2image/canvas2image.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+    <!--行事曆-->
+    <script>
+        //下載圖片
+        document.querySelector("#btnDownload").addEventListener("click", () => {
+            html2canvas(document.querySelector('#tableCal'), {
+                onrendered: function (canvas) {
+                    return Canvas2Image.saveAsPNG(canvas);
+                }
+            });
+        });
+
+    let fullDate = new Date();  //取得今天日期
+    let Year = fullDate.getFullYear();
+    let Month = (fullDate.getMonth() + 1) >= 10 ? (fullDate.getMonth() + 1) : ("0" + (fullDate.getMonth() + 1));
+    let date = fullDate.getDate();
+    let totalDate = (new Date(Year, Month, 0)).getDate();   //取得該月總天數
+    let weekDay, firstDay;
+        $("#inputMon").val(`${Year}-${Month}`);
+        $("#thYearMon").text(`${Year}-${Month}`);
+        CreateCalendar();
+        GetReservations()
+
+    //年月改變時重新載入月曆
+    $("#inputMon").change(() => {
+        Year = $("#inputMon").val().substr(0, 4);
+        Month = $("#inputMon").val().substr(5, 2);
+        totalDate = (new Date(Year, Month, 0)).getDate();
+        CreateCalendar();
+        GetReservations()
+    })
+
+    //click下個月
+    $("#btnNext").click(() => {
+        if (Month == 12) {
+            Year++;
+            Month = "01";
+        }
+        else {
+            let m = parseInt($("#inputMon").val().substr(5, 2));
+            let newMon = m + 1 >= 10 ? m + 1 : "0" + (m + 1)
+            Month = newMon;
+        }
+        $("#inputMon").val(`${Year}-${Month}`);
+        $("#thYearMon").text(`${Year}-${Month}`);
+        CreateCalendar();
+        GetReservations()
+    })
+    //click上個月
+    $("#btnPre").click(() => {
+        if (Month == 1) {
+            Year--;
+            Month = "12";
+        }
+        else {
+            let m = parseInt($("#inputMon").val().substr(5, 2));
+            let newMon = m - 1 >= 10 ? m - 1 : "0" + (m - 1);
+            Month = newMon;
+        }
+        $("#inputMon").val(`${Year}-${Month}`);
+        $("#thYearMon").text(`${Year}-${Month}`);
+        CreateCalendar();
+        GetReservations()
+    })
+
+    //建立月曆
+    function CreateCalendar() {
+        let recent = document.querySelector("#tbody");
+        if (recent)
+            recent.remove();    //移除舊的月曆
+
+        //新增tbody、第一行
+        var tbody = document.createElement("tbody");
+        tbody.setAttribute("id", "tbody");
+        var fragtable = document.createDocumentFragment();
+        var row = document.createElement("tr");
+        var count = 0;
+
+        //新增第一行空格
+        firstDay = (new Date(Year, Month - 1, 1)).getDay(); //取得該月份第一天星期幾
+        for (let i = 1; i <= firstDay; i++) {
+            let td = document.createElement("td");
+            td.className = "false";
+            row.appendChild(td);
+            count += 1;
+        }
+
+        //新增日期
+        for (let i = 1; i <= totalDate; i++) {
+            if (count >= 7) { //已大於7天則新增至下一週
+                fragtable.appendChild(row);
+                row = document.createElement("tr");
+                var td = document.createElement("td");
+                td.setAttribute("id", `${Year + Month + i}`);
+                td.className = "true";
+                let text = document.createTextNode(i);
+                td.appendChild(text);
+                row.appendChild(td);
+                count = 1; //以新的一行計算
+            }
+            else {
+                var td = document.createElement("td");
+                td.setAttribute("id", `${Year + Month + i}`);
+                td.className = "true";
+                let text = document.createTextNode(i);
+                td.appendChild(text);
+                row.appendChild(td);
+                count += 1;
+            }
+        }
+
+        //新增最後一行空格
+        let d = new Date(Year, Month - 1, totalDate);
+        let lastDay = d.getDay();
+        for (i = 1; i <= 6 - lastDay; i++) {
+            let td = document.createElement("td");
+            td.className = "false";
+            row.appendChild(td);
+        }
+        fragtable.appendChild(row);
+        tbody.appendChild(fragtable);
+        document.querySelector("#tableCal").appendChild(tbody);
+
+        //當天日期的邊框變色
+        let thisYear = fullDate.getFullYear();
+        let thisMon = (fullDate.getMonth() + 1) >= 10 ? (fullDate.getMonth() + 1) : ("0" + (fullDate.getMonth() + 1));
+        if (thisYear == Year && thisMon == Month)
+            $(`#${thisYear +thisMon+date}`).addClass("today");
+    }
+
+        //顯示當月排課
+        function GetReservations() {
+            $.getJSON("@Url.Content("~/Coach/GetAllReservation")", function (data) {
+                $.each(data, function (index, record) {
+                if (record.courseDate.substr(0, 4) == Year && record.courseDate.substr(4, 2) == Month) {
+                    let theDate = record.courseDate.substr(6, 2) < 10 ? record.courseDate.substr(7, 1) : record.courseDate.substr(6, 2);
+                    let time = record.courseTime.substr(0, 2) + ":" + record.courseTime.substr(2, 2);
+                    $(`#${Year + Month + theDate}`).append(`<div class="divRecord r${record.memberId} r${record.fCourseId}" data-toggle='modal' data-target=".modal_${record.fCourseId}"><b>${record.memberName}</b>-${time}</div>`);
+                    }
+                })
+
+
+            }).done(() => {
+                //取得所有MemberId，不同Member設定不同顏色
+                $.getJSON("@Url.Content("~/Coach/GetReservationMemId")", function (data) {
+                    let classCount = 1;
+                    for (let i = 0; i < data.length; i++) {
+                        $(`.r${data[i]}`).addClass(`color${classCount}`);
+                        classCount++;
+                        if (classCount == 11) {
+                            classCount = 1;
+                        }
+                    }
+            })
+            })
+        }
+    </script>
+}

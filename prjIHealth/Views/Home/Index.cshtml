@@ -1,0 +1,573 @@
+﻿@using prjIHealth.Controllers
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@section Styles{
+    <style>
+        .categories__item {
+            border-radius: 50%;
+        }
+
+        .hero__text > h2, .hero__text > h3 {
+            color: #ffffff;
+            text-shadow: 1px 1px 20px black;
+        }
+
+        .hero__item.set-bg {
+            height: 320px;
+        }
+
+        .divOption {
+            position: relative;
+            width: 100%;
+            -webkit-transition: background .2s linear, border-radius 1s ease-in 1s;
+            transition: background .2s linear, border-radius 1s ease-in 1s;
+        }
+
+            .divOption:after {
+                content: "";
+                display: block;
+                padding-bottom: 50%; /*padding取決於寬度，這裡設定padding-bottom: 100%就可以得到正方形*/
+            }
+
+            .divOption > img {
+                transition: 0.5s;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0; /*將圖片大小固定為父類div的大小*/
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* 相當於 background-size: cover; of a background-image */
+                object-position: center;
+                opacity: 0.8;
+                border-radius: 2%;
+            }
+
+            .divOption > div {
+                width: 60%;
+                height: 40%;
+                position: absolute;
+                top: 30%;
+                left: 20%;
+                color: white;
+                text-align: center;
+            }
+
+                .divOption > div > h1 {
+                    transition: 0.5s;
+                    font-family: "Cairo", sans-serif;
+                    color: #ffffff;
+                    font-weight: 700;
+                    font-size: 45px;
+                }
+
+        .divBackground {
+            width: 60%;
+            height: 40%;
+            position: absolute;
+            top: 30%;
+            left: 20%;
+            color: white;
+            text-align: center;
+            background-color: dimgrey;
+            opacity: 0.3;
+            border-radius: 2%;
+        }
+        /*        .greenback {
+            background-color: #7fad39;
+        }*/
+
+        /*熱門教練*/
+        .divCoachCard {
+            display: flex;
+            height: 320px;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 0px 3px;
+            border: 1px solid lightgray;
+            color: dimgray;
+            transition: .3s;
+        }
+
+            .divCoachCard:hover {
+                box-shadow: 2px 2px 5px lightgray;
+                border: 1px solid #7FAD39;
+                color: dimgray;
+            }
+
+        .divImg {
+            text-align: right;
+            display: flex;
+            align-items: center;
+        }
+
+        .imgCoach {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            margin: auto;
+        }
+
+        .divCoachInfo {
+            padding: 20px;
+        }
+
+        .imgIcon {
+            height: 20px;
+        }
+
+        .spSkill {
+        }
+
+        .li {
+            margin: 5px 0px;
+        }
+
+        .liCoachName {
+            margin-bottom: 10px;
+            display: flex;
+        }
+
+        .liSlogan {
+            margin-top: 18px;
+        }
+
+            .spSkill, .liSlogan span {
+                line-height: 30px;
+            }
+    </style>
+}
+
+
+@using prjIHealth.Models;
+@using prjiHealth.Models;
+@using prjIHealth.ViewModels;
+@using prjiHealth.ViewModels;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Mvc;
+@using System.Linq;
+@using System.Text.Json;
+
+@{
+    string LoginbuttonValue = "登入";
+    int loginId = 0;
+    TMember loginMember = null;
+
+    if (Context.Session.Keys.Contains(CDictionary.SK_Logined_User))
+    {
+        string logJson = Context.Session.GetString(CDictionary.SK_Logined_User);
+        loginMember = JsonSerializer.Deserialize<TMember>(logJson);
+        LoginbuttonValue = loginMember.FMemberName;
+        loginId = loginMember.FMemberId;
+    };
+}
+@*banner*@
+<section class="hero reveal_l1">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="hero__item set-bg" data-setbg="/img/banner/banner_main.png">
+                    <div class="hero__text">
+                        <span>HEALTH & HOPE</span>
+                        <h2>iHEALTH </h2>
+                        <h3 style="font-weight:800;">一手包辦您的體態、運動、飲食計畫</h3>
+                        <p></p>
+                        <a href="" class="primary-btn" data-toggle="modal" data-target="#registerModal" data-dismiss="modal">加入會員</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@*分類跑馬燈*@
+<section class="categories reveal_r1">
+    <div class="container">
+        <div class="row">
+            <div class="categories__slider owl-carousel">
+                <div class="col-lg-3">
+                    <div class="categories__item set-bg" data-setbg="/img/home/video.jpg">
+                        <h5><a href="~/News/Blog">健康資訊</a></h5>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="categories__item set-bg" data-setbg="/img/home/coach1.png">
+                        <h5><a href="~/Student/CoachList">教練課程</a></h5>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    <div class="categories__item set-bg" data-setbg="/img/home/shopping1.png">
+                        <h5><a href="~/shopping/ShowShoppingMall">周邊商城</a></h5>
+                    </div>
+                </div>
+                <div class="col-lg-3">
+                    @if (LoginbuttonValue == "登入")
+                    {
+                        <div class="categories__item set-bg" data-setbg="/img/home/eat.jpg">
+                            <h5><a data-toggle="modal" href="" onclick="pleaseLogin();" data-nexthref="~/Diary/DiaryMain">飲食日誌</a></h5>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="categories__item set-bg" data-setbg="/img/home/eat.jpg">
+                            <h5><a href="~/Diary/DiaryMain">飲食日誌</a></h5>
+                        </div>
+                    }
+                </div>
+                <div class="col-lg-3">
+                    <div class="categories__item set-bg" data-setbg="/img/home/calculator.jpg">
+                        <h5><a href="~/Body/BodyCalculatorMain">BODY計算器</a></h5>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+@*專欄文章*@
+<section class="from-blog spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12  reveal_b1">
+                <div class="section-title from-blog__title">
+                    <h2>最新文章</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            @*我要從此處新增首頁專欄*@
+            @{
+                IHealthContext dblHealth = new IHealthContext();
+                var test = (from t in dblHealth.TNews
+                            join m in dblHealth.TNewsComments
+                            on t.FNewsId equals m.FNewsId into ps
+                            from m in ps.DefaultIfEmpty()
+                            orderby t.FNewsId descending
+                            select new {
+                                FNewsId = t.FNewsId,
+                                FThumbnailPath = t.FThumbnailPath,
+                                FNewsDate = t.FNewsDate,
+                                commentCount = t.TNewsComments.Count,
+                                FTitle = t.FTitle,
+                                FContent = t.FContent
+                            }).ToList().Take(3);
+                foreach (var item in test /*dblHealth.TNews.OrderByDescending(t => t.FNewsDate).Take(3)*/)
+                {
+                    <div class="col-lg-4 col-md-4 col-sm-6 reveal_b1">
+                        <div class="blog__item">
+                            <div class="blog__item__pic">
+                                <img src="~/img/blog/@item.FThumbnailPath" alt="">
+                            </div>
+                            <div class="blog__item__text">
+                                <ul>
+                                    <li><i class="fa fa-calendar-o"></i>@item.FNewsDate.Substring(0, Math.Min(item.FNewsDate.Length, 10))</li>
+                                    <li><i class="fa fa-comment-o"></i>@item.commentCount</li>
+                                </ul>
+                                <h5><a href="~/News/BlogDetail?id=@item.FNewsId">@item.FTitle.Substring(0, Math.Min(item.FTitle.Length, 18)).Replace("<p>", "").Replace("<strong>", "").Replace("<br />", "").Replace("</p>", "")</a></h5>
+                                <p>@item.FContent.Substring(0, Math.Min(item.FContent.Length, 68)).Replace("<p>", "").Replace("<strong>", "").Replace("<br/>", "").Replace("</p>", "")</p>
+                            </div>
+                        </div>
+                    </div>
+                } }
+        </div>
+    </div>
+</section>
+@*熱門教練*@
+<div class="banner">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 reveal_b1">
+                <div class="section-title">
+                    <h2>熱門教練</h2>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 reveal_b2">
+                @{
+                    var coach1 = dblHealth.TCoaches.FirstOrDefault(c => c.FCoachId == 3);
+                }
+                <a href="/Student/ViewCoachDetails/@coach1.FCoachId">
+                    <div class="divCoachCard row">
+                        <div class="col-4 divImg">
+                            <img src="/img/coach/coachImage/@coach1.FCoachImage" class="imgCoach">
+                        </div>
+                        <div class="col-8 divCoachInfo">
+                            <ul>
+                                <li style="list-style:none" class="liCoachName row">
+                                    <h3 class="col-7"><b>@coach1.FCoachName</b></h3>
+                                </li>
+                                <li style="list-style:none" class="li">
+                                    <img src="~/img/Coach/icon/location.png" class="imgIcon" /><b>&nbsp;&nbsp;&nbsp;授課地區： </b>
+                                    <span>@dblHealth.TCities.FirstOrDefault(c => c.FCityId == coach1.FCityId).FCityName</span>
+                                </li>
+                                <li style="list-style:none" class="li">
+                                    <img src="~/img/Coach/icon/skill.png" class="imgIcon" />
+                                    <b>&nbsp;&nbsp;&nbsp;專長： <span class="spSkill">備賽指導、體態評估雕塑、增肌減脂、肌肥大訓練</span></b>
+                                </li>
+                                <li style="list-style:none" class="liSlogan"><span>@coach1.FSlogan</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-6 reveal_b3">
+                @{
+                    var coach2 = dblHealth.TCoaches.FirstOrDefault(c => c.FCoachId == 2);
+                }
+                <a href="/Student/ViewCoachDetails/@coach2.FCoachId">
+                    <div class="divCoachCard row">
+                        <div class="col-4 divImg">
+                            <img src="/img/coach/coachImage/@coach2.FCoachImage" class="imgCoach">
+                        </div>
+                        <div class="col-8 divCoachInfo">
+                            <ul>
+                                <li style="list-style:none" class="liCoachName row">
+                                    <h3 class="col-7"><b>@coach2.FCoachName</b></h3>
+                                </li>
+                                <li style="list-style:none" class="li">
+                                    <img src="~/img/Coach/icon/location.png" class="imgIcon" /><b>&nbsp;&nbsp;&nbsp;授課地區： </b>
+                                    <span>@dblHealth.TCities.FirstOrDefault(c => c.FCityId == coach2.FCityId).FCityName</span>
+                                </li>
+                                <li style="list-style:none" class="li">
+                                    <img src="~/img/Coach/icon/skill.png" class="imgIcon" />
+                                    <b>&nbsp;&nbsp;&nbsp;專長： <span class="spSkill">增肌減脂、功能性訓練、體態評估雕塑、TRX課程訓練</span></b>
+                                </li>
+                                <li style="list-style:none" class="liSlogan"><span>@coach2.FSlogan</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+@*商品排行*@
+<section class="latest-product spad reveal_b1">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 reveal_b1">
+                <div class="section-title">
+                    <h2>健康周邊</h2>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 reveal_b1">
+                <div class="latest-product__text">
+                    <h4>乳清蛋白</h4>
+                    <div class="latest-product__slider owl-carousel">
+                        <div class="latest-prdouct__slider__item">
+                            @{
+                                var product = dblHealth.TProducts.Where(p => p.FCategoryId == 1).Take(3);
+                                foreach (var item in product)
+                                {
+                                    <a href="/Shopping/ShowProductDetail/@item.FProductId" class="latest-product__item">
+                                        <div class="latest-product__item__pic">
+                                            <img src="/img/product/@item.FCoverImage" alt="" style="width:110px;height:110px">
+                                        </div>
+                                        <div class="latest-product__item__text">
+                                            <h6>@item.FProductName</h6>
+                                            <span>@item.FUnitprice.ToString("C0")</span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                        <div class="latest-prdouct__slider__item">
+                            @{
+                                product = dblHealth.TProducts.Where(p => p.FCategoryId == 1).Skip(3).Take(3);
+                                foreach (var item in product)
+                                {
+                                    <a href="/Shopping/ShowProductDetail/@item.FProductId" class="latest-product__item">
+                                        <div class="latest-product__item__pic">
+                                            <img src="/img/product/@item.FCoverImage" alt="" style="width:110px;height:110px">
+                                        </div>
+                                        <div class="latest-product__item__text">
+                                            <h6>@item.FProductName</h6>
+                                            <span>@item.FUnitprice.ToString("C0")</span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                        <div class="latest-prdouct__slider__item">
+                            @{
+                                product = dblHealth.TProducts.Where(p => p.FCategoryId == 1).Skip(6).Take(3);
+                                foreach (var item in product)
+                                {
+                                    <a href="/Shopping/ShowProductDetail/@item.FProductId" class="latest-product__item">
+                                        <div class="latest-product__item__pic">
+                                            <img src="/img/product/@item.FCoverImage" alt="" style="width:110px;height:110px">
+                                        </div>
+                                        <div class="latest-product__item__text">
+                                            <h6>@item.FProductName</h6>
+                                            <span>@item.FUnitprice.ToString("C0")</span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 reveal_b2">
+                <div class="latest-product__text">
+                    <h4>健康食品</h4>
+                    <div class="latest-product__slider owl-carousel">
+                        <div class="latest-prdouct__slider__item">
+                            @{
+                                product = dblHealth.TProducts.Where(p => p.FCategoryId == 2).Take(3);
+                                foreach (var item in product)
+                                {
+                                    <a href="/Shopping/ShowProductDetail/@item.FProductId" class="latest-product__item">
+                                        <div class="latest-product__item__pic">
+                                            <img src="/img/product/@item.FCoverImage" alt="" style="width:110px;height:110px">
+                                        </div>
+                                        <div class="latest-product__item__text">
+                                            <h6>@item.FProductName</h6>
+                                            <span>@item.FUnitprice.ToString("C0")</span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                        <div class="latest-prdouct__slider__item">
+                            @{
+                                product = dblHealth.TProducts.Where(p => p.FCategoryId == 2).Skip(3).Take(3);
+                                foreach (var item in product)
+                                {
+                                    <a href="/Shopping/ShowProductDetail/@item.FProductId" class="latest-product__item">
+                                        <div class="latest-product__item__pic">
+                                            <img src="/img/product/@item.FCoverImage" alt="" style="width:110px;height:110px">
+                                        </div>
+                                        <div class="latest-product__item__text">
+                                            <h6>@item.FProductName</h6>
+                                            <span>@item.FUnitprice.ToString("C0")</span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                        <div class="latest-prdouct__slider__item">
+                            @{
+                                product = dblHealth.TProducts.Where(p => p.FCategoryId == 2).Skip(6).Take(3);
+                                foreach (var item in product)
+                                {
+                                    <a href="/Shopping/ShowProductDetail/@item.FProductId" class="latest-product__item">
+                                        <div class="latest-product__item__pic">
+                                            <img src="/img/product/@item.FCoverImage" alt="" style="width:110px;height:110px">
+                                        </div>
+                                        <div class="latest-product__item__text">
+                                            <h6>@item.FProductName</h6>
+                                            <span>@item.FUnitprice.ToString("C0")</span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 reveal_b3">
+                <div class="latest-product__text">
+                    <h4>運動用具</h4>
+                    <div class="latest-product__slider owl-carousel">
+                        <div class="latest-prdouct__slider__item">
+                            @{
+                                product = dblHealth.TProducts.Where(p => p.FCategoryId == 3).Take(3);
+                                foreach (var item in product)
+                                {
+                                    <a href="/Shopping/ShowProductDetail/@item.FProductId" class="latest-product__item">
+                                        <div class="latest-product__item__pic">
+                                            <img src="/img/product/@item.FCoverImage" alt="" style="width:110px;height:110px">
+                                        </div>
+                                        <div class="latest-product__item__text">
+                                            <h6>@item.FProductName</h6>
+                                            <span>@item.FUnitprice.ToString("C0")</span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                        <div class="latest-prdouct__slider__item">
+                            @{
+                                product = dblHealth.TProducts.Where(p => p.FCategoryId == 3).Skip(3).Take(3);
+                                foreach (var item in product)
+                                {
+                                    <a href="/Shopping/ShowProductDetail/@item.FProductId" class="latest-product__item">
+                                        <div class="latest-product__item__pic">
+                                            <img src="/img/product/@item.FCoverImage" alt="" style="width:110px;height:110px">
+                                        </div>
+                                        <div class="latest-product__item__text">
+                                            <h6>@item.FProductName</h6>
+                                            <span>@item.FUnitprice.ToString("C0")</span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                        <div class="latest-prdouct__slider__item">
+                            @{
+                                product = dblHealth.TProducts.Where(p => p.FCategoryId == 3).Skip(6).Take(3);
+                                foreach (var item in product)
+                                {
+                                    <a href="/Shopping/ShowProductDetail/@item.FProductId" class="latest-product__item">
+                                        <div class="latest-product__item__pic">
+                                            <img src="/img/product/@item.FCoverImage" alt="" style="width:110px;height:110px">
+                                        </div>
+                                        <div class="latest-product__item__text">
+                                            <h6>@item.FProductName</h6>
+                                            <span>@item.FUnitprice.ToString("C0")</span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@*身體數據*@
+<section class="product spad" id="begin">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 reveal_b1">
+                <div class="section-title">
+                    <h2>身體數據</h2>
+                </div>
+            </div>
+            <div class="col-lg-6 reveal_b2">
+                <a href="../Body/BMICalculator">
+                    <div class="divOption">
+                        <img src='~/img/body/BMI.png' />
+                        <div class="divBackground"></div>
+                        <div><h1>BMI<br />計算器</h1></div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-6 reveal_b3">
+                <a href="../Body/TDEECalculator">
+                    <div class="divOption">
+                        <img src='~/img/body/TDEE.jpg' />
+                        <div class="divBackground"></div>
+                        <div><h1>TDEE<br />計算器</h1></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        $(".divOption").hover(function () {
+            $(this).children("img").css("border-radius", "50%").css("opacity", "0.2").end().find("h1").css("color", "black").end().children(".divBackground").css("visibility", "hidden");
+        }, function () {
+            $(this).children("img").css("border-radius", "2%").css("opacity", "0.8").end().find("h1").css("color", "#ffffff").end().children(".divBackground").css("visibility", "visible");
+        })
+
+
+    </script>
+}

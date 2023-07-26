@@ -1,0 +1,118 @@
+﻿@model IEnumerable<prjIHealth.ViewModels.COrderDetailViewModel>
+
+@{
+    ViewData["Title"] = "OrderdetailList";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+
+@section Styles{
+    <style>
+        .btn-light {
+            background-color: #DFEACE !important;
+            color: black;
+        }
+
+        .btn-success {
+            background-color: #7FAD39;
+            color: white;
+            border: none;
+        }
+
+        table.table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .selectbox {
+            margin-bottom: 5%;
+            margin-left: -10%;
+        }
+
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+        .btn-demo {
+            background-color: #6c757d;
+            color: #fff;
+            border: none;
+        }
+    </style>
+}
+    <h2 id="title">訂單明細</h2>
+    <hr />
+    <section class="">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="shoping__cart__table">
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th style="margin-left:auto">
+                                        編號
+                                    </th>
+                                    <th style="margin-left:auto">
+                                        @Html.DisplayNameFor(model => model.FProductId)
+                                    </th>
+                                    <th style="margin-left:auto">
+                                        @Html.DisplayNameFor(model => model.FQuantity)
+                                    </th>
+                                    <th style="margin-left:auto">
+                                        @Html.DisplayNameFor(model => model.FUnitprice)
+                                    </th>
+                                    <th style="margin-left:auto">
+                                       折扣優惠
+                                    </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    decimal discount = 0;
+                                    int count = 0;
+                                    foreach (var item in Model)
+                                    {
+                                        discount = Convert.ToInt32(item.fdiscount.FDiscountValue);
+                                        count++;
+                                        <tr>
+                                            <td style="margin-left:auto">
+                                                @count
+                                                <input type="hidden" value=" @Html.DisplayFor(model =>item.FOrderId)" name="FOrderId" id="FOrderId" />
+                                                <input type="hidden" value=" @Html.DisplayFor(model =>item.FProductId)" name="FProductId" id="FProductId" />
+                                                <input type="hidden" value=" @Html.DisplayFor(model =>item.FDiscountId)" name="FDiscountId" id="FDiscountId" />
+                                                <input type="hidden" value="@Html.DisplayFor(model =>item.FOrderDetailsId)" name="FOrderDetailsId" id="FOrderDetailsId" />
+                                            </td>
+                                            <td style="margin-left:auto">
+                                                @Html.DisplayFor(modelItem => item.fproduct.FProductName)
+                                            </td>
+                                            <td style="margin-left:auto">
+                                                @Html.DisplayFor(modelItem => item.FQuantity)
+                                            </td>
+                                            <td style="margin-left:auto">
+                                                @Html.DisplayFor(modelItem => item.FUnitprice)
+                                            </td>
+                                            <td style="margin-left:auto">
+                                                @Html.DisplayFor(modelItem => item.fdiscount.FDiscretion)
+                                            </td>
+                                            <td style="margin-left:auto">
+                                                @Html.ActionLink("修改明細", "OrderdetailEdit", new { id = item.FOrderDetailsId },
+                                                  new { @class = "btn btn-light" })
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                        <div class="checkout__order__total">折扣金額:<span>@discount.ToString("C0")</span></div>
+                        <div class="form-group ">
+                            <a asp-action="OrderList" class="btn-demo btn">返回清單</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+

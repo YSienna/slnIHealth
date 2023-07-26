@@ -1,0 +1,361 @@
+﻿@model IEnumerable<prjIHealth.ViewModels.CShoppingCartItem>
+@{
+    ViewData["Title"] = "ShoppingCartList";
+}
+@section Styles{
+<style>
+   
+</style>
+}
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/product/banner_shop.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">購物車</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Shopping/ShowShoppingMall">Home</a>
+                        <span>Shopping</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@*※※※非會員專區的View的內容請從此處開始※※※*@
+
+<section class="shoping-cart spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shoping__cart__table">
+                    <table id="table">
+                        <thead>
+                            <tr>
+                                <th style="display:none">編號</th>
+                                <th class="shoping__product">產品名稱</th>
+                                <th>價格</th>
+                                <th>數量</th>
+                                <th>總價</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                decimal pay = 0;
+                                decimal discount = 0;
+
+                                @foreach (var item in Model)
+                                {
+                                    discount = item.discount;
+                                    pay += item.小計;
+                            <tr>
+                                <td style="display:none" id="productid">@item.productId</td>
+                                <td class="shoping__cart__item">
+                                    <img src="/img/product/@item.product.FCoverImage" alt="" style="width:10%;height:10%">
+                                    <h5>@item.product.FProductName</h5>
+                                </td>
+                                <td class="shoping__cart__price">
+                                    @item.price.ToString("C0")
+                                </td>
+                                <td class="shoping__cart__quantity">
+                                    <div class="quantity">
+                                        <div class="pro-qty">
+                                            <input type="text" value="@Html.DisplayFor(modelItem => item.count)" id="productqty" readonly="readonly">
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="shoping__cart__total" id="tempprice" name="shoping__cart__total">
+                                    @item.小計.ToString("C0")
+                                </td>
+                                <td class="shoping__cart__item__close">
+                                    <span class="icon_close"></span>
+                                </td>
+                                <td style="display:none" id="productdiscount">@item.discount</td>
+                            </tr>
+                                }
+                                decimal total = pay - discount;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shoping__cart__btns">
+                    <a href="~/Shopping/ShowShoppingMall" class="primary-btn cart-btn">繼續購物</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="shoping__continue">
+                    <div class="shoping__discount">
+                        <h5>折扣代碼</h5>
+                        <form action="#">
+                            <input type="text" autocomplete="off" placeholder="請輸入折扣代碼" id="codestring">
+                            <button type="button" class="site-btn" id="checkdiscount">使用折扣代碼</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="shoping__checkout">
+                    <h5>結帳明細</h5>
+                    <ul>
+                        <li>小計<span id="originprice">@pay.ToString("C0")</span></li>
+                        <li  id="discounthint">折扣金額<span id="pricehint">@discount.ToString("C0")</span></li>
+                        <li>總金額<span id="total">@total.ToString("C0")</span></li>
+                    </ul>
+                    @Html.ActionLink("開始結帳", "CheckOut", new { @*id =checkout*@}, new { @class = "primary-btn", @id = "checkout" })
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        //結帳時檢查是否有數量為0的商品，若有則從session中移除
+        $('#checkout').on('click', checkzero)
+        function checkzero() {
+            var data = {};
+            data.txtFid = $('#productid').text()
+            data.txtCount = 0;
+            $.ajax({
+             type: "POST",
+             url: "@Url.Action("ShoppingCartCheckZero")",
+             data: data
+            })
+        }
+        //刪除購物車商品並重新計算小計與總金額
+        $("span[class='icon_close']").on('click', removeproduct)
+        function removeproduct(){
+            $(this).closest('tr').remove();
+            //將所有加總的值取出後放入list，再計算list之和sum，之後由sum計算並替換小計與總金額
+            var list = new Array();
+            $("td[class='shoping__cart__total']").each(function () {
+                list.push(parseInt($(this).text().trim().replace(",", "").replace("\n", "").substring(3)));
+            });
+            var sum = 0;
+            list.forEach(function (element) {
+                sum += element;
+            });
+            //sum處理為NT$與千分位型態&計算折扣金額
+            let strsum = "NT$" + toCurrency(sum)
+            let discountprice = 0;
+            if (hasdiscount) {
+                discountprice = parseInt($('#discounthint').text().replace(',', '').substring(7))
+            }
+            let finaltotal = sum - discountprice
+            $('#originprice').html(strsum)
+            //finaltotal處理為NT$與千分位型態
+            let strfinaltotal = "NT$" + toCurrency(finaltotal)
+            $('#total').html(strfinaltotal)
+            //從session中移除選中商品
+            var data = {};
+            data.txtFid = parseInt($(this).parent().prev().prev().prev().prev().prev().text());
+            $.ajax({
+             type: "POST",
+             url: "@Url.Action("ShoppingCartDelete")",
+             data: data
+            })
+            //變更右上購物車顯示數量            
+            let oricartcount = $("#fa-cart").children("span").text();
+            let newcartcount = oricartcount - 1;
+            if (newcartcount == 0) {
+                $("#fa-cart").children("span").text("");
+                $("#fa-cart").children("span").hide();
+            }
+            else {
+                $("#fa-cart").children("span").text(newcartcount);
+                $("#fa-cart").children("span").show();
+            }           
+        }
+        //判斷是否有折價卷旗標
+        let hasdiscount = false;
+        //js轉換數字為千分位型態方法
+        function toCurrency(num) {
+            var parts = num.toString().split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return parts.join('.');
+        }
+        //js處理C#帶入的貨幣文字格式，將NT$與,消除後變數字運用
+        async function CheckDiscount() {
+            const originprice = parseInt((document.getElementById("originprice").innerHTML).replace(",", "").substring(3))
+            const codestring = ($('#codestring').val()).toString();
+            const response = await fetch('@Url.Content("~/Shopping/CheckDiscount")' + `?code=${codestring}`);
+            const datas = await response.json();
+            if (datas.length == 0) {
+                SwalGreen.fire({
+                    title: '請輸入正確折扣碼',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+            }
+            else {
+        //讀取折扣額並計算總金額後，再將數字用方法轉回千分位型態字串且加上NT$
+                $('#discounthint').css('display', 'block')
+                let discountvalue = "NT$" + toCurrency(parseInt(datas[0].fDiscountValue, 10))
+                $('#pricehint').html(discountvalue)
+                let total = originprice - parseInt(datas[0].fDiscountValue, 10)
+                let stringtotal = "NT$" + toCurrency(total)
+                $('#total').html(stringtotal)
+                hasdiscount = true;
+                SwalGreen.fire({
+                    title: '已成功使用折扣碼',
+                    text: false,
+                    icon: 'success',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+            }
+        //為現有商品加上折扣金額的值供結帳頁面使用
+            var data = {};
+            data.txtFid = $('#productid').text()
+            data.discountValue = parseInt($('#discounthint').text().replace(',', '').substring(7))
+            data.discountID = datas[0].fDiscountId
+            $.ajax({
+             type: "POST",
+             url: "@Url.Action("AttachDiscount")",
+             data: data
+            })
+            console.log(data.discountID)
+        }
+        $('#checkdiscount').on('click', CheckDiscount);
+
+        //按+時變更總價,小計,總金額,並對模板預設input值與顯示值差1進行處理
+        $("span[class='inc qtybtn']").on('click', changepriceplus)
+        function changepriceplus() {
+            let count = parseInt($(this).prev().val())
+            let newprice = 0
+            let oldprice = parseInt(($(this).parent().parent().parent().prev().text()).replace(",", "").trim().substring(3))
+            if (count == 1) {
+                newprice = "NT$" + toCurrency(2 * oldprice)
+            } else {
+                newprice = "NT$" + toCurrency((count+1) * oldprice)
+            }
+            $(this).parent().parent().parent().next().html(newprice)
+          //將所有加總的值取出後放入list，再計算list之和sum，之後由sum計算並替換小計與總金額
+            var list = new Array();
+            $("td[class='shoping__cart__total']").each(function () {
+                list.push(parseInt($(this).text().trim().replace(",", "").replace("\n", "").substring(3)));
+            });
+            var sum = 0;
+            list.forEach(function (element) {
+                sum += element;
+            });
+
+
+           //sum處理為NT$與千分位型態&計算折扣金額
+            let strsum = "NT$" + toCurrency(sum)
+            let discountprice = 0;
+            if (hasdiscount) {
+                discountprice = parseInt($('#discounthint').text().replace(',', '').substring(7))
+            }
+            let finaltotal = sum - discountprice
+            $('#originprice').html(strsum)
+            //finaltotal處理為NT$與千分位型態
+            let strfinaltotal = "NT$" + toCurrency(finaltotal)
+            $('#total').html(strfinaltotal)
+            //變更seesion內產品數量
+             var data = {};
+            data.txtFid = parseInt($(this).parent().parent().parent().prev().prev().prev().text());
+            data.txtCount = parseInt($(this).prev().val()) + 1;
+            if (hasdiscount) {
+                data.discountValue = discountprice = parseInt($('#discounthint').text().replace(',', '').substring(7))
+            }
+            else {
+                data.discountValue = 0;
+            }
+            $.ajax({
+             type: "POST",
+             url: "@Url.Action("ShoppingCartSession")",
+             data: data
+            })
+            console.log(data.discountValue)
+        }
+        //按-時變更總價,小計,總金額,並對模板預設input值與顯示值差1進行處理
+        $("span[class='dec qtybtn']").on('click', changepriceminus)
+        function changepriceminus() {
+            //處理商品數量歸0時，總價小計與總金額顯示
+            if ($(this).next().val() == 1 || $(this).next().val() == 0) {
+                let newprice = "NT$0"
+                $(this).parent().parent().parent().next().html(newprice)
+                //將所有加總的值取出後放入list，再計算list之和sum，之後由sum計算並替換小計與總金額
+                var list = new Array();
+                $("td[class='shoping__cart__total']").each(function () {
+                    list.push(parseInt($(this).text().trim().replace(",", "").replace("\n", "").substring(3)));
+                });
+                var sum = 0;
+                list.forEach(function (element) {
+                    sum += element;
+                });
+                //sum處理為NT$與千分位型態&計算折扣金額
+                let strsum = "NT$" + toCurrency(sum)
+                let discountprice = 0;
+                if (hasdiscount) {
+                    discountprice = parseInt($('#discounthint').text().replace(',', '').substring(7))
+                }
+                let finaltotal = sum - discountprice
+                $('#originprice').html(strsum)
+                //finaltotal處理為NT$與千分位型態
+                let strfinaltotal = "NT$" + toCurrency(finaltotal)
+                $('#total').html(strfinaltotal)
+            }
+            else {
+            let count = parseInt($(this).next().val())
+            let newprice = 0
+            let oldprice = parseInt(($(this).parent().parent().parent().prev().text()).replace(",", "").trim().substring(3))
+            if (count == 3) {
+                newprice = "NT$" + toCurrency(2 * oldprice)
+            } else {
+                newprice = "NT$" + toCurrency((count - 1) * oldprice)
+            }
+            $(this).parent().parent().parent().next().html(newprice)
+            //將所有加總的值取出後放入list，再計算list之和sum，之後由sum計算並替換小計與總金額
+            var list = new Array();
+            $("td[class='shoping__cart__total']").each(function () {
+                list.push(parseInt($(this).text().trim().replace(",", "").replace("\n", "").substring(3)));
+            });
+            var sum = 0;
+            list.forEach(function (element) {
+                sum += element;
+            });
+            //sum處理為NT$與千分位型態&計算折扣金額
+            let strsum = "NT$" + toCurrency(sum)
+            let discountprice = 0;
+            if (hasdiscount) {
+                discountprice = parseInt($('#discounthint').text().replace(',', '').substring(7))
+            }
+            let finaltotal = sum - discountprice
+            $('#originprice').html(strsum)
+            //finaltotal處理為NT$與千分位型態
+            let strfinaltotal = "NT$" + toCurrency(finaltotal)
+            $('#total').html(strfinaltotal)
+            }
+            //變更seesion內產品數量
+             var data = {};
+            data.txtFid = parseInt($(this).parent().parent().parent().prev().prev().prev().text());
+            data.txtCount = parseInt($(this).next().val())-1;
+            if (hasdiscount) {
+                data.discountValue = discountprice = parseInt($('#discounthint').text().replace(',', '').substring(7))
+            }
+            else {
+                data.discountValue = 0;
+            }
+            $.ajax({
+             type: "POST",
+             url: "@Url.Action("ShoppingCartSession")",
+             data: data
+            })
+        }
+    </script>
+
+
+}

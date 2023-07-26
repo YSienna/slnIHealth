@@ -1,0 +1,136 @@
+﻿@model prjIHealth.Models.TMember
+
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+    <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col">
+                <div class="card card-registration my-4">
+                    <div class="row g-0">
+                        <div class="col-xl-6 d-none d-xl-block">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/img4.webp"
+                                 alt="Sample photo" class="img-fluid"
+                                 style="border-top-left-radius: .25rem; border-bottom-left-radius: .25rem;" />
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="card-body p-md-5 text-black">
+                                <h3 class="mb-5 text-uppercase">歡迎加入IHealth會員!</h3>
+                                <form asp-action="Register">
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="FUserName" class="form-control" placeholder="帳號,至少需二個字(含)以上" autocomplete="off" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="FMemberName" class="form-control" placeholder="姓名" autocomplete="off" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="FPassword" class="form-control" placeholder="密碼需含數字, 大,小寫英文字母" autocomplete="off" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="FAddress" class="form-control " placeholder="地址" autocomplete="off" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="FPhone" class="form-control" placeholder="電話" autocomplete="off" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="FBirthday" class="form-control" placeholder="生日,請依格式19991231輸入" autocomplete="off" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <input asp-for="FEmail" class="form-control" placeholder="電子郵件信箱" autocomplete="off" />
+                                    </div>
+                                    <div class="d-md-flex justify-content-start align-items-center mb-4 py-2" id="divGender">
+                                        <h6 class="mb-0 me-4">生理性別: </h6>
+                                        <div class="form-check form-check-inline mb-0 me-4">
+                                            <input asp-for="FGender" class="form-check-input" type="radio" name="FGender" value="false" id="femalGender" />
+                                            <label class="form-check-label" for="femaleGender">生理女性</label>
+                                        </div>
+                                        <div class="form-check form-check-inline mb-0 me-4">
+                                            <input asp-for="FGender" class="form-check-input" type="radio" name="FGender" value="true" id="maleGender" />
+                                            <label class="form-check-label" for="maleGender">生理男性</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <input id="authorityId" type="hidden" asp-for="FAuthorityId" class="form-control" value="5" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <input id="registerDate" type="hidden" asp-for="FRegisterDate" class="form-control" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <input type="hidden" asp-for="FRemarks" class="form-control" />
+                                    </div>
+                                    <div class="form-outline mb-4">
+                                        <input type="hidden" value="false" asp-for="FDisabled" class="form-control" />
+                                    </div>
+                                    <div class="form-group col-md-8 col-md-4-offset">
+                                        <input id="btnSubmit" type="submit" value="送出" class="btn btn-primary" />
+                                        <input type="reset" value="重設" class="btn btn-danger" />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@*會員登入Modal*@
+@*<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">歡迎登入IHealth會員 <span></span></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="~/Member/Login" id="addForm" method="post" enctype="application/x-www-form-urlencoded" name="userInfo">
+                    <div class="form-group">
+                        <label for="fUserName">UserName</label>
+                        <input type="text" class="form-control" id="fUserName" name="fUserName" placeholder="帳號">
+                    </div>
+                    <div class="form-group">
+                        <label for="fPassword">密碼</label>
+                        <input type="text" class="form-control" id="fPassword" name="fPassword" placeholder="密碼">
+                    </div>
+                    <div>
+                        <input id="btnLogin1" type="submit" value="會員登入" class="btn btn-primary "><i class="fa fa-sign-in"></i>
+                    </div>
+
+                </form>
+
+            </div>
+            <div class="modal-footer row">
+                <div class="text-center col-md-4">
+                    <button id="btnRegister" class="btn btn-primary mb-3" onclick="window.location.href='Member/Register'">
+                        註冊會員 <i class="fa fa-user"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>*@
+<body class="bg-gradient-primary">
+    <!-- Bootstrap core JavaScript-->
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="js/sb-admin-2.min.js"></script>
+
+</body>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            @*※※※非會員專區的View的內容請從此處開始※※※*@
+
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+   }

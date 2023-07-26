@@ -1,0 +1,93 @@
+﻿
+
+@section Styles{
+    <style>
+        .blog__btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #1c1c1c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #b2b2b2;
+            padding: 14px 20px 12px;
+            border-radius: 25px;
+        }
+
+            .blog__btn:visited {
+                color: #1c1c1c;
+            }
+
+            .blog__btn:hover {
+                color: black;
+                font-weight: 800;
+            }
+
+            .blog__btn:active {
+                color: black;
+                font-weight: 800;
+            }
+        .sidebar__item ul li a {
+            border: dashed 2px #7fad39;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            padding-left: 1vw;
+            margin-right: 8vw;
+            margin-bottom: 1vh;
+        }
+    </style>
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">會員專區Demo</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="./index.html">Home</a>
+                        <span>Shop</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            @*會員專區垂直導覽列*@
+            <div class="col-lg-3 col-md-5 reveal_b1">
+                <div class="sidebar" style="position:sticky;top:150px;">
+                    <div class="sidebar__item">
+                        <h4>會員專區</h4>
+                        <ul>
+
+                            <li><a href="~/member/edit">個人資料</a></li>
+                            <li><a href="~/Diary/DiaryMain">飲食日誌</a></li>
+                            <li><a href="~/Member/OrderList">訂單查詢</a></li>
+                            <li><a href="~/Student/CandidateList">候選教練</a></li>
+                            <li><a href="~/Student/CourseList">課程列表</a></li>
+                            <li><a href="~/Student/ViewCourseCalendar">課程行事曆</a></li>
+                            <li><a href="~/Problem/CheckReply">客服記錄</a></li>
+
+                        </ul>
+                        <br />
+                        <a href="~/Coach/CreateResume" class="blog__btn"><span class="arrow_right"></span>教練專區</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-7" style="height:400px">
+                @*※※※會員專區View內容請從此開始※※※*@
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+
+}

@@ -1,0 +1,329 @@
+﻿@model prjIHealth.Models.TProblem
+@using prjIHealth.Models;
+@using prjiHealth.Models;
+@using prjIHealth.ViewModels;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Mvc;
+@using System.Linq;
+@using System.Text.Json;
+@{
+    ViewData["Title"] = "ReplyProblem";
+}
+
+@section Styles{
+
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/banner/banner_mem.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">聯絡我們</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Problem/ReplyProblem">Home</a>
+                        <span>Contact</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<section class="contact spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-6 text-center">
+                <div class="contact__widget">
+                    <span class="icon_phone"></span>
+                    <h4>客服電話</h4>
+                    <p>02-6631-6588</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 text-center">
+                <div class="contact__widget">
+                    <span class="icon_pin_alt"></span>
+                    <h4>地址</h4>
+                    <p>台北市大安區復興南路一段390號2樓</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 text-center">
+                <div class="contact__widget">
+                    <span class="icon_clock_alt"></span>
+                    <h4>線上客服時間</h4>
+                    <p>08:00 am to 23:00 pm</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-6 text-center">
+                <div class="contact__widget">
+                    <span class="icon_mail_alt"></span>
+                    <h4>客服Email</h4>
+                    <p>msit141_iHealth@ispan.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="product spad">
+    <div class="map">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3615.004702379926!2d121.54122331460911!3d25.033914483972392!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3442abd379a5ec97%3A0xedc006d25a9e35df!2z6LOH5bGV5ZyL6Zqb6IKh5Lu95pyJ6ZmQ5YWs5Y-4!5e0!3m2!1szh-TW!2stw!4v1656767682771!5m2!1szh-TW!2stw" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <div class="map-inside">
+            <i class="icon_pin"></i>
+            <div class="inside-widget">
+                <h4>iHealth</h4>
+                <ul>
+                    <li>客服電話: 02-66316588</li>
+                    <li>106台北市大安區復興南路一段390號2樓</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            @*※※※非會員專區的View的內容請從此處開始※※※*@
+            <div class="contact-form spad">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="contact__form__title">
+                                <h2>請說明您的問題</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <form asp-action="ReplyProblem" id="problemform" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6">
+                                <select name="qtype" id="qtype" class="qa-select">
+                                    <option value="999" disabled selected hidden>請選擇問題類型(Please select type of problem)</option>
+                                    <option value="帳號/密碼/認證">帳號/密碼/認證(Account/access code/authentication)</option>
+                                    <option value="訂單相關">訂單相關(Related problems of ordes)</option>
+                                    <option value="課程相關">課程相關(Related problems of courses)</option>
+                                    <option value="商品相關">商品相關(Related problems of products)</option>
+                                    <option value="其他建議相關">其他建議相關(Other related suggestions)</option>
+                                </select>
+                            </div>
+                            @{
+                                //如果有登入，自動帶入信箱及電話
+                                string LoginbuttonValue = "登入";
+                                int loginId = 0;
+                                TMember loginMember = null;
+                                string loginmemberemail = "";
+                                string loginphone = "";
+                                if (Context.Session.Keys.Contains(CDictionary.SK_Logined_User))
+                                {
+                                    string logJson = Context.Session.GetString(CDictionary.SK_Logined_User);
+                                    loginMember = JsonSerializer.Deserialize<TMember>(logJson);
+                                    LoginbuttonValue = loginMember.FMemberName;
+                                    loginId = loginMember.FMemberId;
+                                    IHealthContext db = new IHealthContext();
+                                    var memberinfo = (from m in db.TMembers
+                                                      where m.FMemberId == loginId
+                                                      select new
+                                                      {
+                                                          phone=m.FPhone,
+                                                          email=m.FEmail
+                                                      }).FirstOrDefault();
+                                    loginmemberemail = memberinfo.email;
+                                    loginphone = memberinfo.phone;
+                                };
+                            }
+                            <div class="col-lg-6 col-md-6">
+                                <input asp-for="FContactPhone" type="text" placeholder="連絡電話" id="FContactPhone" value="@loginphone">
+                            </div>
+                            <div class="col-lg-6 col-md-6">
+                                <input asp-for="FEmail" type="text" placeholder="Email信箱" id="FEmail" value="@loginmemberemail">
+                            </div>
+
+                            <div class="col-lg-6 col-md-6">
+                                <input asp-for="FOrderId" type="text" placeholder="訂單編號" id="FOrderId">
+                            </div>
+                            @*隱藏寫入資料庫不可NULL欄位，時間，處理狀態，會員ID，問題類別
+                                會員ID之後應改用session傳遞
+                            *@
+                            <div id="AddProblemCategoryId"></div>
+                            <input type="hidden" asp-for="FProblemTime" value=@ViewBag.Time name="FProblemTime" />
+                            <input type="hidden" asp-for="FStatusNumber" value=80 name="FStatusNumber" />
+                            <input type="hidden" asp-for="FMemberId" value=9 name="FMemberId" />
+
+                            <div class="col-lg-12 text-center">
+                                <textarea asp-for="FProblemContent" placeholder="問題描述" id="FProblemContent"></textarea>
+                                <input type="file" id="photo" name="photo" style="padding-top:10px" class="form-control" accept="image/*" onchange="checkfile(this);">
+                                <div id="uploadpic" style="float:left;display:none">
+                                    <b class="bTopic">預覽縮圖</b>
+                                    <img id="imgPreivew" style="width:150px" />
+                                </div>
+                                <div style="float:right">
+                                    <button type="submit" class="site-btn" id="submitproblem">送出訊息</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="col-lg-12" style="margin-top:20px">
+                        <button type="submit" class="site-btn" id="cancelfile">取消上傳</button>
+                        <button type="submit" class="site-btn" id="demo">DEMO</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@section Scripts{
+    @*防止同時未填寫電話及EMAIL*@
+    @if (ViewBag.Message_EP != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                SwalGreen.fire({
+                    title: '@ViewBag.Message_EP',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+            };
+
+        </script>
+    }
+    @*防止未填寫問題內容*@
+    @if (ViewBag.Message_PC != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+            SwalGreen.fire({
+                    title: '@ViewBag.Message_PC',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+        };
+        </script>
+    }
+    @*防止未選擇問題類別*@
+    @if (ViewBag.Message_PCID != null)
+    {
+        <script type="text/javascript">
+        window.onload = function () {
+            SwalGreen.fire({
+                    title: '@ViewBag.Message_PCID',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+        };
+        </script>
+    }
+    @*送出後提示成功並將輸入欄位清空*@
+    @if (ViewBag.Message_SUCCESS != null)
+    {
+        <script type="text/javascript">
+        window.onload = function () {
+            function ReplySuccess() {
+                SwalGreen.fire({
+                    title: '@ViewBag.Message_SUCCESS',
+                    text: false,
+                    icon: 'success',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+            }
+            function ResetView() {
+                document.getElementById("FContactPhone").value = "";
+                document.getElementById("FEmail").value = "";
+                document.getElementById("FOrderId").value = "";
+                document.getElementById("FProblemContent").value = "";
+            }
+            ReplySuccess();
+            ResetView();
+        }
+        </script>
+    }
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @*限制圖片上傳類型*@
+    <script type="text/javascript" language="javascript">
+        function checkfile(sender) {
+            var validExts = new Array(".jpg", ".png", ".bmp", ".png", ".jpeg", ".gif");
+            var fileExt = sender.value;
+            fileExt = fileExt.substring(fileExt.lastIndexOf('.'));
+            if (validExts.indexOf(fileExt) < 0) {
+                SwalGreen.fire({
+                    title: '檔案類型錯誤，僅接受的副檔名有' + validExts.toString(),
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+                sender.value = null;
+                return false;
+            }
+            else return true;
+        }
+    </script>
+    <script>
+        let ProblemCategoryID = 0;
+        var input = '';
+        function SelectedProblemCategoryID() {          /*判斷所選類別對應的ID*/
+            $('#AddProblemCategoryId>input').remove();  /*避免重複點擊持續增加*/
+            if ($('#qtype').val() == "帳號/密碼/認證")
+                ProblemCategoryID = 1;
+            if ($('#qtype').val() == "訂單相關")
+                ProblemCategoryID = 2;
+            if ($('#qtype').val() == "課程相關")
+                ProblemCategoryID = 3;
+            if ($('#qtype').val() == "商品相關")
+                ProblemCategoryID = 4;
+            if ($('#qtype').val() == "其他建議相關")
+                ProblemCategoryID = 5;
+            input = `<input type="hidden" asp-for="FProblemCategoryId" value="${ProblemCategoryID}" name="FProblemCategoryId" />`
+            $('#AddProblemCategoryId').append(input)   /*change事件發生時才產生存放資料的input*/
+        };
+        $('#qtype').on("change", SelectedProblemCategoryID) /*選擇類別時會產生寫入資料庫所需的ProblemCategoryID*/
+
+        $('#cancelfile').on("click", function () {     /*清除選擇上傳檔案*/
+            var obj = document.getElementById('photo');
+            obj.select();
+            obj.value = "";
+            var url = "";
+            $("#imgPreivew").attr("src", url);
+            $('#uploadpic').attr("style", "display:none")
+            document.selection.clear();
+        })
+        //demo用按鈕
+        $('#demo').on('click', demo)
+        function demo() {
+            $('#FContactPhone').val("0944678566").css("color", "black")
+            $('#FEmail').val("charleschou54138@gmail.com").css("color", "black")
+            $('#FProblemContent').val("請問有賣金牌乳清蛋白香草冰淇淋口味嗎，像圖片的那種")
+        }
+        //預覽圖片jquery
+        var arrayBuffer = null;
+        document.querySelector("#photo").addEventListener("change", function () {
+            var reader = new FileReader();
+            reader.onload = function () {
+                $('#uploadpic').attr("style", "display:block;float:left")
+                arrayBuffer = this.result;
+                var arrayBufferView = new Uint8Array(arrayBuffer);
+                var blob = new Blob([arrayBufferView], { type: "image/jpg" });
+                var urlCreator = window.URL || window.webkitURL;
+                var url = urlCreator.createObjectURL(blob);
+                $("#imgPreivew").attr("src", url);
+            };
+            reader.readAsArrayBuffer(this.files[0]);
+        }, false);
+    </script>
+
+    @*<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+        <script src="~/Scripts/jquery.validate.min.js"></script>
+        <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
+}
+
+

@@ -1,0 +1,503 @@
+﻿@model List<prjIHealth.ViewModels.CCourseListViewModel>
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>       
+        .details {
+            text-align: right
+        }
+        
+        .thCount {
+            width: 10%;
+        }
+
+        .thTime {
+            width: 20%;
+        }
+
+        .thStatus {
+            width: 30%;
+        }
+
+        .tbToggle {
+            background-color: #EFF1ED;
+        }
+
+        .btnView {
+            border: none;
+            color: white;
+            background-color: #7FAD39;
+            border-radius: 5px;
+            height: 36px;
+            vertical-align: bottom;
+            transition: .3s;
+        }
+
+            .btnView:hover {
+                background-color: #5F822B;
+                color: white;
+            }
+
+        .hiddenRow {
+            padding: 0 !important;
+        }
+
+        .tdBtns {
+            text-align: right;
+        }        
+
+        .btn-success {
+            background-color: #7FAD39;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #A9B6A8;
+            border: none;
+        }
+
+        /*評分*/
+        .btnRate {
+            border: none;
+            color: dimgray;
+            background-color: #DFEACE;
+            border-radius: 5px;
+            height: 36px;
+            vertical-align: bottom;
+            transition: .3s;
+        }
+
+            .btnRate:hover {
+                background-color: #EFF5E6;
+                color: dimgray;
+            }            
+        .divStarRate{
+            margin-bottom:10px;
+        }
+        .divGuide{
+            margin-bottom:15px;
+        }       
+        .divTextarea {
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .divStarRate {
+            display: flex;
+        }
+
+            .divStarRate div span {
+                line-height: 30.5px;
+                vertical-align: middle;
+            }
+
+        .divStars {
+            width: 40%;
+            text-align: center;
+        }
+
+            .divStars > img {
+                width: 15%;
+            }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+        }
+
+        .divResult, .spCheckWord {
+            text-align: center;
+            font-size: 14px;
+        }
+
+            .divResult > span, .spCheckWord {
+                color: slategray;
+            }
+
+        .starOrig {
+            filter: grayscale(1);
+        }
+
+        .starChg {
+            filter: grayscale(0);
+            transition: .5s;
+        }
+        #txtaText {
+            height: 140px
+        }
+
+        td a {
+            color: #212529;
+        }
+
+            td a:hover {
+                color: #7fad39;
+            }
+
+        .colorFinish {
+            color: silver;
+            font-weight: 700;
+        }
+
+        .colorIng {
+            color: #39ADA1;
+            font-weight: 700;
+        }
+
+        /*會員專區導覽列*/
+        .blog__btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #1c1c1c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #b2b2b2;
+            padding: 14px 20px 12px;
+            border-radius: 25px;
+        }
+
+            .blog__btn:visited {
+                color: #1c1c1c;
+            }
+
+            .blog__btn:hover {
+                border: 1px solid #4F6C24;
+                color: #4F6C24;
+            }
+
+            .blog__btn:active {
+                color: black;
+                font-weight: 800;
+            }
+
+        .sidebar__item ul li a {
+            margin-bottom: 1vh;
+        }
+
+        .sidebar__item {
+            border: 1px solid lightgray;
+            box-shadow: 2px 2px 5px lightgray;
+            padding: 20px;
+            margin-right: 30px;
+            margin-bottom: 20px;
+        }
+
+            .sidebar__item h5 {
+                text-align: center;
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #4F6C24;
+                color: white;
+            }
+
+            .sidebar__item li:hover {
+                transition: .2s;
+                background-color: #EFF5E6;
+            }
+
+            .sidebar__item i {
+                margin-right: 5px;
+            }
+
+        .liThis {
+            background-color: #EFEDED;
+        }
+       
+    </style>
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/banner/banner_mem.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">課程列表</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Student/CoachList">Home</a>
+                        <span>Training</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            @*會員專區垂直導覽列*@
+            <div class="col-lg-3 col-md-5 reveal_b1">
+                <div class="sidebar" style="position:sticky;top:150px;">
+                    <div class="sidebar__item">
+                        <h5>會員專區</h5>
+                        <ul>
+                            <li><a href="~/member/edit" class="row"><i class="fa-solid fa-user-pen col-2"></i>個人資料</a></li>
+                            <li><a href="~/Diary/DiaryMain" class="row"><i class="fa-solid fa-utensils col-2"></i>飲食日誌</a></li>
+                            <li><a href="~/Member/OrderList" class="row"><i class="fa-solid fa-cart-shopping col-2"></i>訂單查詢</a></li>
+                            <li><a href="~/Student/CandidateList" class="row"><i class="fa-solid fa-heart col-2"></i>候選教練</a></li>
+                            <li class="liThis"><a href="~/Student/CourseList" class="row"><i class="fa-solid fa-dumbbell col-2"></i>課程列表</a></li>
+                            <li><a href="~/Student/ViewCourseCalendar" class="row"><i class="fa-solid fa-calendar-day col-2"></i>課程行事曆</a></li>
+                            <li><a href="~/Problem/CheckReply" class="row"><i class="fa-solid fa-comments col-2"></i>客服記錄</a></li>
+                        </ul>
+                    </div>
+                    <a href="~/Coach/CreateResume" class="blog__btn"><span class="arrow_right"></span>教練專區</a>
+                </div>
+                </div>            
+            <div class="col-lg-9 col-md-7">                
+                <table class="table reveal_b1">
+                    @*課程列表標頭*@
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>
+                                No.
+                            </th>
+                            <th>
+                                教練姓名
+                            </th>
+                            <th>
+                                課程名稱
+                            </th>
+                            <th>
+                                時段
+                            </th>
+                            <th>
+                                堂數
+                            </th>
+                            <th>
+                                課程狀態
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @{
+                            int courseCount = 0;
+                            foreach (var c in Model)
+                            {
+                                courseCount++;
+
+                                @*課程列表*@
+                        <tr>
+                            <td>
+                                @courseCount
+                            </td>
+                            <td>
+                                <a href="~/Student/ViewCoachDetails/@c.CoachId">
+                                    @c.CoachName
+                                </a>
+                            </td>
+                            <td>
+                                @c.FCourseName
+                            </td>
+                            <td>
+                                @c.AvailableTime
+                            </td>
+                            <td>
+                                @c.FCourseTotal
+                            </td>
+                            @{
+                                if (c.Status == "進行中")
+                                {
+                                    <td class="colorIng">
+                                        @c.Status
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td class="colorFinish">
+                                        @c.Status
+                                    </td>
+                                }
+                            }
+                            <td class="tdBtns">
+                                <button class=" accordion-toggle btnView" data-toggle="collapse" data-target="#@c.CoachName.Trim()@courseCount"><i class="fa-solid fa-eye"></i>&nbsp&nbsp上課紀錄</button>
+                                <button class="btnRate" data-toggle="modal" data-target="#addModal"><i class="fa-solid fa-clipboard-check"></i>&nbsp&nbsp評價教練</button>
+                                <input hidden value="@c.CoachId" />
+                            </td>
+                        </tr>
+
+                                @*展開上課紀錄*@
+                                <tr>
+                                    <td colspan="12" class="hiddenRow">
+                                        <div class="accordian-body collapse" id="@c.CoachName.Trim()@courseCount">
+                                            <table class="table tbToggle">
+                                                <thead>
+                                                    <tr class="info">
+                                                        <th class="thCount">堂數</th>
+                                                        <th class="thTime">上課時間</th>
+                                                        <th class="thStatus">狀態</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @{
+                                                        int reservationCount = 0;
+                                                        foreach (var r in c.Reservations)
+                                                        {
+                                                            reservationCount++;
+                                                            <tr data-toggle="collapse" class="accordion-toggle" data-target="#demo10">
+                                                                <td>@reservationCount</td>
+                                                                <td>@r.FCourseTime.Substring(0, 4)-@r.FCourseTime.Substring(4, 2)-@r.FCourseTime.Substring(6, 2) @r.FCourseTime.Substring(8, 2):@r.FCourseTime.Substring(10, 2)</td>
+                                                                @{
+                                                                    if (r.Status == "未完成")
+                                                                    {
+                                                                        <td class="colorIng">
+                                                                            @r.Status
+                                                                        </td>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <td class="colorFinish">
+                                                                            @r.Status
+                                                                        </td>
+                                                                    }
+                                                                }
+                                                            </tr>
+                                                        }
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">評價教練<span></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addForm">
+                    <div class="divStarRate">
+                        <div class="divGuide">
+                            <span><b>評分</b></span>
+                        </div>
+                        <div class="divStars">
+                            <img src="~/img/Coach/icon/star.png" />
+                            <img src="~/img/Coach/icon/star.png" />
+                            <img src="~/img/Coach/icon/star.png" />
+                            <img src="~/img/Coach/icon/star.png" />
+                            <img src="~/img/Coach/icon/star.png" />
+                        </div>
+                        <div class="divResult">
+                            <span class="spResult">您尚未評分</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="divGuide">
+                            <span class="spGuide"><b>分享你的心得&nbsp;</b></span>
+                            @*<span class="spCheckWord">*限125字</span>*@
+                        </div>
+                        <div class="divTextarea">
+                            <textarea id="txtaText"></textarea>
+                        </div>                                       
+                    </div>                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
+                <button class="btn btn-success" id="btnSendRate">送出評分</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+
+        //星星評分
+        var starIndex = -1;
+        $(".divStars>img").attr("class", "starOrig");
+        $(".divStars>img").on({
+            mouseover: mouseOver,
+            mouseout: mouseOut,
+            click: clickStar,
+            dblclick: reset
+        })
+        function mouseOver() {
+            starIndex = $(this).index();
+            $(".divStars>img").slice(0, starIndex + 1).attr("class", "starChg");
+            $(".spResult").text("評分中...");
+        }
+        function mouseOut() {
+            starIndex = $(this).index();
+            $(".divStars>img").slice(0, starIndex + 1).attr("class", "starOrig");
+            $(".spResult").text("您尚未評分");
+            starIndex = -1;
+        }
+        function clickStar() {
+            $(".divStars>img").off("mouseover").off("mouseout");
+            $(".spResult").text(`${starIndex + 1}\t顆星，雙擊可重置`);
+        }
+        function reset() {
+            starIndex = $(this).index();
+            $(".divStars>img").attr("class", "starOrig").mouseover(mouseOver).mouseout(mouseOut);
+            $(".divStars>img").slice(0, starIndex + 1).attr("class", "starChg");
+            $(".spResult").text("評分中...");
+        }
+
+        //顯示已評分內容
+        var theCoachId;
+        $(".btnRate").click(function () {
+            theCoachId = $(this).next("input").val();
+            $.get("@Url.Content("~/Student/viewRate")", { theCoachId: theCoachId }, function (rate) {
+                if (rate != null) {
+                    starIndex = rate.fRateStar - 1;
+                    $(".divStars>img").slice(0, starIndex + 1).attr("class", "starChg");
+                    $(".divStars>img").off("mouseover").off("mouseout");
+                    $(".spResult").text(`${starIndex + 1}\t顆星，雙擊可重置`);
+                    if (rate.fRateText != null) {
+                        $("#txtaText").val(rate.fRateText);
+                    }
+                }
+            })
+        })
+
+        //關閉modal時重置
+        $("#addModal").on("hidden.bs.modal", function () {
+            $(".divStars>img").attr("class", "starOrig").mouseover(mouseOver).mouseout(mouseOut);
+            $(".spResult").text("您尚未評分");
+            starIndex = -1;
+            $("#txtaText").val("");
+        });
+
+        //送出評分
+        $("#btnSendRate").click(function () {
+            if (starIndex >= 0) {
+                $.post("@Url.Content("~/Student/createRate")", { FCoachId: theCoachId, FRateStar: starIndex + 1, FRateText: $("#txtaText").val() }, function () {
+                    $("#addModal").modal('hide');
+                })
+            }
+            else {
+                SwalGreen.fire({
+                    title: `您尚未評分，請點擊星星給分`,
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    confirmButtonText: '確定',
+                    icon: 'error'
+                })
+            }
+        });
+
+
+        
+
+    </script>
+}

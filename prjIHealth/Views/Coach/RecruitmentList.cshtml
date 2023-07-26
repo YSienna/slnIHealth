@@ -1,0 +1,735 @@
+﻿@model List<prjIHealth.ViewModels.CContactViewModel>
+
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /*教練專區導覽列*/
+        .blog__btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #1c1c1c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #b2b2b2;
+            padding: 14px 20px 12px;
+            border-radius: 25px;
+        }
+
+            .blog__btn:visited {
+                color: #1c1c1c;
+            }
+
+            .blog__btn:hover {
+                border: 1px solid #6F4315;
+                color: #6F4315;
+            }
+
+            .blog__btn:active {
+                color: black;
+                font-weight: 800;
+            }
+
+        .sidebar__item ul li a {
+            margin-bottom: 1vh;
+        }
+
+        .sidebar__item {
+            border: 1px solid lightgray;
+            box-shadow: 2px 2px 5px lightgray;
+            padding: 20px;
+            margin-right: 30px;
+            margin-bottom: 20px;
+        }
+
+            .sidebar__item h5 {
+                text-align: center;
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #452A0D;
+                color: white;
+            }
+
+            .sidebar__item li:hover {
+                transition: .2s;
+                background-color: #EDE8E2;
+            }
+
+            .sidebar__item i {
+                margin-right: 8px;
+            }
+
+        .liThis {
+            background-color: #EFEDED;
+        }
+
+
+        .table {
+            table-layout: fixed;
+            word-break: break-all;
+        }
+
+        .thNo {
+            width: 6%;
+        }
+
+        .thName {
+            width: 10%;
+        }
+
+        .thPhone {
+            width: 15%;
+        }
+
+        .thPreferTime {
+            width: 14%;
+        }
+
+        .thTime {
+            width: 18%;
+        }
+
+        .thStatus {
+            width: 19%;
+        }
+
+        .tdBtn {
+            width: 18%;
+            text-align: right;
+        }
+
+            .tdBtn button:disabled {
+                background-color: gray;
+            }
+
+        .btnView {
+            border: none;
+            background-color: #DFEACE;
+            border-radius: 5px;
+            height: 36px;
+            vertical-align: bottom;
+        }
+
+            .btnView:hover {
+                background-color: #C3CDB4;
+            }
+
+        .hiddenRow {
+            padding: 0 !important;
+        }
+
+
+        .btn-success {
+            background-color: #7fad39;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #A9B6A8;
+            border: none;
+        }        
+
+        .selStatus {
+            display: inline !important;
+        }
+
+        #selStatus {
+            display: inline !important;
+            color: #fff;
+            background-color: #343a40;
+            border-color: #454d55;
+            font-weight: bold;
+        }
+
+        .selTime1, .selTime2 {
+            display: inline !important;
+            width: 48%;
+        }
+
+        .aMemberName {
+            color: #212529;
+        }
+
+            .aMemberName:visited {
+                color: #212529;
+            }
+
+            .aMemberName:hover {
+                color: #7fad39;
+            }
+
+        .ddImg {
+            width: 210px;
+            height: 280px;
+            background-size: contain;
+            background-repeat: no-repeat;
+        }
+
+
+        .chatText {
+            border: 1px solid cornflowerblue;
+            border-radius: 10px;
+            padding: 3px 8px 3px 8px;
+            background-color: ghostwhite;
+        }
+            .chatText small {
+                color: cornflowerblue;
+                margin-left: 5px;
+            }
+        .modal-title {
+            color: cornflowerblue;
+            font-weight: 800;
+        }
+
+        .colorFinish {
+            color: silver;
+            font-weight: 700;
+        }
+
+        .colorIng {
+            color: #39ADA1;
+            font-weight: 700;
+        }
+
+        .colorWait {
+            color: lightcoral;
+            font-weight: 700;
+        }
+    </style>
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/banner/banner_coach.png">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">招生列表</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Student/CoachList">Home</a>
+                        <span>Coach</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            @*教練專區左側導覽列*@
+            <div class="col-lg-3 col-md-5">
+                <div class="sidebar" style="position:sticky;top:150px;">
+                    <div class="sidebar__item">
+                        <h5>教練專區</h5>
+                        <ul>
+                            <li><a href="~/Coach/CreateResume"><i class="fa-solid fa-pen"></i>履歷管理</a></li>
+                            <li class="liThis"><a href="~/Coach/RecruitmentList" class="aLimit"><i class="fa-solid fa-user-check"></i>招生紀錄</a></li>
+                            <li><a href="~/Coach/TeachingList" class="aLimit"><i class="fa-solid fa-dumbbell"></i>教課列表</a></li>
+                        </ul>
+                    </div>
+                    <a href="~/Member/Edit" class="blog__btn"><span class="arrow_right"></span>會員專區</a>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-7">                
+                <table class="table reveal_b1">
+                    @*表格head*@
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="thNo">
+                                No.
+                            </th>
+                            <th class="thName">
+                                學員
+                            </th>
+                            <th class="thPhone">
+                                聯絡電話
+                            </th>
+                            <th class="thPreferTime">
+                                偏好時段
+                            </th>
+                            <th class="thTime">
+                                發送時間<i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </th>
+                            <th class="thStatus">
+                                <select id="selStatus">
+                                    <option value="0" selected>所有聯繫狀態</option>
+                                    <option value="50">等待聯繫中</option>
+                                    <option value="52">已聯繫，配對成功</option>
+                                    <option value="51">已聯繫，暫無課程</option>
+                                </select>
+                            </th>
+                            <th class="tdBtn"></th>
+                        </tr>
+                    </thead>
+                    @*招生紀錄*@
+                    <tbody id="tbdContact">
+                        @{
+                            int count = 0;
+                            foreach (var c in Model)
+                            {
+                                count++;
+                                <tr>
+                                    <td>
+                                        @count
+                                    </td>
+                                    <td>
+                                        <a class="aMemberName" data-toggle="modal" data-target="#modalMember" href="">@c.MemberName</a>
+                                        <input class="inpTheMemberID" type="hidden" value="@c.FMemberId" />
+                                    </td>
+                                    <td>
+                                        @c.MemberPhone
+                                    </td>
+                                    <td>
+                                        @c.AvailableTime
+                                        <input class="inpPreferTime" type="hidden" value="@c.FAvailableTimeNum" />
+                                    </td>
+                                    <td>
+                                        @c.StrContactDate
+                                    </td>
+                                    <td>
+
+                                        @{
+                                            if (c.FStatusNumber == 50)
+                                            {
+                                                <select class="selStatus colorWait" onchange="changeStatus();">
+                                                    <option value="50" class="colorWait" selected>等待聯繫中</option>
+                                                    <option value="51" class="colorFinish">已聯繫，暫無課程</option>
+                                                    <option value="52" class="colorIng">已聯繫，配對成功</option>
+                                                </select>
+                                            }
+                                            else if (c.FStatusNumber == 51)
+                                            {
+                                                <select class="selStatus colorFinish" onchange="changeStatus();">
+                                                    <option value="50" class="colorWait">等待聯繫中</option>
+                                                    <option value="51" class="colorFinish" selected>已聯繫，暫無課程</option>
+                                                    <option value="52" class="colorIng">已聯繫，配對成功</option>
+                                                </select>
+                                            }
+                                            else if (c.FStatusNumber == 52)
+                                            {
+                                                <select class="selStatus colorIng" onchange="changeStatus();">
+                                                    <option value="50" class="colorWait">等待聯繫中</option>
+                                                    <option value="51" class="colorFinish">已聯繫，暫無課程</option>
+                                                    <option value="52" class="colorIng" selected>已聯繫，配對成功</option>
+                                                </select>
+                                            }
+                                        }
+
+                                    </td>
+                                    <td class="tdBtn">
+                                        <input type="hidden" value="@c.FCoachContactId" />
+                                        <button class="btn btn-success btnCreateCourse" data-toggle="modal" data-target="#modalCreateCourse">排課</button>
+                                        <button class="btn btn-secondary btnChat" data-toggle="modal" data-target="#modalChat" data-membername="@c.MemberName" onclick="getId();">訊息</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+@*彈出視窗:會員資料*@
+<div class="modal fade" id="modalMember" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">學員資料<span></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <dl class="row" id="dlMember">
+                </dl>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*彈出視窗:新增課程(排課)*@
+<div class="modal fade" id="modalCreateCourse" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">新增課程<span></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="inpContactId">
+                <div class="form-group">
+                    <label>會員姓名</label>
+                    <input type="hidden" id="inpMemberId">
+                    <input type="text" class="form-control" id="inpMemberName" readonly>
+                </div>
+                <div class="form-group">
+                    <label>課程名稱</label>
+                    <input type="text" class="form-control" id="inpCourseName">
+                </div>
+                <div class="form-group">
+                    <label>時段</label>
+                    <div>
+                        <select class="selTime1">
+                            <option value="7">每周日</option>
+                            <option value="1">每周一</option>
+                            <option value="2">每周二</option>
+                            <option value="3">每周三</option>
+                            <option value="4">每周四</option>
+                            <option value="5">每周五</option>
+                            <option value="6">每周六</option>
+                        </select>
+                        <select class="selTime2">
+                            <option value="9">09:00</option>
+                            <option value="10">10:00</option>
+                            <option value="11">11:00</option>
+                            <option value="12">12:00</option>
+                            <option value="13">13:00</option>
+                            <option value="14">14:00</option>
+                            <option value="15">15:00</option>
+                            <option value="16">16:00</option>
+                            <option value="17">17:00</option>
+                            <option value="18">18:00</option>
+                            <option value="19">19:00</option>
+                            <option value="20">20:00</option>
+                            <option value="21">21:00</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>堂數</label>
+                    <input type="number" class="form-control" id="inpTotal">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="btnDemo">Demo</button>
+                <button type="button" class="btn btn-success" id="btnSendCourse">送出</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*彈出視窗:聯繫聊天室*@
+<div class="modal fade" id="modalChat" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="hMemberName">聯繫學員<span></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="height:60vh;overflow-y:scroll">
+                <input type="hidden" id="inpChatContactId" />
+                <div class="row" id="divChatBox">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div style="width:100%" class="row">
+                    <textarea id="txtNewText" class="col-10"></textarea>
+                    <div class="col-2" style="justify-content: center; display: flex;">
+                        <button type="button" class="btn btn-success" id="btnSendText" style="height:40px">送出</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div>
+                    <button id="btnChatDemo1" class="btn btn-light">Demo1</button>
+                    <button id="btnChatDemo2" class="btn btn-light">Demo3</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script>
+        //select樣式
+        $(".nice-select").remove();
+        //SweetAlert Button樣式調整
+        const SwalWithGreen = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-secondary'
+            },
+            buttonsStyling: false
+        })
+
+        //改變聯繫狀態
+        function changeStatus() {
+            theSel = $(event.target);
+            theContactId = $(event.target).parents("tr").find(".tdBtn").find("input").val();
+            theStatusNum = $(event.target).val();
+            $.get("@Url.Content("~/Coach/changeContactStatus")", { FCoachContactId: theContactId, FStatusNumber: theStatusNum }, function () {
+                if (theStatusNum == 50) {
+                    theSel.removeClass("colorWait").removeClass("colorFinish").removeClass("colorIng").addClass("colorWait");
+                }
+                else if (theStatusNum == 51) {
+                    theSel.removeClass("colorWait").removeClass("colorFinish").removeClass("colorIng").addClass("colorFinish");
+                }
+                else {
+                    theSel.removeClass("colorWait").removeClass("colorFinish").removeClass("colorIng").addClass("colorIng");
+                }
+            })
+        }
+
+        //點擊查看學員資料
+        var theMemberId = 0;
+        $(".aMemberName").on("click", showMember);
+        function showMember() {
+            theMemberId = $(event.target).next("input").val();
+            $.get("@Url.Content("~/Coach/showMember")", { memberId: theMemberId }, function (member) {
+                let html = "";//
+                html += `<dt class="col-sm-3">會員編號</dt><dd class="col-sm-9">${member.fMemberId}</dd>`;
+                html += `<dt class="col-sm-3">姓名</dt><dd class="col-sm-9">${member.memberName}</dd>`;
+                html += `<dt class="col-sm-3">性別</dt><dd class="col-sm-9">${member.memberGender}</dd>`;
+                html += `<dt class="col-sm-3">年齡</dt><dd class="col-sm-9">${member.memberAge}</dd>`;
+                //TODO 改圖片路徑:member.memberPicturePath
+                html += `<dt class="col-sm-3">相片</dt><dd class="col-sm-9"><div class="ddImg" style="background-image: url(/img/member/${member.memberPicturePath});"/></dd>`;
+                html += `<dt class="col-sm-3">連絡電話</dt><dd class="col-sm-9">${member.memberPhone}</dd>`;
+                html += `<dt class="col-sm-3">Email</dt><dd class="col-sm-9">${member.memberEmail}</dd>`;
+                $("#dlMember").html(html);
+            })
+        }
+
+        //彈出新增排課視窗
+        var theMemberName;
+        var selStatus;
+        $(".btnCreateCourse").on("click", btnCreateCourseClick);
+        function btnCreateCourseClick() {
+            selStatus = $(event.target).parents("tr").find(".selStatus");
+            theMemberName = $(event.target).parents("tr").find("a").text();
+            theMemberId = $(event.target).parents("tr").find(".inpTheMemberID").val();
+            theContactId = $(event.target).prev("input").val();
+            thePreferTime = $(event.target).parents("tr").find(".inpPreferTime").val();
+            $("#inpMemberName").val(theMemberName);
+            $("#inpMemberId").val(theMemberId);
+            $("#inpContactId").val(theContactId);
+            $(".selTime1").val(thePreferTime.substr(0, 1));
+            $(".selTime2").val(thePreferTime.substr(1, 2));
+        }
+
+        //新增課程(排課)
+        $("#btnSendCourse").click(function () {
+
+            if ($("#inpCourseName").val() == "" || $("#inpTotal").val() == "") {
+                SwalWithGreen.fire(
+                    '請勿空白',
+                    '請檢查是否完整填寫課程名稱及堂數',
+                    'error'
+                )
+            }
+            else {
+                SwalWithGreen.fire({
+                    title: '確定要新增課程嗎?',
+                    text: '確定新增後無法修改',
+                    showDenyButton: false,
+                    showCancelButton: true,
+                    confirmButtonText: '確定',
+                    cancelButtonText: `取消`,
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        let time = `${$(".selTime1").val()}${$(".selTime2").val()}`;
+                        $.post("@Url.Content("~/Coach/createCourse")", { FCoachContactId: $("#inpContactId").val(), FCourseName: $("#inpCourseName").val(), FCourseTotal: $("#inpTotal").val(), FAvailableTimeNum: time }, function () {
+                            SwalWithGreen.fire('新增成功', '', 'success')
+                            selStatus.val(52);
+                            selStatus.removeClass("colorWait").removeClass("colorFinish").removeClass("colorIng").addClass("colorIng");
+                            $("#modalCreateCourse").modal("hide");
+                        })
+                    }
+                })
+            }
+        })
+
+        //DEMO鍵
+        $("#btnDemo").click(function () {
+            $("#inpCourseName").val("增肌減脂課程2");
+            $("#inpTotal").val(8);
+        });
+
+        //依發送時間及聯絡狀態排序
+        function loadContact() {
+            let html = "";
+            if ($(".thTime").children("i").hasClass("fa-caret-up")) {
+                $.get("@Url.Content("~/Coach/loadContact")", { flag: 0, statusNum:$("#selStatus").val() }, function (contacts) {
+                    $.each(contacts, function (index, value) {
+                        html += `<tr><td>${index+1}</td>`;
+                        html += `<td><a class="aMemberName" data-toggle="modal" data-target="#modalMember" href="" onclick="showMember();">${value.memberName}</a>`;
+                        html += `<input class="inpTheMemberID" type="hidden" value="${value.fMemberId}" /></td>`;
+                        html += `<td>${value.memberPhone}</td>`;
+                        html += `<td>${value.availableTime} <input class="inpPreferTime" type = "hidden" value = "${value.fAvailableTimeNum}" /></td >`;
+                        html += `<td>${value.strContactDate}</td>`;
+                        if (value.fStatusNumber == 50) {
+                            html += `<td><select class="selStatus colorWait" onchange="changeStatus();">`;
+                            html += `<option value="50" class="colorWait" selected>等待聯繫中</option>`;
+                            html += `<option value="51" class="colorFinish">已聯繫，暫無課程</option>`;
+                            html += `<option value="52" class="colorIng">已聯繫，配對成功</option></select>`;
+                        }
+                        else if (value.fStatusNumber == 51) {
+                            html += `<td><select class="selStatus colorFinish" onchange="changeStatus();">`;
+                            html += `<option value="50" class="colorWait">等待聯繫中</option>`;
+                            html += `<option value="51" class="colorFinish" selected>已聯繫，暫無課程</option>`;
+                            html += `<option value="52" class="colorIng">已聯繫，配對成功</option></select>`;
+                        }
+                        else if (value.fStatusNumber == 52) {
+                            html += `<td><select class="selStatus colorIng" onchange="changeStatus();">`;
+                            html += `<option value="50" class="colorWait">等待聯繫中</option>`;
+                            html += `<option value="51" class="colorFinish">已聯繫，暫無課程</option>`;
+                            html += `<option value="52" class="colorIng" selected>已聯繫，配對成功</option></select>`;
+                        }
+                        html += `</td><td class="tdBtn"><input type="hidden" value="${value.fCoachContactId}" />`;
+                        html += `<button class="btn btn-success btnCreateCourse" data-toggle="modal" data-target="#modalCreateCourse" onclick="btnCreateCourseClick();">排課</button>`;
+                        html += `<button class="btn btn-secondary btnChat" data-toggle="modal" data-target="#modalChat" data-membername="${value.memberName}" onclick="getId();">訊息</button>`;
+                    })
+                    $("#tbdContact").html(html);
+                })
+            }
+            else {
+                $.get("@Url.Content("~/Coach/loadContact")", { flag: 1, statusNum: $("#selStatus").val() }, function (contacts) {
+                    $.each(contacts, function (index, value) {
+                        html += `<tr><td>${index + 1}</td>`;
+                        html += `<td><a class="aMemberName" data-toggle="modal" data-target="#modalMember" href="" onclick="showMember();">${value.memberName}</a>`;
+                        html += `<input class="inpTheMemberID" type="hidden" value="${value.fMemberId}" /></td>`;
+                        html += `<td>${value.memberPhone}</td>`;
+                        html += `<td>${value.availableTime} <input class="inpPreferTime" type = "hidden" value = "${value.fAvailableTimeNum}" /></td >`;
+                        html += `<td>${value.strContactDate}</td>`;
+                        if (value.fStatusNumber == 50) {
+                            html += `<td><select class="selStatus colorWait" onchange="changeStatus();">`;
+                            html += `<option value="50" class="colorWait" selected>等待聯繫中</option>`;
+                            html += `<option value="51" class="colorFinish">已聯繫，暫無課程</option>`;
+                            html += `<option value="52" class="colorIng">已聯繫，配對成功</option></select>`;
+                        }
+                        else if (value.fStatusNumber == 51) {
+                            html += `<td><select class="selStatus colorFinish" onchange="changeStatus();">`;
+                            html += `<option value="50" class="colorWait">等待聯繫中</option>`;
+                            html += `<option value="51" class="colorFinish" selected>已聯繫，暫無課程</option>`;
+                            html += `<option value="52" class="colorIng">已聯繫，配對成功</option></select>`;
+                        }
+                        else if (value.fStatusNumber == 52) {
+                            html += `<td><select class="selStatus colorIng" onchange="changeStatus();">`;
+                            html += `<option value="50" class="colorWait">等待聯繫中</option>`;
+                            html += `<option value="51" class="colorFinish">已聯繫，暫無課程</option>`;
+                            html += `<option value="52" class="colorIng" selected>已聯繫，配對成功</option></select>`;
+                        }
+                        html += `</td><td class="tdBtn"><input type="hidden" value="${value.fCoachContactId}" />`;
+                        html += `<button class="btn btn-success btnCreateCourse" data-toggle="modal" data-target="#modalCreateCourse" onclick="btnCreateCourseClick();">排課</button>`;
+                        html += `<button class="btn btn-secondary btnChat" data-toggle="modal" data-target="#modalChat" data-membername="${value.memberName}" onclick="getId();">訊息</button>`;
+                    })
+                    $("#tbdContact").html(html);
+                })
+            }
+        }
+        $(".thTime").click(function () {
+            if ($(".thTime").children("i").hasClass("fa-caret-down")) {
+                $(".thTime").children("i").removeClass("fa-caret-down").addClass("fa-caret-up");
+            }
+            else {
+                $(".thTime").children("i").removeClass("fa-caret-up").addClass("fa-caret-down");
+            }
+            loadContact();
+        });
+        $("#selStatus").on("change", loadContact);
+
+        var theContactId;
+        var theContactName;
+        function getId() {
+            theContactId = $(event.target).parent("td").children("input").val();
+            theContactName = $(event.target).attr("data-membername");
+            $("#inpChatContactId").val(theContactId);
+        }
+
+        function loadChatText() {
+            if (theContactId != undefined) {
+                $.get("@Url.Content("~/Coach/loadChatText")", { id: theContactId }, function (texts) {
+                    let html = "";
+                    $.each(texts, function (idx, text) {
+                        if (text.fIsCoach == true) {//教練自己
+                            html += `<div class="col-3" ></div><div class="col-9" style="float:right">`;
+                            html += `<p class="chatText" style="float: right; text-align: start;">${text.fContactText}`;
+                            html += `<small>${text.time}</small></p></div>`;
+                        }
+                        else {//對方學員
+                            html += `<div class="col-2"><label style="float:right;color:navy"><i class="fa fa-commenting-o" aria-hidden="true"></i> ${text.memberName}</label></div><div class="col-7">`;
+                            html += `<p class="chatText" style="float: left; text-align: start;">${text.fContactText}`;
+                            html += `<small>${text.time}</small></p></div><div class="col-3"></div></div >`;
+                        }
+                    })
+                    $("#divChatBox").html(html);
+                });
+            }
+        }
+
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        //傳入
+        connection.on("ReceiveMessage", function (CoachContactId, IsCoach, ContactText) {
+            var now = new Date();
+            var time = `${now.getHours()}:${now.getMinutes()}`;
+            if (CoachContactId == theContactId) {
+                let html = "";
+                if (IsCoach == true) {//教練自己
+                    html += `<div class="col-3" ></div><div class="col-9" style="float:right">`;
+                    html += `<p class="chatText" style="float: right; text-align: start;">${ContactText}`;
+                    html += `<small>${time}</small></p></div>`;
+                }
+                else {//對方學員
+                    html += `<div class="col-2"><label style="float:right;color:navy"><i class="fa fa-commenting-o" aria-hidden="true"></i> ${theContactName}</label></div><div class="col-7">`;
+                    html += `<p class="chatText" style="float: left; text-align: start;">${ContactText}`;
+                    html += `<small>${time}</small></p></div><div class="col-3"></div></div >`;
+                }
+                $("#divChatBox").append(html);
+            }
+        });
+
+        $("#modalChat").on("show.bs.modal", function () {
+            loadChatText();
+            connection.start();
+        })
+        $("#modalChat").on("hide.bs.modal", function () {
+            connection.stop();
+            $("#divChatBox").html("");
+            $("#txtNewText").val("");
+        })
+
+        //送出訊息
+        $("#btnSendText").click(function () {
+            let id = $("#inpChatContactId").val();
+            let text = $("#txtNewText").val();
+
+            connection.invoke("SendMessage", `${id}`, true, `${text}`).catch(function (err) {
+                return console.error(err.toString());
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            $("#txtNewText").val("");
+            $.get("@Url.Content("~/Coach/saveText")", { FCoachContactId: id, FContactText: text })
+        })
+
+        //訊息Demo鍵
+        $("#btnChatDemo1").click(function () {
+            $("#txtNewText").val("嗨嗨～不好意思，您偏好的時間剛好有學員先約了，跟您改晚一點的時間方便嗎？")
+        })
+
+        $("#btnChatDemo2").click(function () {
+            $("#txtNewText").val("沒問題呀！週五下午15:00好嗎？")
+        })
+
+
+    </script>
+}

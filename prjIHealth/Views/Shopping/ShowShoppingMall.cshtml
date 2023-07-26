@@ -1,0 +1,568 @@
+﻿@model IEnumerable<prjIHealth.ViewModels.CProductViewModel>
+@using Microsoft.EntityFrameworkCore
+@using prjIHealth.Controllers
+
+@section Styles{
+    <style>
+        .categoryItem {
+            -webkit-transition: all, 0.3s;
+            -moz-transition: all, 0.3s;
+            -ms-transition: all, 0.3s;
+            -o-transition: all, 0.3s;
+            transition: all, 0.3s;
+        }
+    </style>
+}
+<link rel="stylesheet" href="/css/ShoppingMallCategory.css" type="text/css">
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/product/banner_shop.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">周邊商城</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Shopping/ShowShoppingMall">Home</a>
+                        <span>Shopping</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-5">
+                <div class="sidebar reveal_l1">
+                    <div class="sidebar__item">
+                        <h4>商品類別</h4>
+                        <ul id="showByCatergory" class="header__menu">
+                            @{
+                                IHealthContext dblIHealth = new IHealthContext();
+                                <li><a href="#" data-id="0" class="categoryItem selectedCategory">所有商品 (@dblIHealth.TProducts.Count())</a></li>
+                                var categories = dblIHealth.TProductCategories.ToList();
+                                foreach (var item in categories)
+                                {
+                                    <li><a href="#" data-id="@item.FCategoryId" class="categoryItem">@item.FCategoryName (@dblIHealth.TProducts.Where(ca => ca.FCategoryId == item.FCategoryId).Count())</a></li>
+                                }
+
+                            }                     
+                        </ul>
+                        <br />                      
+                        <a class="btn btn-dark" href="~/Shopping/DEMO">DEMO</a>
+                        <br /><br />
+                        <div class="sidebar__item">
+                            <div class="latest-product__text">
+                                <h4>熱門商品</h4>
+                                <div class="latest-product__slider owl-carousel">
+                                    <div class="latest-prdouct__slider__item">
+                                        @{
+                                            dblIHealth = new IHealthContext();
+                                            var top3PopularProduct = (from od in dblIHealth.TOrderDetails.Include(od => od.FProduct).ThenInclude(p => p.FCategory).AsEnumerable()
+                                                                      where od.FProduct.FCategoryId == 1
+                                                                      group od by new
+                                                                      {
+                                                                          od.FProductId,
+                                                                          od.FProduct.FProductName,
+                                                                          od.FProduct.FCoverImage,
+                                                                          od.FProduct.FUnitprice
+                                                                      }
+                                                                      into g
+                                                                      select new
+                                                                      {
+                                                                          Key = g.Key,
+                                                                          Count = g.Sum(od => od.FQuantity),
+                                                                          Photo = g.Key.FCoverImage,
+                                                                          UnitPrice = g.Key.FUnitprice
+                                                                      }).OrderByDescending(p => p.Count).Take(3).ToList();
+
+                                            foreach (var item in top3PopularProduct)
+                                            {
+                                                <a href="/Shopping/ShowProductDetail/@item.Key.FProductId" class="latest-product__item">
+                                                    <div class="latest-product__item__pic">
+                                                        <img src="/img/product/@item.Key.FCoverImage" alt="" style="width:110px;height:110px">
+                                                    </div>
+                                                    <div class="latest-product__item__text">
+                                                        <h6>@item.Key.FProductName</h6>
+                                                        <span>@item.Key.FUnitprice.ToString("C0")</span>
+                                                    </div>
+                                                </a>
+                                            }
+
+                                        }
+                                    </div>
+                                    <div class="latest-prdouct__slider__item">
+                                        @{
+                                            top3PopularProduct = (from od in dblIHealth.TOrderDetails.Include(od => od.FProduct).ThenInclude(p => p.FCategory).AsEnumerable()
+                                                                  where od.FProduct.FCategoryId == 2
+                                                                  group od by new
+                                                                  {
+                                                                      od.FProductId,
+                                                                      od.FProduct.FProductName,
+                                                                      od.FProduct.FCoverImage,
+                                                                      od.FProduct.FUnitprice
+                                                                  }
+                                                                      into g
+                                                                  select new
+                                                                  {
+                                                                      Key = g.Key,
+                                                                      Count = g.Sum(od => od.FQuantity),
+                                                                      Photo = g.Key.FCoverImage,
+                                                                      UnitPrice = g.Key.FUnitprice
+                                                                  }).OrderByDescending(p => p.Count).Take(3).ToList();
+
+                                            foreach (var item in top3PopularProduct)
+                                            {
+                                                <a href="/Shopping/ShowProductDetail/@item.Key.FProductId" class="latest-product__item">
+                                                    <div class="latest-product__item__pic">
+                                                        <img src="/img/product/@item.Key.FCoverImage" alt="" style="width:110px;height:110px">
+                                                    </div>
+                                                    <div class="latest-product__item__text">
+                                                        <h6>@item.Key.FProductName</h6>
+                                                        <span>@item.Key.FUnitprice.ToString("C0")</span>
+                                                    </div>
+                                                </a>
+                                            }
+                                        }
+                                    </div>
+                                    <div class="latest-prdouct__slider__item">
+                                        @{
+                                            top3PopularProduct = (from od in dblIHealth.TOrderDetails.Include(od => od.FProduct).ThenInclude(p => p.FCategory).AsEnumerable()
+                                                                  where od.FProduct.FCategoryId == 3
+                                                                  group od by new
+                                                                  {
+                                                                      od.FProductId,
+                                                                      od.FProduct.FProductName,
+                                                                      od.FProduct.FCoverImage,
+                                                                      od.FProduct.FUnitprice
+                                                                  }
+                                                                      into g
+                                                                  select new
+                                                                  {
+                                                                      Key = g.Key,
+                                                                      Count = g.Sum(od => od.FQuantity),
+                                                                      Photo = g.Key.FCoverImage,
+                                                                      UnitPrice = g.Key.FUnitprice
+                                                                  }).OrderByDescending(p => p.Count).Take(3).ToList();
+
+                                            foreach (var item in top3PopularProduct)
+                                            {
+                                                <a href="/Shopping/ShowProductDetail/@item.Key.FProductId" class="latest-product__item">
+                                                    <div class="latest-product__item__pic">
+                                                        <img src="/img/product/@item.Key.FCoverImage" alt="" style="width:110px;height:110px">
+                                                    </div>
+                                                    <div class="latest-product__item__text">
+                                                        <h6>@item.Key.FProductName</h6>
+                                                        <span>@item.Key.FUnitprice.ToString("C0")</span>
+                                                    </div>
+                                                </a>
+                                            }
+                                        }
+                                    </div>
+                                    <div class="latest-prdouct__slider__item">
+                                        @{
+                                            top3PopularProduct = (from od in dblIHealth.TOrderDetails.Include(od => od.FProduct).ThenInclude(p => p.FCategory).AsEnumerable()
+                                                                  where od.FProduct.FCategoryId == 4
+                                                                  group od by new
+                                                                  {
+                                                                      od.FProductId,
+                                                                      od.FProduct.FProductName,
+                                                                      od.FProduct.FCoverImage,
+                                                                      od.FProduct.FUnitprice
+                                                                  }
+                                                                      into g
+                                                                  select new
+                                                                  {
+                                                                      Key = g.Key,
+                                                                      Count = g.Sum(od => od.FQuantity),
+                                                                      Photo = g.Key.FCoverImage,
+                                                                      UnitPrice = g.Key.FUnitprice
+                                                                  }).OrderByDescending(p => p.Count).Take(3).ToList();
+
+                                            foreach (var item in top3PopularProduct)
+                                            {
+                                                <a href="/Shopping/ShowProductDetail/@item.Key.FProductId" class="latest-product__item">
+                                                    <div class="latest-product__item__pic">
+                                                        <img src="/img/product/@item.Key.FCoverImage" alt="" style="width:110px;height:110px">
+                                                    </div>
+                                                    <div class="latest-product__item__text">
+                                                        <h6>@item.Key.FProductName</h6>
+                                                        <span>@item.Key.FUnitprice.ToString("C0")</span>
+                                                    </div>
+                                                </a>
+                                            }
+                                        }
+                                    </div>
+                                    <div class="latest-prdouct__slider__item">
+                                        @{
+                                            top3PopularProduct = (from od in dblIHealth.TOrderDetails.Include(od => od.FProduct).ThenInclude(p => p.FCategory).AsEnumerable()
+                                                                  where od.FProduct.FCategoryId == 5
+                                                                  group od by new
+                                                                  {
+                                                                      od.FProductId,
+                                                                      od.FProduct.FProductName,
+                                                                      od.FProduct.FCoverImage,
+                                                                      od.FProduct.FUnitprice
+                                                                  }
+                                                                      into g
+                                                                  select new
+                                                                  {
+                                                                      Key = g.Key,
+                                                                      Count = g.Sum(od => od.FQuantity),
+                                                                      Photo = g.Key.FCoverImage,
+                                                                      UnitPrice = g.Key.FUnitprice
+                                                                  }).OrderByDescending(p => p.Count).Take(3).ToList();
+
+                                            foreach (var item in top3PopularProduct)
+                                            {
+                                                <a href="/Shopping/ShowProductDetail/@item.Key.FProductId" class="latest-product__item">
+                                                    <div class="latest-product__item__pic">
+                                                        <img src="/img/product/@item.Key.FCoverImage" alt="" style="width:110px;height:110px">
+                                                    </div>
+                                                    <div class="latest-product__item__text">
+                                                        <h6>@item.Key.FProductName</h6>
+                                                        <span>@item.Key.FUnitprice.ToString("C0")</span>
+                                                    </div>
+                                                </a>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-7">
+                <div class="hero__search">
+                    <button type="button" class="hero__search__form site-btn sort" data-sort="" style="width:20%">按價格排序</button>
+                    <div class="hero__search__form " style="width:57.3%" id="search">
+                        <form method="post">
+                            <input style="width:392.1px;height:46px" id="txtKeyword" name="txtKeyword" type="text" placeholder="請輸入關鍵字" autocomplete="off">
+                            <button type="button" class="site-btn" id="btnSearch" style="float:right">搜尋</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom:30px">
+                    <span id="spanCount"></span>
+                </div>
+                <div class="row reveal_b2" id="showProduct">
+
+                </div>
+                <div class="product__pagination">
+
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@section Scripts{
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    @using prjIHealth.Models;
+    @using prjiHealth.Models;
+    @using prjIHealth.ViewModels;
+    @using prjiHealth.ViewModels;
+    @using Microsoft.AspNetCore.Http;
+    @using Microsoft.AspNetCore.Mvc;
+    @using System.Linq;
+    @using System.Text.Json;
+
+    @{
+        string LoginbuttonValue = "登入";
+        int loginId = 0;
+        TMember loginMember = null;
+
+        if (Context.Session.Keys.Contains(CDictionary.SK_Logined_User))
+        {
+            string logJson = Context.Session.GetString(CDictionary.SK_Logined_User);
+            loginMember = JsonSerializer.Deserialize<TMember>(logJson);
+            LoginbuttonValue = loginMember.FMemberName;
+            loginId = loginMember.FMemberId;
+        };
+    }
+
+        let option = {
+            categoryID: 0,
+            sort: "",
+            url: "",
+            page: 1,
+            txtKeyword: ""
+        }
+        
+        //js轉換數字為千分位型態方法
+        function toCurrency(num) {
+            var parts = num.toString().split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return parts.join('.');
+        }
+
+        //顯示商品
+        AllProducts(option);
+        function AllProducts(option) {
+            let url = "@Url.Content("~/Shopping/GetProduct/")" + (option.categoryID == 0 ? "" : option.categoryID);
+            $.post(url,option, function (datas) {
+                let htmlShowProduct = "";
+                $.each(datas, function (idx, product) {
+                    product.fUnitprice = "NT$" + toCurrency(product.fUnitprice);
+                    htmlShowProduct += `<div class="col-lg-4 col-md-6 col-sm-6 productitem " ><div class="reveal_b2" id="header" style="cursor:pointer;">
+                                <div class="product__item">
+                                <div class="product__item__pic set-bg showProductDetail" data-id="${product.fProductId}" data-setbg="/img/product/${product.fCoverImage}" style="background-image: url(&quot;/img/product/${product.fCoverImage}&quot;);">
+                                    <ul class="product__item__pic__hover">                                      
+                                        <li><a href="#" data-id="${product.fProductId}" class="addToTrack"><i class="fa fa-heart"></i></a></li>
+                                        <li><a href="#" data-id="${product.fProductId}" class="addToCart"><i class="fa fa-shopping-cart"></i></a></li>
+                                    </ul>
+                                </div>
+                                <div class="product__item__text">
+                                    <h6 class="showProductDetail" data-id="${product.fProductId}">${product.fProductName}</h6>
+                                    <h5 class="showProductDetail" data-id="${product.fProductId}">${product.fUnitprice}</h5>
+                                </div>
+                            </div>
+                            </div></div>`
+                })
+                $("#showProduct").html(htmlShowProduct);
+
+                //頁碼動態生成，一開始只顯示前9個商品
+                $(".productitem").hide();
+                let XNum = 0;
+                let YNum = 9;
+                $(".productitem").slice(XNum, YNum).show();
+                let productCount = $(".productitem").length;
+                if (YNum > productCount) {
+                    YNum = productCount;
+                }
+                $("#spanCount").text(`共${productCount}筆商品，現在顯示第${XNum+1}~${YNum}筆商品。`);
+                let pageNum = "";
+                let page = productCount / 9;
+                if (page % 9 != 0) {
+                    page = page + 1;
+                }
+                for (let i = 1; i < page; i++) {
+                    if (i == 1) {
+                        pageNum = `<a href="#" class="pageSelect selectedPage">${i}</a>`;
+                    }
+                    else {
+                        pageNum += `<a href="#" class="pageSelect">${i}</a>`;
+                    }
+                }
+                $(".product__pagination").html(pageNum);
+
+                //點頁數會跳至相對頁數產品
+                $(".pageSelect").click(function () {
+                    let newPageNum = $(this).text();
+                    $(this).addClass("selectedPage").siblings().removeClass("selectedPage");
+                    $(".productitem").hide();
+                    XNum = (newPageNum - 1)*9;
+                    YNum = newPageNum * 9;
+                    if (YNum > productCount) {
+                        YNum = productCount;
+                    }
+                    $(".productitem").slice(XNum, YNum).show();
+                    $("#spanCount").text(`共查${productCount}筆商品，現在顯示第${XNum + 1}~${YNum}筆商品。`);
+                    $('html,body').animate({ scrollTop: 10 }, 'slow');
+                })
+
+                if ($(".productitem").length == 0) {
+                    SwalGreen.fire({
+                    title: '查無搜尋結果',
+                    text: '請重新搜尋或選擇篩選條件。',
+                    icon: 'error',
+                        confirmButtonText: '返回商城主頁',
+                    showCloseButton: true
+                }).then((result) => {
+                    if (result.isConfirmed)
+                        $(location).prop("href", "@Url.Content("~/Shopping/ShowShoppingMall")");
+                })
+                }
+            })
+        }
+
+        //點選圖片進showPrductDetail，讓心心/購物車正常運作
+        $("#showProduct").delegate(".addToTrack", "mouseover",function(){
+            $(".product__item__pic").removeClass("showProductDetail");
+        })
+        $("#showProduct").delegate(".addToTrack", "mouseleave", function () {
+            $(".product__item__pic").addClass("showProductDetail");
+        })
+        $("#showProduct").delegate(".addToCart", "mouseover", function () {
+            $(".product__item__pic").removeClass("showProductDetail");
+        })
+        $("#showProduct").delegate(".addToCart", "mouseleave", function () {
+            $(".product__item__pic").addClass("showProductDetail");
+        })
+
+
+        //按價格排序
+        //class改變箭頭方向
+        //以data-sort的值傳去後端做IF/ELSE判斷
+        $(".sort").on("click", sorting);
+        function sorting() {
+            //以data-sort當flag
+            let dataSort = $(".sort").attr("data-sort");
+            //每次執行function清空sort以外class
+            $(".sort").removeClass("sort-asc sort-desc");
+            if (dataSort == null || dataSort == "") {
+                dataSort = "asc";
+                $(".sort").addClass("sort-asc");
+                $(".sort").attr("data-sort", dataSort);
+            }
+            else if (dataSort == "desc") {
+                dataSort = "asc";//改變旗標
+                $(".sort").addClass("sort-asc");
+                $(".sort").attr("data-sort", dataSort);
+            }
+            else {
+                dataSort = "desc";
+                $(".sort").addClass("sort-desc");
+                $(".sort").attr("data-sort", dataSort);
+            }
+            option.sort = dataSort;
+            AllProducts(option);
+        }
+
+        //以類別分類各產品
+        $("#showByCatergory").find(".categoryItem").click(function (event) {
+            event.preventDefault();
+            id = $(this).attr("data-id");
+            console.log(this);
+            //清空txtKeyword，斷除2姐關係
+            option.txtKeyword = "";
+            $("#txtKeyword").val("");
+            option.categoryID = id;
+            AllProducts(option);
+        })
+        $(".categoryItem").click(function () {
+            $(".categoryItem").removeClass("selectedCategory");
+            $(this).addClass("selectedCategory");
+        })
+
+         //以輸入文字搜產品
+        $("#btnSearch").click(function () {
+            let keyword = $("#txtKeyword").val();
+            //清空categoryID，斷除2姐關係
+            option.categoryID = 0;
+            option.txtKeyword = keyword;
+            $(".categoryItem").removeClass("selectedCategory");
+            AllProducts(option);
+            if (keyword == "") {
+                SwalGreen.fire({
+                    title: "請輸入搜尋資料",
+                    text: false,
+                    icon: 'question',
+                    confirmButtonText: '確定',
+                    showCloseButton: true
+                })
+            }
+        })
+
+        showProduct();
+        //在商城主頁執行所有function
+        function showProduct() {
+            option.url = "@Url.Content("~/Shopping/ShowProduct")";
+            AllProducts(option);
+            //按品名會彈出相對應商品明細
+            $("#showProduct").delegate(".showProductDetail", "click", function () {
+            id = $(this).attr("data-id");
+            location.href = `/Shopping/ShowProductDetail/${id}`;
+            showProductDetail(id);
+            })
+            async function showProductDetail(id) {
+            var data = {};
+            data.FProductId = id;
+            data.FProductName = 1;
+            $.ajax({ type: "POST", url: "@Url.Action("ShowProductDetail")",data:data });
+            }
+
+            //按心心會加入追蹤清單
+            $("#showProduct").delegate(".addToTrack", "click", function (event) {
+                event.preventDefault();
+                id = $(this).attr("data-id");
+                console.log(@loginId);
+                if (@loginId== 0) {
+                    pleaseLogin();
+                }
+                else {
+                    addTrack(id);                            
+                 }
+
+            })
+            async function addTrack(id) {
+                url = "@Url.Content("~/Shopping/AddToTrack/")" + id;
+                let response = await fetch(url);
+                let datas = await response.json();
+                newTrackCount = datas;
+                console.log(trackCount);
+                console.log(newTrackCount);
+                //變更右上追蹤清單顯示數量
+                $("#fa-heart").children("span").text(datas);
+                $("#fa-heart").children("span").show();
+                if (trackCount == newTrackCount) {
+                    SwalGreen.fire({
+                        title: '產品已在追蹤清單中',
+                        text: false,
+                        icon: 'warning',
+                        confirmButtonText: '確認',
+                        showCloseButton: true
+                    })
+                }
+                else {
+                    trackCount = newTrackCount;
+                    SwalGreen.fire({
+                        title: '已成功加入追蹤清單',
+                        text: false,
+                        icon: 'success',
+                        confirmButtonText: '確認',
+                        showCloseButton: true
+                    })
+                }
+            }
+
+            //按購物車會加入到購物車
+            $("#showProduct").delegate(".addToCart", "click", function (event) {
+            event.preventDefault();
+            id = $(this).attr("data-id");
+            if (@loginId == 0) {
+            pleaseLogin();
+            }
+            else {
+                addCart(id);
+                $("#fa-cart").children("span").show();
+            SwalGreen.fire({
+                    title: '已成功加入購物車',
+                    text: false,
+                    icon: 'success',
+                        confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+            }
+
+            })
+            async function addCart(id) {
+            //傳值回AddToCartViewModel
+            var data = {};
+            data.txtFid = id;
+            data.txtCount = 1;
+            data.discountValue = 0;
+            data.discountID = 10;
+            //變更右上購物車顯示數量
+            await $.ajax({ type: "POST", url: "@Url.Action("ShowProductDetail")", data: data });
+            url = "@Url.Content("~/Shopping/ShowCartCount/")"
+            let response = await fetch(url);
+            let datas = await response.json();
+            await $("#fa-cart").children("span").text(datas);
+            }         
+        }
+    </script>
+}
+

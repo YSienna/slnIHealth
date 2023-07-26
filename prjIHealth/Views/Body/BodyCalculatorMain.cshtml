@@ -1,0 +1,124 @@
+﻿
+@{
+    ViewData["Title"] = "BodyCalculatorMain";
+}
+
+@section Styles{
+
+    @*<META http-equiv="Page-Enter" content="revealTrans(Transition=12,Duration=5.000)">*@
+    <style>
+        .divOption {
+            position: relative;
+            width: 100%;
+            -webkit-transition: background .2s linear, border-radius 1s ease-in 1s;
+            transition: background .2s linear, border-radius 1s ease-in 1s;
+        }
+
+            .divOption:after {
+                content: "";
+                display: block;
+                padding-bottom: 100%; /*padding取決於寬度，這裡設定padding-bottom: 100%就可以得到正方形*/
+            }
+
+            .divOption > img {
+                transition: 0.5s;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0; /*將圖片大小固定為父類div的大小*/
+                width: 100%;
+                height: 100%;
+                object-fit: cover; /* 相當於 background-size: cover; of a background-image */
+                object-position: center;
+                opacity: 0.8;
+                border-radius: 2%;
+            }
+
+            .divOption > div {
+                width: 60%;
+                height: 40%;
+                position: absolute;
+                top: 30%;
+                left: 20%;
+                color: white;
+                text-align: center;
+            }
+
+                .divOption > div > h1 {
+                    transition: 0.5s;
+                    font-family: "Cairo", sans-serif;
+                    color: #ffffff;
+                    font-weight: 700;
+                }
+
+        .divBackground {
+            width: 60%;
+            height: 40%;
+            position: absolute;
+            top: 30%;
+            left: 20%;
+            color: white;
+            text-align: center;
+            background-color: dimgrey;
+            opacity: 0.3;
+            border-radius: 2%;
+        }
+    </style>
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/body/banner_cal.png">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">BODY計算器</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="#begin">請選擇想計算的身體數據</a>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="product spad" id="begin">
+    <div class="container">
+        <div class="row">
+            @*非會員專區的View的內容請從此處開始*@
+
+            <div class="col-lg-6 reveal_b1">
+                <a href="../Body/BMICalculator">
+                    <div class="divOption">
+                        <img src='~/img/body/BMI.png' />
+                        <div class="divBackground"></div>
+                        <div><h1>BMI<br />計算器</h1></div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-6 reveal_b2">
+                <a href="../Body/TDEECalculator">
+                    <div class="divOption">
+                        <img src='~/img/body/TDEE.jpg' />
+                        <div class="divBackground"></div>
+                        <div><h1>TDEE<br />計算器</h1></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        $(".divOption").hover(function () {
+            $(this).children("img").css("border-radius", "50%").css("opacity", "0.2").end().find("h1").css("color", "black").end().children(".divBackground").css("visibility", "hidden");
+        }, function () {
+            $(this).children("img").css("border-radius", "2%").css("opacity", "0.8").end().find("h1").css("color", "#ffffff").end().children(".divBackground").css("visibility", "visible");
+        })
+    </script>
+}

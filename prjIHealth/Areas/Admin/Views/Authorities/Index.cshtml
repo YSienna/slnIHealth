@@ -1,0 +1,65 @@
+﻿@model IEnumerable<prjIHealth.Models.TAuthority>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+
+@section Styles{
+    <style>
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+        /*        <h2 id="title">管理頁Demo</h2>*/
+    </style>
+}
+<h2 id="title">會員權限資料管理</h2>
+<hr />
+
+<p>
+    <a asp-action="Create" class="btn btn-success">會員權限資料新增</a>
+</p>
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FAutorityId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FAuthorityName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FRemarks)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FAutorityId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FAuthorityName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FRemarks)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.FAutorityId" class="btn btn-success">編輯</a> |
+                    @*<a asp-action="Details" asp-route-id="@item.FAutorityId">Details</a> |*@
+                    <a asp-action="Delete" asp-route-id="@item.FAutorityId" class="btn btn-danger">刪除</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+@*<div class="embed-responsive embed-responsive-16by9" width="200" height="200">
+        <a>   <iframe class="embed-responsive-item " src="https://www.youtube.com/embed/zpOULjyy-n8?rel=0" ></iframe></a>
+    </div>*@

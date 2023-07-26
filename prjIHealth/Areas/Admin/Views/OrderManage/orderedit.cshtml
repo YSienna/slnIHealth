@@ -1,0 +1,214 @@
+﻿@model prjIHealth.Models.TOrder
+@{
+    ViewData["Title"] = "OrderEdit";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+
+@section Styles{ 
+    <style>
+        .btn-light {
+            background-color: #DFEACE !important;
+            color: black;
+        }
+
+        .btn-success {
+            background-color: #7FAD39;
+            color: white;
+            border: none;
+        }
+
+        table.table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .selectbox {
+            margin-bottom: 5%;
+            margin-left: -10%;
+        }
+
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+        .btn-demo {
+            background-color: #6c757d;
+            color: #fff;
+            border: none;
+        }
+    </style>
+
+}
+
+<h2 id="title">訂單修改</h2>
+<hr />
+
+
+<div class="container">
+    <div class="row">
+
+        <div style="margin-left:34%">
+            <form asp-action="OrderEdit" onsubmit="return CheckRequired(), CheckRequired2()">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" value="@Html.DisplayFor(modelItem => Model.FOrderId)" id="FOrderId" name="FOrderId" />
+                <input type="hidden" value="@Html.DisplayFor(modelItem => Model.FMemberId)" id="FMemberId" name="FMemberId" />
+                @*<input type="hidden" value=" @Html.DisplayFor(modelItem =>Model.FStatusNumber)" id="FStatusNumber" name="FStatusNumber" />
+                    <input type="hidden" value=" @Html.DisplayFor(modelItem =>Model.FPaymentCategoryId)" id="FPaymentCategoryId" name="FPaymentCategoryId" />*@
+
+
+                <div class="form-group col-md-4">
+                    <div class="row">
+                        <div class="col-md-4"> <label class="control-label" style="font-size:30px;">收件人</label></div>
+                        <div class="col-md-8"><input id="FContact" name="FContact" class="form-control" value="@Html.DisplayFor(modelItem => Model.FContact)" /></div>
+
+                    </div>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <div class="row">
+                        <div class="col-md-4"> <label for="FPhone" class="control-label" style="font-size:30px;">電話</label></div>
+                        <div class="col-md-8"> <input name="FPhone" id="FPhone" class="form-control" value="@Html.DisplayFor(modelItem => Model.FPhone)" /></div>
+
+                    </div>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <div class="row">
+                        <div class="col-md-4"> <label for="FAddress" class="control-label" style="font-size:30px;">地址</label></div>
+                        <div class="col-md-8"> <input id="FAddress" name="FAddress" class="form-control" value="@Html.DisplayFor(modelItem => Model.FAddress)" /></div>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <div class="row">
+                        <div class="col-md-4"><label for="FDate" class="control-label" style="font-size:30px;">日期</label></div>
+                        <div class="col-md-8"> <input name="FDate" id="FDate" class="form-control" value="@Html.DisplayFor(modelItem => Model.FDate)" /></div>
+                        <span for="FDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <div class="row">
+                        <div class="col-md-4"><label for="fPayment.FPaymentCategory" class="control-label" style="font-size:30px;">付款</label></div>
+                        <div class="col-md-8">
+                            <select name="qtype" id="qtype" class="custom-select">
+                                <option value="999" disabled selected hidden>付款方式</option>
+                                <option value="貨到付款">貨到付款</option>
+                                <option value="ATM轉帳">ATM轉帳</option>
+                                <option value="歐付寶">歐付寶</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <div class="row">
+                        <div class="col-md-4"> <label for="FRemarks" class="control-label" style="font-size:30px;">備註</label></div>
+                        <div class="col-md-8"> <textarea name="FRemarks" id="FRemarks" class="form-control" value="">@Html.DisplayFor(modelItem => Model.FRemarks)</textarea></div>
+                        <span for="FRemarks" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <div class="row">
+                        <div class="col-md-4"><label class="control-label" style="font-size:30px;">狀態</label></div>
+                        <div class="col-md-8">
+                            <select name="qtypee" id="qtypee" class="custom-select">
+                                <option value="999" disabled selected hidden>狀態</option>
+                                <option value="等待賣家確認訂單">等待賣家確認訂單</option>
+                                <option value="已確認訂單，待出貨">已確認訂單，待出貨</option>
+                                <option value="已出貨">已出貨</option>
+                                <option value="待收貨">待收貨</option>
+                                <option value="交易完成">交易完成</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div id="AddFPayment"></div>
+                <div id="AddStatus"></div>
+                <div class="form-group col-md-4">
+                    <input type="submit" class="site-btn btn btn-success" value="確定修改" />
+                    <a asp-action="OrderList" class="site-btn btn btn-demo">返回清單</a>
+                </div>
+            </form>
+            @*}*@
+        </div>     
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>    
+        let FPaymentCategoryId = 0;
+        var input = '';
+        function SelectedPaymentCategory() {          /*判斷所選類別對應的ID*/
+            $('#AddFPayment>input').remove();
+            if ($('#qtype').val() == "貨到付款")
+                FPaymentCategoryId = 1;
+            if ($('#qtype').val() == "ATM轉帳")
+                FPaymentCategoryId = 2;
+            if ($('#qtype').val() == "歐付寶")
+                FPaymentCategoryId = 3;
+            input = `<input type="hidden" id="FPaymentCategoryId" value="${FPaymentCategoryId}" name="FPaymentCategoryId" />`
+            $('#AddFPayment').append(input)   /*change事件發生時才產生存放資料的input*/
+        };
+        $('#qtype').on("change", SelectedPaymentCategory) /*選擇類別時會產生寫入資料庫所需的FStatusNumber*/
+
+
+        let FStatusNumber = 0;
+        var inputt = '';
+        function SelectedStatus() {
+            $('#AddStatus>input').remove();
+            if ($('#qtypee').val() == "等待賣家確認訂單")
+                FStatusNumber = 70;
+            if ($('#qtypee').val() == "已確認訂單，待出貨")
+                FStatusNumber = 71;
+            if ($('#qtypee').val() == "已出貨")
+                FStatusNumber = 72;
+            if ($('#qtypee').val() == "待收貨")
+                FStatusNumber = 73;
+            if ($('#qtypee').val() == "交易完成")
+                FStatusNumber = 74;
+            inputt = `<input type="hidden" id="FStatusNumber" value="${FStatusNumber}" name="FStatusNumber" />`
+            $('#AddStatus').append(inputt)
+        };
+        $('#qtypee').on("change", SelectedStatus)
+        //======================================================================================================
+        function CheckRequired() {
+            if ($('#FStatusNumber').val() == null|| $('#FPaymentCategoryId').val() == null) {
+                SwalGreen.fire({
+                    title: '必填欄位未選擇',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function CheckRequired2() {
+            if ($('#FContact').val() == '' || $('#FPhone').val() == '' || $('#FAddress').val() == '' || $('#FDate').val() == '') {
+                SwalGreen.fire({
+                    title: '必填欄位不能空白',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+                return false;
+            } else {
+                return true;
+            }
+        }
+    </script>
+}
+
+
+

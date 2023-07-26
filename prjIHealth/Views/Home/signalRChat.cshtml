@@ -1,0 +1,178 @@
+﻿
+
+@section Styles{
+    <style>
+        .blog__btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #1c1c1c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #b2b2b2;
+            padding: 14px 20px 12px;
+            border-radius: 25px;
+        }
+
+            .blog__btn:visited {
+                color: #1c1c1c;
+            }
+
+            .blog__btn:hover {
+                color: black;
+                font-weight: 800;
+            }
+
+            .blog__btn:active {
+                color: black;
+                font-weight: 800;
+            }
+
+        .sidebar__item ul li a {
+            border: dashed 2px #7fad39;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            padding-left: 1vw;
+            margin-right: 8vw;
+            margin-bottom: 1vh;
+        }
+    </style>
+}
+
+banner大圖
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    h2內容請自行更換
+                    <h2 class="reveal_t1">會員專區Demo</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="./index.html">Home</a>
+                        <span>Shop</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-5">
+                <div class="sidebar">
+                    <div class="sidebar__item">
+                        <h4>會員專區</h4>
+                        <ul>
+
+                            <li><a href="~/Member/Edit">個人資料</a></li>
+                            <li><a href="~/Diary/DiaryMain">飲食日誌</a></li>
+                            <li><a href="~/Member/OrderList">訂單查詢</a></li>
+                            <li><a href="~/Student/CandidateList">候選教練</a></li>
+                            <li><a href="~/Student/CourseList">課程列表</a></li>
+                            <li><a href="~/Student/ViewCourseCalendar">課程行事曆</a></li>
+                            <li><a href="~/Problem/CheckReply">客服記錄</a></li>
+
+                        </ul>
+                        <br />
+                        <a href="~/Coach/ManageResume" class="blog__btn"><span class="arrow_right"></span>教練專區</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-7" style="height:400px">
+                <h3>會員聊天室</h3>
+
+                <div class="row">
+                    <div class="col-8">
+                        <h4>個人 ID: <span id="SelfID"></span></h4>
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">userName</label>
+                            <input type="text" class="form-control" id="userName" placeholder="Input your name?">
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">發送訊息</label>
+                            <input type="text" class="form-control" id="message">
+                        </div>
+                        <div class="mb-3">
+                            <label for="sendToID" class="form-label">指定 ID(私訊)</label>
+                            <input type="text" class="form-control" id="sendToID">
+                        </div>
+                        <button type="button" class="btn btn-primary" id="sendButton">傳送訊息</button>
+                    </div>
+                    <div class="col-4">
+                        <h4>連線 ID 列表</h4>
+                        <ul class="list-group" id="IDList">
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h3>聊天內容</h3>
+                        <ul class="list-group" id="Content">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        //與Server建立連線
+        connection.start().then(function ()
+        {
+            console.log("Hub 連線完成");
+        }).catch(function (err)
+        {
+            alert('連線錯誤: ' + err.toString());
+        });
+
+        // 更新連線 ID 列表事件
+        connection.on("UpdList", function (jsonList)
+        {
+            var list = JSON.parse(jsonList);
+          /*  console.log(list[0].ConnectionId);*/
+            $("#IDList li").remove();
+            for (i = 0; i < list.length; i++)
+            {
+                console.log(list.length);
+                $("#IDList").append($("<li></li>").attr("class", "list-group-item").text(list[i].ConnectionId));
+            }
+        });
+
+        // 更新用戶個人連線 ID 事件
+        connection.on("UpdSelfID", function (id)
+        {
+            $('#SelfID').html(id);
+        });
+
+        // 更新聊天內容事件
+        connection.on("UpdContent", function (msg)
+        {
+           /* $("#Content").empty();*/
+        //    console.log(msg);
+            $("#Content").append($("<li></li>").attr("class", "list-group-item").text(msg));
+          /*  $("#Content").append($("<li></li>").text(msg));*/
+
+        });
+
+        /*傳送訊息*/
+        $('#sendButton').on('click', function ()
+        {
+             let selfID=$("#userName").val();
+         /*   let selfID = $('#SelfID').html();*/
+            let message = $('#message').val();
+            let sendToID = $('#sendToID').val();
+            connection.invoke("SendMessage", selfID, message, sendToID).catch(function (err)
+            {
+                alert('傳送錯誤: ' + err.toString());
+            });
+        });
+    </script>
+}

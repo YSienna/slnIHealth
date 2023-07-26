@@ -1,0 +1,460 @@
+﻿@*@using X.PagedList
+@using X.PagedList.Mvc.Core*@
+@model List<prjiHealth.ViewModels.CNewsViewModel>
+
+@section Styles{
+    @*<link href="/css/PagedList.css" rel="stylesheet" />*@
+    <style>
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+
+        .divTop {
+            margin-bottom: 10px;
+        }
+
+        .divShow {
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .divCreate {
+            display: flex;
+            justify-content: right;
+        }
+
+        table {
+            table-layout: auto;
+        }
+        .btnPage {
+            font-weight: 600;
+            background-color: white;
+            color: #7fad39;
+            border: 1px solid #7fad39;
+            width: 35px;
+            height: 35px;
+            margin: 0px 8px;
+            transition: .4s;
+        }
+
+            .btnPage:hover {
+                background-color: #7fad39;
+                color: white;
+            }
+
+        .selectedPage {
+            background-color: #7fad39;
+            color: white;
+        }
+    </style>
+}
+@{ ViewData["Title"] = "iHeath後臺";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml"; }
+
+<h2 id="title">專欄管理</h2>
+<section class="product spad">
+    <div class="container">
+        <div class="container row divTop">
+            <div @*style="margin-right:79%"*@ class="col-2 divShow">
+                <a href="~/News/Blog" class="btn btn-light">專欄顯示</a>
+            </div>
+            <div @*class="col-lg-3 col-md-3 "*@ class="col-4">
+                @using (Html.BeginForm())
+                {
+                    @Html.TextBox("txtKeyword", ViewBag.Keyword, null, new { @style = "width:220px" })
+                    <input type="submit" value="輸入查詢" class="btn btn-success" @*style="width:200px"*@ />}
+            </div>
+            <div @*class="col-lg-3 col-md-3 "*@ class="col-4">
+                @*<div class="col-sm-7">*@
+                <select name="selectCate" id="selectCate" class="custom-select" style="width:220px">
+                    <option value="0" disabled selected hidden>依類別篩選</option>
+                    <option value="1">運動健身</option>
+                    <option value="2">食物營養</option>
+                    <option value="3">新冠疫情</option>
+                    <option value="4">教練專欄</option>
+                </select>
+                @*</div>*@
+                <!--<div--> @*class="col-lg-3 col-md-3"*@ @*style="margin-right:0%"*@ <!--class="col-sm-5">-->
+                <button name="btnReset" id="btnReset" class="btn btn-success" @*style="width:150px"*@>清空篩選</button>
+                @*</div>*@
+            </div>
+            <div @*class="col-lg-3 col-md-3"*@ @*style="margin-left:0%"*@ class="col-2 @*divCreate*@">
+                <a asp-action="Create" class="btn btn-success">新增專欄</a>
+            </div>
+            <div class="col-1 col-form-label divCreate" id="divCount" style="font-weight:600;flex">共 @Model.Count 筆</div>
+        </div>
+        @*※※※非會員專區的View的內容請從此處開始※※※*@
+        <div class="row">
+            <div>
+                <table class="table" style="table-layout: fixed">
+                    <thead class="thead-dark">
+                        <tr style="margin-left:auto">
+                            <th style="margin-left:auto">
+                                標題
+                            </th>
+                            <th style="margin-left:auto">
+                                時間
+                            </th>
+                            <th style="margin-left:auto">
+                                內容
+                            </th>
+                            <th style="margin-left:auto">
+                                縮圖
+                            </th>
+                            <th style="margin-left:auto">
+                                類別
+                            </th>
+                            @*<th style="margin-left:auto">
+
+                    </th>
+                    <th style="margin-left:auto">
+                        影片連結
+                    </th>*@
+                            <th style="margin-left:auto">
+                                作者名稱
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="ListZone">
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.FTitle.Substring(0, Math.Min(item.FTitle.Length, 10))
+                                </td>
+                                <td>
+                                    @item.FNewsDate.Substring(0, Math.Min(item.FNewsDate.Length, 10))
+                                </td>
+                                <td>
+                                    @{
+                                        string showcontent;
+                                        if (item.FContent == null)
+                                        {
+                                            showcontent = "";
+                                        }
+                                        else
+                                            showcontent = item.FContent.Substring(0, Math.Min(item.FContent.Length, 10));
+                                    }
+
+                                    @Html.Raw(showcontent)
+
+                                    @*@Html.Raw(item.FContent.Substring(0, 10))*@
+                                    @*@Html.Raw(@item.FContent.Substring(0, Math.Min(item.FContent.Length, 10)))*@
+                                    @*@item.FContent.Substring(0, Math.Min(item.FContent.Length, 10)))*@
+                                    @*@Html.DisplayFor(modelItem => item.FNewsContent.Substring(0, 29))*@
+                                   @* @Html.Raw(@item.FContent.Substring(0, Math.Min(item.FContent.Length, 10)))*@
+                                </td>
+                                <td>
+                                    <img src="~/img/blog/@item.FThumbnailPath" width="100" height="80" />
+                                </td>
+                                <td>
+                                    @item.news.FNewsCategory.FCategoryName
+                                    @*@Html.DisplayFor(modelItem => item.getCategory)*@
+                                    @*@Html.DisplayFor(modelItem => item.FNewsCategory.FCategoryName)*@
+                                    @*@Html.DisplayFor(modelItem => item.categorry)*@
+                                </td>
+                                @*<td>
+                            @Html.DisplayFor(modelItem => item.FViews)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FVideoUrl)
+                        </td>*@
+                            <td>
+                                @item.news.FMember.FMemberName
+                                @*@Html.DisplayFor(modelItem => item.FMember.FMemberName)*@
+                                @*@Html.DisplayFor(modelItem => item.getName)*@
+                            </td>
+                                <td>
+                                    @Html.ActionLink("編輯", "Edit", new { id = item.FNewsId }, new { @class = "btn btn-success" })
+                                    <br />
+                                    @Html.ActionLink("詳細", "Details", new { id = item.FNewsId }, new { @class = "btn btn-light" })
+                                    <br />
+                                    @Html.ActionLink("刪除", "Delete", new { id = item.FNewsId },
+                                                   new { onclick = "return confirm('確定要刪除嗎？如果有留言將一併刪除')", @class = "btn btn-secondary" })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="col-lg-12">
+                    <div class="product__pagination blog__pagination">
+                    </div>
+                </div>
+                @*@Html.PagedListPager((IPagedList)ViewBag.OnePageOfNews, page => Url.Action("List", new { page }))*@
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        $('#selectCate').on('change', CategoriesChange);
+        $('#btnReset').on('click', ResetClick);
+
+        //$(document).ready(function twice() {
+        //    Once();
+        //    twice = function () { }
+        //})
+        //$(document).ready(()=> {
+        //    $("#btnReset").trigger("click");
+        //})
+        //$(document).ready(function twice() {
+        //    var flag = true;
+
+        //    function Once() {
+        //        if (flag) {
+        //            $("#btnReset").trigger("click");
+        //            flag = false;
+        //        } else {
+        //            return;
+        //        }
+        //    }})
+
+        //function Once() {
+        //    $("#btnReset").trigger("click");
+        //}
+        @*$("#txtKeyword").on("keyup", loadSearch);
+
+        async function loadSearch() {
+            $('#ListZone>tr').remove();
+            const changeCate = $('#txtKeyword').val().toString();
+            console.log(changeCate);
+            const response = await fetch("@Url.Content("~/Admin/NewsManage/Search")"+`?keyWord=${changeCate}`);
+            console.log(response);
+        const datas = await response.json();
+        console.log(datas);
+        let tr = '';
+        for (i = 0; i < datas.length; i++) {
+            let fixViews = '';                 /*處理篩選資料後，空值會顯示null字樣問題*/
+            let fixVideo = '';
+            let fixTitle = '';
+            let fixDate = '';
+            let fixContent = '';
+            let fixMember = '';
+            if (datas[i].fViews == null) {
+                fixViews = ''
+            }
+            else {
+                fixViews = datas[i].fViews
+            }
+            if (datas[i].fVideoUrl == null) {
+                fixVideo = ''
+            }
+            else {
+                fixVideo = datas[i].fVideoUrl
+            }
+            if (datas[i].fMemberId == null) {
+                fixMember = ''
+            }
+            else {
+                fixMember = datas[i].getMember.fMemberName
+            }
+            if (datas[i].fTitle != null) {
+                fixTitle = datas[i].fTitle.substr(0, 10);
+            }
+            if (datas[i].fNewsDate != null) {
+                fixDate = datas[i].fNewsDate.substr(0, 10);
+            }
+            if (datas[i].fContent != null) {
+                fixContent = datas[i].fContent.substr(0, 10);
+            }
+             tr =`<tr>
+             <td>${fixTitle}</td>
+             <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">${fixDate}</td>
+             <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">${fixContent}</td>
+             <td>
+             <img src="/img/blog/${datas[i].fThumbnailPath}" width="100" height="80"/></td>
+             <td>${datas[i].newsCategory.fCategoryName}</td>
+             <td>${fixMember}</td>
+             <td>
+             <a class="btn btn-success" href="/Admin/NewsManage/Edit/${datas[i].fNewsId}">編輯</a>
+             <br />
+             <a class="btn btn-light" href="/Admin/NewsManage/Details/${datas[i].fNewsId}">詳細</a>
+             <br />
+             <a class="btn btn-secondary" href="/Admin/NewsManage/Delete/${datas[i].fNewsId}" onclick="return confirm('確定要刪除嗎?')">刪除</a>
+             </td></tr>`
+            $(`#ListZone`).append(tr);
+            GetPage();
+        }
+        };*@
+
+
+        //專欄類別篩選ajax
+    async function CategoriesChange() {
+        $('#ListZone>tr').remove();
+        const changeCate = selectCate.options[selectCate.selectedIndex].value;
+        const response = await fetch("@Url.Content("~/Admin/NewsManage/SelectCategoryIDAPI")" + `?id=${changeCate}`);
+        const datas = await response.json();
+        console.log(datas);
+        let tr = '';
+        for (i = 0; i < datas.length; i++) {
+            let fixViews = '';                 /*處理篩選資料後，空值會顯示null字樣問題*/
+            let fixVideo = '';
+            let fixTitle = '';
+            let fixDate = '';
+            let fixContent = '';
+            let fixMember = '';
+            if (datas[i].fViews == null) {
+                fixViews = ''
+            }
+            else {
+                fixViews = datas[i].fViews
+            }
+            if (datas[i].fVideoUrl == null) {
+                fixVideo = ''
+            }
+            else {
+                fixVideo = datas[i].fVideoUrl
+            }
+            if (datas[i].fMemberId == null) {
+                fixMember = ''
+            }
+            else {
+                fixMember = datas[i].getMember.fMemberName
+            }
+            if (datas[i].fTitle != null) {
+                fixTitle = datas[i].fTitle.substr(0, 10);
+            }
+            if (datas[i].fNewsDate != null) {
+                fixDate = datas[i].fNewsDate.substr(0, 10);
+            }
+            if (datas[i].fContent != null) {
+                fixContent = datas[i].fContent.substr(0, 10);
+            }
+             tr =`<tr>
+             <td>${fixTitle}</td>
+             <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">${fixDate}</td>
+             <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">${fixContent}</td>
+             <td>
+             <img src="/img/blog/${datas[i].fThumbnailPath}" width="100" height="80"/></td>
+             <td>${datas[i].newsCategory.fCategoryName}</td>
+             <td>${fixMember}</td>
+             <td>
+             <a class="btn btn-success" href="/Admin/NewsManage/Edit/${datas[i].fNewsId}">編輯</a>
+             <br />
+             <a class="btn btn-light" href="/Admin/NewsManage/Details/${datas[i].fNewsId}">詳細</a>
+             <br />
+             <a class="btn btn-secondary" href="/Admin/NewsManage/Delete/${datas[i].fNewsId}" onclick="return confirm('確定要刪除嗎?')">刪除</a>
+             </td></tr>`
+            $(`#ListZone`).append(tr);
+        }
+        $("#divCount").text(`共 ${datas.length} 筆`)
+        GetPage();
+        };
+        //專欄類別篩選復歸ajax
+        async function ResetClick() {
+            $('#txtKeyword').val("");
+            $('#ListZone>tr').remove();
+            $('#selectCate').val(0);
+            $('#txtKeyword').val("");
+        const response = await fetch('@Url.Content("~/Admin/NewsManage/ResetList")');
+        const datas = await response.json();
+        let tr = '';
+            for (i = 0; i < datas.length; i++) {
+                let fixViews = '';
+                let fixVideo = '';
+                let fixTitle = '';
+                let fixDate = '';
+                let fixContent = '';
+                let fixMember = '';
+                if (datas[i].fViews == null) {
+                    fixViews = ''
+                }
+                else {
+                    fixViews = datas[i].fViews
+                }
+                if (datas[i].fVideoUrl == null) {
+                    fixVideo = ''
+                }
+                else {
+                    fixVideo = datas[i].fVideoUrl
+                }
+                if (datas[i].fMemberId == null) {
+                    fixMember = ''
+                }
+                else {
+                    fixMember = datas[i].getMember.fMemberName
+                }
+                if (datas[i].fTitle != null) {
+                    fixTitle = datas[i].fTitle.substr(0, 10);
+                }
+                if (datas[i].fNewsDate != null) {
+                    fixDate = datas[i].fNewsDate.substr(0, 10);
+                }
+                if (datas[i].fContent != null) {
+                    fixContent = datas[i].fContent.substr(0, 10);
+                }
+                tr = `<tr>
+             <td>${fixTitle}</td>
+             <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">${fixDate}</td>
+             <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">${fixContent}</td>
+             <td>
+             <img src="/img/blog/${datas[i].fThumbnailPath}" width="100" height="80"/></td>
+             <td>${datas[i].newsCategory.fCategoryName}</td>
+             <td>${fixMember}</td>
+             <td>
+             <a class="btn btn-success" href="/Admin/NewsManage/Edit/${datas[i].fNewsId}">編輯</a>
+             <br />
+             <a class="btn btn-light" href="/Admin/NewsManage/Details/${datas[i].fNewsId}">詳細</a>
+             <br />
+             <a class="btn btn-secondary" href="/Admin/NewsManage/Delete/${datas[i].fNewsId}" onclick="return confirm('確定要刪除嗎?')">刪除</a>
+             </td></tr>`
+                $(`#ListZone`).append(tr);
+            }
+            $("#divCount").text(`共 ${datas.length} 筆`)
+            GetPage();
+        };
+
+        function GetPage() {
+            $(".blog__pagination").empty();
+            let newsCount = $("#ListZone").children("tr").length;
+            console.log(newsCount)
+            let pageCount = newsCount / 6;
+            for (let i = 1; i < pageCount + 1; i++) {
+                $(".blog__pagination").append(`<button class="btnPage" id="btn${i}">${i}</button>`);
+            }
+            $(".btnPage").on("click", function () {
+                let newsTrs = $("#ListZone").children("tr");
+                newsTrs.hide();
+                let index = 6 * parseInt($(this).text());
+                newsTrs.slice(index - 6, index).show();
+                $('html,body').animate({ scrollTop: 0 }, 'slow');
+                $(this).addClass("selectedPage").siblings().removeClass("selectedPage");
+            })
+            if ($(".btnPage").length > 1) {
+                $(".blog__pagination").append('<button class="btnPage btnNext"><i class="fa fa-long-arrow-right"></i></button>');
+            }
+            $(".btnNext").on("click", function () {
+                let recent = $(".selectedPage").text();
+                $(`#btn${parseInt(recent) + 1}`).trigger("click");
+            })
+            $(".btnPage").first().trigger("click");
+        }
+        GetPage();
+
+    </script>
+    @*tr = `<tr>
+                    <td>${fixTitle}</td>
+                    <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">${fixDate}</td>
+                    <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">${fixContent}</td>
+                    <td>
+                        <img src="/img/blog/${datas[i].fThumbnailPath}" width="100" height="80" />
+                    </td>
+                    <td>${datas[i].newsCategory.fCategoryName}</td>
+                    <td>${fixViews}</td>
+                    <td>${fixVideo}</td>
+                    <td>${fixMember}</td>
+                    <td>
+                        <a class="primary-btn" href="/Admin/NewsManage/Edit/${datas[i].fNewsId}">編輯</a>
+                        <a class="primary-btn" href="/Admin/NewsManage/Details/${datas[i].fNewsId}">詳細</a>
+                        <a class="primary-btn" href="/Admin/NewsManage/Delete/${datas[i].fNewsId}" onclick="return confirm('確定要刪除嗎?')">刪除</a>
+                    </td>
+                </tr>`
+                $(`#ListZone`).append(tr);
+      
+    *@
+}

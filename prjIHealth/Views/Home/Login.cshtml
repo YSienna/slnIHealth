@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login</h1>
+
+
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">歡迎登入IHealth會員! <span></span></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addForm">
+                    @*<input type="hidden" name="ShipperID" id="ShipperID">*@
+                    @*<div class="form-group">
+                            <label for="CompanyName">CompanyNametext</label>
+                            <input type="text" class="form-control" id="CompanyName" name="CompanyName"
+                                   placeholder="帳號">
+                        </div>
+                        <div class="form-group">
+                            <label for="Phone">Phone</label>
+                            <input type="text" class="form-control" id="Phone" name="Phone" placeholder="密碼">
+                        </div>*@
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            <hr />
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                            <input type="hidden" name="fAuthorityId" id="fAuthorityId">
+                            <div class="form-outline mb-4">
+                                <div class="col-md-12 mb-3">
+                                    @Html.TextBox("fUserName", "", new { htmlAttributes = new { @class = "form-control form-control-user" }, placeholder = "請輸入帳號" })
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    @Html.TextBox("fPassword", "", new { htmlAttributes = new { @class = "form-control form-control-user" }, placeholder = "請輸入密碼" })
+                                </div>
+                                <div class="custom-control custom-checkbox small">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck">
+                                    <label class="custom-control-label" for="customCheck">記住帳號  </label>
+                                </div>
+                                <div class=" col-md-12  ">
+                                    <input type="submit" value="會員登入" class="btn btn-primary ">
+                                </div>
+                            </div>
+                            <div class="form-group">
+
+                            </div>
+                        </div>
+                    }
+                </form>
+            </div>
+            <div class="modal-footer row">
+                <div class="text-center  mb-4">
+                    @Html.ActionLink("忘記密碼?", "ForgotPassword", "Member", null, new { @class = "btn btn-primary" })
+                </div>
+                <div class="text-center">
+                    @Html.ActionLink("註冊會員", "Register", "Member", null, new { @class = "btn btn-success" })
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>

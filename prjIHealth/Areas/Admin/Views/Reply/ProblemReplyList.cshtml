@@ -1,0 +1,388 @@
+﻿@model IEnumerable<prjiHealth.ViewModels.CProblemViewModel>
+@{
+    ViewData["Title"] = "iHeath後臺";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+@section Styles{
+    <style>
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+        /*日期選擇器樣式*/
+        #divDatepicker {
+            border: 4px solid #7fad39;
+            border-radius: 20px;    
+            padding: 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+            #divDatepicker input {
+                font-size: 16px;
+                background-color: #f5f5f5;
+                border: none;
+            }
+
+        #divDateTake{
+            margin-top:4px;
+        }
+
+        .fa-caret-left, .fa-caret-right {
+            margin-bottom: 4px;
+            border: none;
+            background-color: transparent;
+        }
+
+        .btn-light {
+            background-color: #DFEACE !important;
+            color: black;
+        }
+
+        .btn-success {
+            background-color: #7FAD39;
+            color: white;
+            border: none;
+        }
+
+        table.table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .selectbox {
+            margin-left: -1.2%;
+        }
+        .divSearch {
+            width: 70%;
+            margin: 15px auto;
+        }
+    </style>
+}
+<h2 id="title">客服回覆</h2>
+<hr />
+<section class="">
+    <div class="container">
+        <div class="row">
+            @*※※※非會員專區的View的內容請從此處開始※※※*@
+            <div class="container">
+                <div class="row divSearch">
+                    <div class="col-lg-3 col-md-3 selectbox">
+                        <select name="stype" id="stype" class="custom-select">
+                            <option value="999" disabled selected hidden>依處理狀態篩選</option>
+                            <option value="未處理">未處理</option>
+                            <option value="處理中">處理中</option>
+                            <option value="已完成">已完成</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-3">
+                        <select name="qtype" id="qtype" class="custom-select">
+                            <option value="999" disabled selected hidden>依問題類型篩選</option>
+                            <option value="帳號相關">帳號相關</option>
+                            <option value="訂單相關">訂單相關</option>
+                            <option value="課程相關">課程相關</option>
+                            <option value="商品相關">商品相關</option>
+                            <option value="其他建議相關">其他相關</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-3">
+                        <div style="text-align:center;" id="divDateTake">
+                            <div id="divDatepicker">
+                                <button class="fa fa-caret-left" id="btnPrevDate"></button>
+                                <input type="date" id="inpDatepicker" />
+                                <button class="fa fa-caret-right" id="btnNextDate"></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-3">
+                        <div style="margin-bottom:10px">
+                            <button id="reload" class="btn btn-success">清空篩選</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table" style="table-layout: fixed">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FProblemTime)
+                        </th>
+                        <th>
+                            類別
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FProblemContent)
+                        </th>
+                        <th style="white-space:nowrap">
+                            會員編號
+                        </th>
+                        <th style="white-space:nowrap">
+                            訂單編號
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FEmail)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FContactPhone)
+                        </th>
+                        <th>
+                            狀態
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="changezoon">
+                    @foreach (var item in Model)
+                    {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FProblemTime)
+                        </td>
+                        <td style="white-space:nowrap">
+                            @Html.DisplayFor(modelItem => item.FProblemCategory.FProblemCategory)
+                        </td>
+                        <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                            @Html.DisplayFor(modelItem => item.FProblemContent)
+                        </td>
+                        @{
+                            string adjmemberid = "";
+                            if (item.FMemberId == 9)
+                            {
+                                adjmemberid = "遊客";
+                            }
+                            else
+                            {
+                                adjmemberid = item.FMemberId.ToString();
+                            }
+                        }
+                        <td>
+                            @adjmemberid
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FOrderId)
+                        </td>
+                        <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                            @Html.DisplayFor(modelItem => item.FEmail)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FContactPhone)
+                        </td>
+                        <td style="white-space:nowrap">
+                            @Html.DisplayFor(modelItem => item.Status.FStatus)
+                        </td>
+                        <td style="white-space:nowrap">
+                            @Html.ActionLink("回覆", "Reply", new { id = item.FProblemId }, new { @class = "site-btn btn btn-succes" })
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            @foreach (var item in Model)
+            {
+                <input type="hidden" value="@Html.DisplayFor(modelItem => item.FFilePath)">
+            }
+            @*<div class="product__pagination">
+                    <a href="#">1</a>
+                    <a href="#">2</a>
+                    <a href="#">3</a>
+                    <a href="#"><i class="fa fa-long-arrow-right"></i></a>
+                </div>*@
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        let ProblemCategoryID = 0;
+        function SelectedProblemCategoryID() {          /*判斷所選類別對應的ID*/
+            if ($('#qtype').val() == "帳號相關")
+                ProblemCategoryID = 1;
+            if ($('#qtype').val() == "訂單相關")
+                ProblemCategoryID = 2;
+            if ($('#qtype').val() == "課程相關")
+                ProblemCategoryID = 3;
+            if ($('#qtype').val() == "商品相關")
+                ProblemCategoryID = 4;
+            if ($('#qtype').val() == "其他相關")
+                ProblemCategoryID = 5;
+        };
+        async  function ChangeByPCID() {         /*依問題類別篩選*/
+            $('#changezoon>tr').remove();
+            document.getElementById("stype").options.selectedIndex = 0;
+            SelectedProblemCategoryID();
+            const response = await fetch('@Url.Content("~/Admin/Reply/SelectByProblemCategoryID")' + `?id=${ProblemCategoryID}`);
+            const datas = await response.json();
+            let tr = '';
+            
+            for (i = 0; i < datas.length; i++) {
+                if (datas[i].fOrderId == null) {
+                    datas[i].fOrderId = ""
+                }
+                if (datas[i].fMemberId == 9) {
+                    datas[i].fMemberId = "遊客"
+                }
+                if (datas[i].fEmail == null) {
+                    datas[i].fEmail = ""
+                }
+                if (datas[i].fContactPhone == null) {
+                    datas[i].fContactPhone = ""
+                }
+                tr = `<tr><td>${datas[i].fProblemTime}</td><td style="white-space:nowrap">${datas[i].fProblemCategory.fProblemCategory}</td>
+                      <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${datas[i].fProblemContent}</td>
+                      <td>${datas[i].fMemberId}</td><td>${datas[i].fOrderId}</td><td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${datas[i].fEmail}</td>
+                      <td>${datas[i].fContactPhone}</td><td style="white-space:nowrap">${datas[i].status.fStatus}</td><td style="white-space:nowrap"><a class="site-btn btn btn-succes" href="/Admin/Reply/Reply/${datas[i].fProblemId}">回覆</a></td></tr>`;
+                $('#changezoon').append(tr);
+            }
+        };
+        $('#qtype').on('change', ChangeByPCID);
+
+        let StatusID = 0;
+        function SelectedStatusID() {          /*判斷所選狀態對應的ID*/
+            if ($('#stype').val() == "未處理")
+                StatusID = 80;
+            if ($('#stype').val() == "處理中")
+                StatusID = 81;
+            if ($('#stype').val() == "已完成")
+                StatusID = 82;
+        };
+        async  function ChangeBySatusID() {         /*依處理狀態篩選*/
+            $('#changezoon>tr').remove();
+            document.getElementById("qtype").options.selectedIndex = 0;
+            SelectedStatusID();
+            const response = await fetch('@Url.Content("~/Admin/Reply/SelectByStatus")' + `?id=${StatusID}`);
+            const datas = await response.json();
+            let tr = '';
+            
+            for (i = 0; i < datas.length; i++) {
+                if (datas[i].fOrderId == null) {
+                    datas[i].fOrderId = ""
+                }
+                if (datas[i].fMemberId == 9) {
+                    datas[i].fMemberId = "遊客"
+                }
+                if (datas[i].fEmail == null) {
+                    datas[i].fEmail = ""
+                }
+                if (datas[i].fContactPhone == null) {
+                    datas[i].fContactPhone = ""
+                }
+                tr = `<tr><td>${datas[i].fProblemTime}</td><td style="white-space:nowrap">${datas[i].fProblemCategory.fProblemCategory}</td>
+                      <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${datas[i].fProblemContent}</td>
+                      <td>${datas[i].fMemberId}</td><td>${datas[i].fOrderId}</td><td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${datas[i].fEmail}</td>
+                      <td>${datas[i].fContactPhone}</td><td style="white-space:nowrap">${datas[i].status.fStatus}</td><td style="white-space:nowrap"><a class="site-btn btn btn-succes" href="/Admin/Reply/Reply/${datas[i].fProblemId}">回覆</a></td></tr>`;
+                $('#changezoon').append(tr);
+            }
+        };
+        $('#stype').on('change', ChangeBySatusID);
+
+        async function Reset() {         /*清空篩選*/
+            document.getElementById("stype").options.selectedIndex = 0;
+            document.getElementById("qtype").options.selectedIndex = 0;
+            $('#changezoon>tr').remove();
+             const response = await fetch('@Url.Content("~/Admin/Reply/Reset")');
+            const datas = await response.json();
+             let tr = '';
+             
+             for (i = 0; i < datas.length; i++) {
+                 if (datas[i].fOrderId == null) {
+                     datas[i].fOrderId = ""
+                 }
+                 if (datas[i].fMemberId == 9) {
+                     datas[i].fMemberId = "遊客"
+                 }
+                 if (datas[i].fEmail == null) {
+                     datas[i].fEmail = ""
+                 }
+                 if (datas[i].fContactPhone == null) {
+                     datas[i].fContactPhone = ""
+                 }
+                tr = `<tr><td>${datas[i].fProblemTime}</td><td style="white-space:nowrap">${datas[i].fProblemCategory.fProblemCategory}</td>
+                      <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${datas[i].fProblemContent}</td>
+                      <td>${datas[i].fMemberId}</td><td>${datas[i].fOrderId}</td><td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${datas[i].fEmail}</td>
+                      <td>${datas[i].fContactPhone}</td><td style="white-space:nowrap">${datas[i].status.fStatus}</td><td style="white-space:nowrap"><a class="site-btn btn btn-succes" href="/Admin/Reply/Reply/${datas[i].fProblemId}">回覆</a></td></tr>`;
+                $('#changezoon').append(tr);
+            }
+        };
+        $('#reload').on('click', Reset);
+
+        //Datepicker預設為今日日期
+        var today;
+        function getToday() {
+            let date = new Date();
+            let dd = date.getDate();
+            let mm = date.getMonth() + 1;
+            let yyyy = date.getFullYear();
+            if (dd < 10) { dd = '0' + dd }
+            if (mm < 10) { mm = '0' + mm }
+            today = yyyy + '-' + mm + '-' + dd;
+            $("#inpDatepicker").attr("value", today);
+            $("#inpDatepicker").attr("max", today);
+        }
+        getToday();
+
+        async  function ChangeDate() {         /*依日期篩選*/
+            $('#changezoon>tr').remove();
+            document.getElementById("stype").options.selectedIndex = 0;
+            document.getElementById("qtype").options.selectedIndex = 0;
+            const date = $("#inpDatepicker").val();
+            const response = await fetch('@Url.Content("~/Admin/Reply/SelectByDate")' + `?date=${date}`);
+            const datas = await response.json();
+            let tr = '';
+            
+            for (i = 0; i < datas.length; i++) {
+                if (datas[i].fOrderId == null) {
+                    datas[i].fOrderId = ""
+                }
+                if (datas[i].fMemberId == 9) {
+                    datas[i].fMemberId = "遊客"
+                }
+                if (datas[i].fEmail == null) {
+                    datas[i].fEmail = ""
+                }
+                if (datas[i].fContactPhone == null) {
+                    datas[i].fContactPhone = ""
+                }
+                tr = `<tr><td>${datas[i].fProblemTime}</td><td style="white-space:nowrap">${datas[i].fProblemCategory.fProblemCategory}</td>
+                      <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${datas[i].fProblemContent}</td>
+                      <td>${datas[i].fMemberId}</td><td>${datas[i].fOrderId}</td><td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${datas[i].fEmail}</td>
+                      <td>${datas[i].fContactPhone}</td><td style="white-space:nowrap">${datas[i].status.fStatus}</td><td style="white-space:nowrap"><a class="site-btn btn btn-succes" href="/Admin/Reply/Reply/${datas[i].fProblemId}">回覆</a></td></tr>`;
+                $('#changezoon').append(tr);
+            }
+        };
+        //Datepicker事件
+        $("#inpDatepicker").change(function () {
+            ChangeDate()
+        })
+        //前一天按鈕事件
+        $("#btnPrevDate").click(function () {
+            let date = new Date($("#inpDatepicker").val().replace(/-/g, "/"));
+            date.setDate(date.getDate() - 1);
+            let dd = date.getDate();
+            let mm = date.getMonth() + 1;
+            let yyyy = date.getFullYear();
+            if (dd < 10) { dd = '0' + dd }
+            if (mm < 10) { mm = '0' + mm }
+            let theDate = yyyy + '-' + mm + '-' + dd;
+            $("#inpDatepicker").val(theDate);
+            ChangeDate()
+        })
+        //後一天按鈕事件
+        $("#btnNextDate").click(function () {
+            if ($("#inpDatepicker").val() < today) {
+                let date = new Date($("#inpDatepicker").val().replace(/-/g, "/"));
+                date.setDate(date.getDate() + 1);
+                let dd = date.getDate();
+                let mm = date.getMonth() + 1;
+                let yyyy = date.getFullYear();
+                if (dd < 10) { dd = '0' + dd }
+                if (mm < 10) { mm = '0' + mm }
+                let theDate = yyyy + '-' + mm + '-' + dd;
+                $("#inpDatepicker").val(theDate);
+                ChangeDate()
+            }
+        })
+    </script>
+}

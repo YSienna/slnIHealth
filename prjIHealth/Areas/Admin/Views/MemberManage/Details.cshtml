@@ -1,0 +1,107 @@
+﻿@model prjIHealth.Models.TMember
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+@section Styles{
+    <style>
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+        /*        <h2 id="title">管理頁Demo</h2>*/
+    </style>
+}
+<h2 id="title">Details</h2>
+<hr />
+<div>
+    <h4>TMember</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FMemberName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FMemberName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FPassword)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FPassword)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FBirthday)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FBirthday)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FGender)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FGender)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FPicturePath)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FPicturePath)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FUserName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FUserName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FAddress)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FAddress)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FPhone)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FPhone)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FEmail)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FEmail)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FRegisterDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FRegisterDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FDisabled)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FDisabled)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FRemarks)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FRemarks)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FAuthority)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FAuthority.FAuthorityName)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.FMemberId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

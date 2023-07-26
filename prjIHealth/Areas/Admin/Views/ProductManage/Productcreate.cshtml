@@ -1,0 +1,216 @@
+﻿@model IEnumerable<prjIHealth.ViewModels.CProductViewModel>
+@{
+    ViewData["Title"] = "ProductCreate";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+@section Styles{
+    <style>
+        .btn-light {
+            background-color: #DFEACE !important;
+            color: black;
+        }
+
+        .btn-success {
+            background-color: #7FAD39;
+            color: white;
+            border: none;
+        }
+
+        table.table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .selectbox {
+            margin-bottom: 5%;
+            margin-left: -10%;
+        }
+
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+    </style>
+}
+<h2 id="title">新增產品</h2>
+<hr />
+
+
+
+    <div class="container">
+        <div class="row">
+
+
+            <div style="margin:auto;">
+
+                <form asp-action="ProductCreate" style="margin-left:20%" enctype="multipart/form-data" onsubmit="return CheckRequired()">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+
+
+                    <div class="form-group col-md-8">
+                        <div class="row">
+                            <div class="col-md-4"><label for="FProductName" class="control-label" style="font-size:30px;">商品名稱</label></div>
+                            <div class="col-md-8"><input id="FProductName" name="FProductName" class="form-control" style="text-align: center;" required /></div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group col-md-8">
+                        <div class="row">
+                            <div class="col-md-4"><label class="control-label" style="font-size:30px;text-align:center;">種類</label></div>
+                            <div class="col-md-8">
+                                <select name="qtype" id="qtype" class="custom-select" style="text-align:center;" required>
+                                    <option disabled selected hidden>商品種類</option>
+                                    <option value="乳清蛋白">乳清蛋白</option>
+                                    <option value="健康食品">健康食品</option>
+                                    <option value="運動用品">運動用品</option>
+                                    <option value="男裝">男裝</option>
+                                    <option value="女裝">女裝</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="form-group col-md-8">
+                        <div class="row">
+                            <div class="col-md-4"> <label for="FUnitprice" class="control-label" style="font-size:30px;">價錢</label></div>
+                            <div class="col-md-8"><input id="FUnitprice" name="FUnitprice" class="form-control" style="text-align: center;" required /></div>
+
+                        </div>
+                    </div>
+                    <div class="form-group col-md-8">
+                        <div class="row">
+                            <div class="col-md-4"><label for="FDescription" class="control-label" style="font-size:30px;">描述</label></div>
+                            <div class="col-md-8"> <input id="FDescription" name="FDescription" class="form-control" style="text-align: center;" required /></div>
+
+                        </div>
+                    </div>
+                    <div class="form-group form-check col-md-8">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="form-check-label" style="font-size:30px;">上架</label>
+                            </div>
+                            <div class="col-md-8">
+                                <select name="qtypee" id="qtypee" class="custom-select" style="text-align:center;">
+                                    <option value="上架" selected="selected">上架</option>
+                                    <option value="下架">下架</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="custom-file  col-md-8" style="margin-right:57%;">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="customFile" class="control-label" style="font-size:30px;">圖片</label>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="custom-file-label" for="customFile">新增圖片</label>
+                                <input type="file" class="custom-file-input" id="customFile" name="photo">
+                            </div>
+                        </div>
+                    </div><br /><br />
+
+                    <div class="form-group col-md-8 ">
+                        <div class="row">
+                        <div class="col-md-4">
+                            <label style="font-size:30px;">預覽縮圖</label>
+                        </div>
+                         <div class="col-md-8">
+                            <img id="imgPreivew" style="width:200px" />
+                        </div>
+                       </div>
+                    </div>
+
+                    <div class="form-group col-md-11">
+                        <div id="AddFCategory"></div>
+                        <div id="AddFVisible"></div>
+                        <input type="submit" value="確定新增" class="btn btn-light" />
+                        <a asp-action="ProductList" class="btn btn-success">返回清單</a>
+                        <button id="btncreate" class="btn btn-dark">Demo</button>
+                    </div>
+                </form>
+             
+            </div>
+        </div>
+    </div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        let FCategoryId = 0;
+        var input = '';
+        function SelectedfCategory() {          /*判斷所選類別對應的ID*/
+            $('#AddFCategory>input').remove();
+            if ($('#qtype').val() == "乳清蛋白")
+                FCategoryId = 1;
+            if ($('#qtype').val() == "健康食品")
+                FCategoryId = 2;
+            if ($('#qtype').val() == "運動用品")
+                FCategoryId = 3;
+            if ($('#qtype').val() == "男裝")
+                FCategoryId = 4;
+            if ($('#qtype').val() == "女裝")
+                FCategoryId = 5;
+            input = `<input type="hidden" id="FCategoryId" value="${FCategoryId}" name="FCategoryId" />`
+            $('#AddFCategory').append(input)   /*change事件發生時才產生存放資料的input*/
+        };
+        $('#qtype').on("change", SelectedfCategory) /*選擇類別時會產生寫入資料庫所需的FStatusNumber*/
+       //===============================================================================================
+        let FVisible = 0;
+        var inputt = '';
+        function SelectedFVisible() {
+            $('#AddFVisible>input').remove();
+            if ($('#qtypee').val() == "下架")
+                FVisible = false;
+            if ($('#qtypee').val() == "上架")
+                FVisible = true;
+            inputt = `<input type="hidden" id="FVisible" value="${FVisible}" name="FVisible" />`
+            $('#AddFCategory').append(inputt)
+        };
+        $('#qtypee').on("change", SelectedFVisible)
+
+        //=============================================================================================
+        //Create Demo
+        $("#btncreate").click(function (event) {
+            event.preventDefault();
+            $("#FProductName").val("啞鈴");
+            $("#FUnitprice").val("500");
+            $("#FDescription").val("健身用品");           
+        });
+        //==============================================================================================
+        function CheckRequired() {
+            if ($('#FProductName').val() == '' || $('#FUnitprice').val() == '' || $('#FCategoryId').val() == null) {
+                SwalGreen.fire({
+                    title: '必填欄位未填寫',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+                return false;
+            } else {
+                return true;
+            }
+        }
+        //==============================================================================================
+        //預覽圖片jquery
+        var arrayBuffer = null;
+        document.querySelector("#customFile").addEventListener("change", function () {
+            var reader = new FileReader();
+            reader.onload = function () {
+                arrayBuffer = this.result;
+                var arrayBufferView = new Uint8Array(arrayBuffer);
+                var blob = new Blob([arrayBufferView], { type: "image/jpg" });
+                var urlCreator = window.URL || window.webkitURL;
+                var url = urlCreator.createObjectURL(blob);
+                $("#imgPreivew").attr("src", url);
+            };
+            reader.readAsArrayBuffer(this.files[0]);
+        }, false);
+    </script>
+}
+

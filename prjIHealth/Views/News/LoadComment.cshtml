@@ -1,0 +1,65 @@
+﻿@model List<prjIHealth.ViewModels.CNewsCommentViewModel>
+
+<div>
+    <!--<form asp-action="ReplyComment" enctype="multipart/form-data" id="blogForm">-->
+    @*@foreach (var item in Model)
+        {
+            <input type="hidden" name="FNewsId" value="@Html.DisplayFor(modelItem => item.FNewsId)" />
+            //<label>使用者名稱</label>
+            <input type="hidden" id="FMemberID" name="FMemberID" value="8" />
+        }*@
+    <!--<input type="hidden" name="FNewsId" id="testInput"/>
+        <br />
+        <label>留言回覆</label>
+        <textarea id="FNewsReply" name="FNewsReply"></textarea>
+        <br />
+        <input id="btnSubmit" type="submit" value="發送回覆" class="site-btn" />
+    </form>-->
+    <div>共有 @ViewBag.CommentCount 篇留言</div>
+    @foreach (var item in Model)
+    {
+        <form asp-action="LoadComment" enctype="multipart/form-data" style="border:dotted 3px green; margin-top:5px; padding:5px">
+            <input type="hidden" value="@item.FNewsId" name="FNewsId" />
+            <input type="hidden" value="@item.FMemberId" name="FMemberId" />
+            <label>會員名稱：</label>
+            <label value="" readonly="readonly">@item.MemberName.FMemberName</label>
+            <br />
+            <label>回覆內容：</label>
+            <label id="FNewsReply" name="FNewsReply" readonly="readonly">@item.FNewsReply</label>
+        </form>
+    }
+</div>
+
+
+@*<div>
+   @{
+        void getComment(CNewsCommentViewModel vModel)
+            {
+                <div id="d_@vModel."></div>
+            }
+   }
+</div>*@
+
+<script>
+
+    @*let newID = @Model.Select(n => n.FNewsId).FirstOrDefault();
+    let txtComment = ${}
+
+    $.post('@Url.Content("~/News/ReplyComment")'), {
+        "fMembierId": 8,
+        "fNewsId": newID,
+        "fNewsReply":
+        }, { $("#div").load('@Url.Content("~/News/LoadComment")'),{ "id": newID });
+    }*@
+
+
+    //let testInput = $('#testInput');
+    //var formData = new FormData(document.querySelector("#blogForm"));
+    //fetch("/News/BlogDetail", { body: formData, method: "Post" }).then(Response => Response.text()).(data => {
+    //    alert(data);
+    //    $('#testInput').val(data);
+
+    //});
+
+
+</script>

@@ -1,0 +1,325 @@
+﻿@*@model IEnumerable<prjiHealth.Models.TProblem>*@
+@model IEnumerable<prjiHealth.ViewModels.CProblemViewModel>
+@{
+    ViewData["Title"] = "CheckReply";
+}
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /*會員專區導覽列*/
+        .blog__btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #1c1c1c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #b2b2b2;
+            padding: 14px 20px 12px;
+            border-radius: 25px;
+        }
+
+            .blog__btn:visited {
+                color: #1c1c1c;
+            }
+
+            .blog__btn:hover {
+                border: 1px solid #4F6C24;
+                color: #4F6C24;
+            }
+
+            .blog__btn:active {
+                color: black;
+                font-weight: 800;
+            }
+
+        .sidebar__item ul li a {
+            margin-bottom: 1vh;
+        }
+
+        .sidebar__item {
+            border: 1px solid lightgray;
+            box-shadow: 2px 2px 5px lightgray;
+            padding: 20px;
+            margin-right: 30px;
+            margin-bottom: 20px;
+        }
+
+            .sidebar__item h5 {
+                text-align: center;
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #4F6C24;
+                color: white;
+            }
+
+            .sidebar__item li:hover {
+                transition: .2s;
+                background-color: #EFF5E6;
+            }
+
+            .sidebar__item i {
+                margin-right: 5px;
+            }
+
+        .liThis {
+            background-color: #EFEDED;
+        }
+
+        .btn-success {
+            background-color: #7FAD39;
+            color: white;
+            border: none;
+        }
+        #stype {
+            display: inline !important;
+        }
+
+        .nice-select {
+            display: none;
+        }
+    </style>
+}
+
+<section class="breadcrumb-section set-bg" data-setbg="/img/banner/banner_mem.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">客服紀錄</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Member/Edit">Home</a>
+                        <span>Contact</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            @*會員專區垂直導覽列*@
+            <div class="col-lg-3 col-md-5 reveal_b1">
+                <div class="sidebar" style="position:sticky;top:150px;">
+                    <div class="sidebar__item">
+                        <h5>會員專區</h5>
+                        <ul>
+                            <li><a href="~/member/edit" class="row"><i class="fa-solid fa-user-pen col-2"></i>個人資料</a></li>
+                            <li><a href="~/Diary/DiaryMain" class="row"><i class="fa-solid fa-utensils col-2"></i>飲食日誌</a></li>
+                            <li><a href="~/Member/OrderList" class="row"><i class="fa-solid fa-cart-shopping col-2"></i>訂單查詢</a></li>
+                            <li><a href="~/Student/CandidateList" class="row"><i class="fa-solid fa-heart col-2"></i>候選教練</a></li>
+                            <li><a href="~/Student/CourseList" class="row"><i class="fa-solid fa-dumbbell col-2"></i>課程列表</a></li>
+                            <li><a href="~/Student/ViewCourseCalendar" class="row"><i class="fa-solid fa-calendar-day col-2"></i>課程行事曆</a></li>
+                            <li class="liThis"><a href="~/Problem/CheckReply" class="row"><i class="fa-solid fa-comments col-2"></i>客服記錄</a></li>
+                        </ul>
+                    </div>
+                    <a href="~/Coach/CreateResume" class="blog__btn"><span class="arrow_right"></span>教練專區</a>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-7 reveal_b1">
+                @*※※※會員專區View內容請從此開始※※※*@
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="contact__form__title">
+                            <h2>客服中心回函</h2>
+                        </div>
+                    </div>
+                    <ul>
+                        <li>目前僅保留三個月內的信件紀錄</li>
+                        <li>可依處理狀態進行篩選</li>
+                    </ul>
+                </div>
+
+                <div class="row" style="margin-bottom:5px">
+                    <div class="col-lg-2 col-md-2 " style="margin:5px 0 5px 0">
+                        <select name="stype" id="stype" class="custom-select">
+                            <option value="999" disabled selected hidden>狀態篩選</option>
+                            <option value="未處理">未處理</option>
+                            <option value="處理中">處理中</option>
+                            <option value="已完成">已完成</option>
+                        </select>
+                    </div>
+                    <button id="reset" class="btn-success btn">清空篩選</button>
+                </div>
+                
+                <table class="table" style="table-layout: fixed ">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>
+                                問題編號
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FProblemTime)
+                            </th>
+                            <th>
+                                類別
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.FProblemContent)
+                            </th>
+                            <th>
+                                訂單編號
+                            </th>
+                            <th>
+                                處理狀態
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="changezoon">
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FProblemId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FProblemTime)
+                                </td>
+                                <td style="white-space:nowrap">
+                                    @Html.DisplayFor(modelItem => item.FProblemCategory.FProblemCategory)
+                                </td>
+                                <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                    @Html.DisplayFor(modelItem => item.FProblemContent)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.FOrderId)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Status.FStatus)
+                                </td>
+                                <td>
+                                    <button id="buttonLoad" class="btn-success btn" data-toggle="modal" data-target="#addModal">查看</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @*<div class="product__pagination">
+            <a href="#">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#"><i class="fa fa-long-arrow-right"></i></a>
+        </div>*@
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- Modal查看回覆內容彈跳視窗 -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">客服回覆<span></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label class="control-label">問題內容</label>
+                <textarea readonly="readonly" style="resize: none; width: 100%; height: 200px " id="problem"></textarea>
+
+                <label class="control-label">回覆內容</label>
+                <textarea readonly="readonly" style="resize: none; width: 100%; height: 250px " id="problemreply" placeholder="客服人員未回覆"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="site-btn" data-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        let button = document.querySelectorAll('#buttonLoad')  /*動態產生的按鈕需動態繫結事件*/
+
+        button.forEach(function (data) {
+            data.addEventListener('click', function () {
+                const problemId = ($(this).parents('tr').find('td:nth-child(1)').text()).trim()
+                const problem = ($(this).parents('tr').find('td:nth-child(4)').text()).trim()
+                GetReply()
+                $('#problem').val(problem)
+                 async function GetReply() {
+                const response = await fetch('@Url.Content("~/Problem/LoadReply")' + `?id=${problemId}`);
+                     const datas = await response.json();
+                     $('#problemreply').val(datas)
+            }
+            })
+        })
+
+         let StatusID = 0;
+        function SelectedStatusID() {          /*判斷所選狀態對應的ID*/
+            if ($('#stype').val() == "未處理")
+                StatusID = 80;
+            if ($('#stype').val() == "處理中")
+                StatusID = 81;
+            if ($('#stype').val() == "已完成")
+                StatusID = 82;
+        };
+        async  function ChangeBySatusID() {         /*依處理狀態篩選*/
+            $('#changezoon>tr').remove();
+            SelectedStatusID();
+            const response = await fetch('@Url.Content("~/Problem/SelectByStatus")' + `?id=${StatusID}`);
+            const datas = await response.json();
+            let tr = '';
+            for (i = 0; i < datas.length; i++) {
+                let fixOrderId = '';                 /*處理篩選資料後，空值會顯示null字樣問題*/
+                if (datas[i].fOrderId == null) {
+                    fixOrderId = ''
+                }
+                else {
+                    fixOrderId = datas[i].fOrderId
+                }
+                tr = `<tr><td>${datas[i].fProblemId}</td><td>${datas[i].fProblemTime}</td><td style="white-space:nowrap">${datas[i].fProblemCategory.fProblemCategory}</td>
+                      <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${datas[i].fProblemContent}</td>
+                      <td>${fixOrderId}</td><td>${datas[i].status.fStatus}</td><td><button id="buttonLoadselected" class="site-btn" data-toggle="modal" data-target="#addModal">查看</button></td></tr>`;
+                $('#changezoon').append(tr);
+            }
+            let buttonselected = document.querySelectorAll('#buttonLoadselected')  /*因篩選後按鈕重新產生，重新繫結事件*/
+            buttonselected.forEach(function (data) {
+                data.addEventListener('click', function () {
+                    const problemId = ($(this).parents('tr').find('td:nth-child(1)').text()).trim()
+                    const problem = ($(this).parents('tr').find('td:nth-child(4)').text()).trim()
+                    GetReply()
+                    $('#problem').val(problem)
+                    async function GetReply() {
+                        const response = await fetch('@Url.Content("~/Problem/LoadReply")' + `?id=${problemId}`);
+                        const datas = await response.json();
+                        $('#problemreply').val(datas)
+                    }
+                })
+            })
+        };
+        $('#stype').on('change', ChangeBySatusID);
+        $('#reset').on('click', Reset);
+        async function Reset() {
+            $('#changezoon>tr').remove();
+            $('#stype').val(999);
+            StatusID = 0;
+            let response1 = await fetch('@Url.Content("~/Problem/SelectByStatus")' + `?id=${StatusID}`);
+            let datas1 = await response1.json();
+            console.log(datas1)
+            let tr = '';
+            for (i = 0; i < datas1.length; i++) {
+                let fixOrderId = '';                 /*處理篩選資料後，空值會顯示null字樣問題*/
+                if (datas1[i].fOrderId == null) {
+                    fixOrderId = ''
+                }
+                else {
+                    fixOrderId = datas1[i].fOrderId
+                }
+                tr = `<tr><td>${datas1[i].fProblemId}</td><td>${datas1[i].fProblemTime}</td><td style="white-space:nowrap">${datas1[i].fProblemCategory.fProblemCategory}</td>
+                      <td style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">${datas1[i].fProblemContent}</td>
+                      <td>${fixOrderId}</td><td>${datas1[i].status.fStatus}</td><td><button id="buttonLoadselected" class="site-btn" data-toggle="modal" data-target="#addModal">查看</button></td></tr>`;
+                $('#changezoon').append(tr);
+            }
+        }
+    </script>
+}
+

@@ -1,0 +1,120 @@
+﻿@model IEnumerable<prjIHealth.ViewModels.CProductImageViewModel>
+@{
+    ViewData["Title"] = "ProductImgList";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+
+@section Styles{ 
+    <style>
+        .btn-light {
+            background-color: #DFEACE !important;
+            color: black;
+        }
+
+        .btn-success {
+            background-color: #7FAD39;
+            color: white;
+            border: none;
+        }
+
+        table.table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .selectbox {
+            margin-bottom: 5%;
+            margin-left: -10%;
+        }
+
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+    </style>
+}
+
+<h2 id="title">圖片檢視</h2>
+<hr />
+
+<div class="col-lg-8 col-md-7" style="margin-left:15%">
+    <div class="row">
+
+        @foreach (var item in Model)
+        {
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="product__item">
+                    <div class="">
+                        <img src="~/img/product/@item.FImage" style="width:350px; height: 200px; margin-bottom:10px" />
+                    </div>
+                    @*<a class="icon_close"  data-id="@item.FProductImageId"></a>*@
+                    @Html.ActionLink("", "ProductImgDelete", new { id = item.FProductImageId },
+                     new { @class = "icon_close", onclick = "return confirm('確認要刪除嗎?')" })
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<form asp-action="ProductImgList" style="margin-left:20%" enctype="multipart/form-data" onsubmit="return CheckRequired()">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    @foreach (var item in Model)
+    {
+        <input type="hidden" name="FProductId" id="FProductId" value=" @Html.DisplayFor(modelItem => item.FProductId)" />
+        <input type="hidden" name="FProductImageId" id="FProductImageId" value=" @Html.DisplayFor(modelItem => item.FProductImageId)" />
+    }
+    <div class="custom-file  col-md-7" style="margin-right:60%;">
+        <div class="row">
+            <div class="col-md-4">
+                <input type="file" class="custom-file-input" id="customFile" required name="photo">
+            </div>
+            <div class="col-md-8">
+                <label class="custom-file-label" for="customFile" required>新增圖片</label>
+            </div>
+        </div><br />
+    </div>
+    <div style="margin-right:25%;">
+        <input type="submit" value="確定新增" class="btn btn-success" />
+        <a asp-action="ProductList" class="btn btn-secondary">返回清單</a>
+    </div>
+</form>
+
+@section Scripts{
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        //$(".icon_close").click(function () {
+        //    let id = $(this).attr("data-id");
+        //         SwalGreen.fire({
+        //        title: `確定要刪除嗎?`,
+        //            showDenyButton: false,
+        //            showCancelButton: true,
+        //            confirmButtonText: '確定',
+        //        cancelButtonText: "取消",
+        //        icon: 'question'
+        //        }).then((result) => {
+        //            if (result.isConfirmed) {
+        //                $(".icon_close").attr("href", `/Admin/ProductManage/ProductImgDelete/${id}`);
+        //            }
+        //        })
+        //})
+        //function CheckRequired() {
+        //    if ($('#FImage').val() == null) {
+        //        SwalGreen.fire({
+        //            title: '必填欄位未選擇',
+        //            icon: 'warning',
+        //            confirmButtonText: '確認',
+        //            showCloseButton: true
+        //        });
+        //        return false;
+        //    } else {
+        //        return true;
+        //    }
+        //}
+    </script>
+ }
+
+
+
+

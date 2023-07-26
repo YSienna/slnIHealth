@@ -1,0 +1,226 @@
+﻿@model prjIHealth.Models.TNews
+
+
+@{
+    ViewData["Title"] = "iHeath後臺";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+@section Styles{
+    <style>
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+
+        #red {
+            color: red;
+        }
+    </style>
+}
+
+@using prjIHealth.Models;
+@using prjiHealth.Models;
+@using prjIHealth.ViewModels;
+@using prjiHealth.ViewModels;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Mvc;
+@using System.Linq;
+@using System.Text.Json;
+
+@{
+    string LoginbuttonValue = "登入";
+    int loginId = 3;
+    TMember loginMember = null;
+
+    if (Context.Session.Keys.Contains(CDictionary.SK_Logined_User))
+    {
+        string logJson = Context.Session.GetString(CDictionary.SK_Logined_User);
+        loginMember = JsonSerializer.Deserialize<TMember>(logJson);
+        LoginbuttonValue = loginMember.FMemberName;
+        loginId = loginMember.FMemberId;
+    };
+}
+
+<h2 id="title">建立文章</h2>
+<hr />
+<div class="contact-form spad">
+    <div class="container" style="height:100%">
+        <form asp-action="Create" enctype="multipart/form-data" onsubmit="return CheckRequired()">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <label asp-for="FTitle" class="control-label">文章標題<span style="color:red">*</span></label>
+                    <input asp-for="FTitle" class="form-control" placeholder="請輸入標題" id="FTitle" required />
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label asp-for="FNewsCategoryId" class="control-label">專欄類別<span style="color:red">*</span></label><br />
+                    <select asp-for="FNewsCategoryId" class="form-select" style="height:55px" id="FNewsCategoryId" required>
+                        <option disabled selected hidden>請選取此處</option>
+                        <option value="1">運動健身</option>
+                        <option value="2">食物營養</option>
+                        <option value="3">新冠疫情</option>
+                        <option value="4">教練專欄</option>
+                    </select>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label asp-for="FMemberId" class="control-label">會員號碼</label>
+                    <input asp-for="@loginId" class="form-control" name="FMemberId" id="loginId" readonly />
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label asp-for="FNewsDate" class="control-label">建立時間</label>
+                    <input asp-for="FNewsDate" class="form-control" value="@DateTime.Now.ToString("yyyy'/'MM'/'dd' - 'HH':'mm")" readonly />
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label asp-for="FVideoUrl" class="control-label">影片連結</label>
+                    <input asp-for="FVideoUrl" class="form-control" placeholder="請輸入影片網址" />
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label class="control-label">專欄縮圖</label>
+                    <input type="file" name="photo" class="form-control" id="imageFile" />
+                </div>
+                <div class="col-lg-6 col-md-6">
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label>預覽縮圖</label>
+                    <br />
+                    <img id="imgPreivew" style="width:150px" />
+                </div>
+                <div class="col-lg-12 text-center">
+                    <label asp-for="FContent" class="control-label">文章內容<span style="color:red">*</span></label>
+                    <textarea id="FContent" asp-for="FContent" class="form-control" placeholder="請輸入內容" style="height:300px" required></textarea>
+                </div>
+            </div>
+            <div style="margin-right:90% ; margin-top:40px">
+                <p>
+                    <input type="submit" class="site-btn" value="建立專欄" style="width:150px" id="btnSubmit" />
+                </p>
+                <p>
+                    <a asp-action="List" class="site-btn" style="width:150px">返回列表</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const SwalGreen = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-secondary'
+            },
+            buttonsStyling: false
+        })</script>
+
+    @if (ViewBag.AlertTitle != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+            SwalGreen.fire({
+                    title: '@ViewBag.AlertTitle',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+        };
+        </script>
+    }
+    @if (ViewBag.AlertContent != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+            SwalGreen.fire({
+                    title: '@ViewBag.AlertContent',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+        };
+        </script>
+    }
+    @if (ViewBag.AlertCategory != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+            SwalGreen.fire({
+                    title: '@ViewBag.AlertCategory',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+        };
+        </script>
+    }
+    @if (ViewBag.Succes != null)
+    {
+        <script type="text/javascript">
+        window.onload = function () {
+                SwalGreen.fire({
+                    title: '@ViewBag.Succes',
+                    text: false,
+                    icon: 'success',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+            };
+        </script>
+    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+
+        function CheckRequired() {
+            if ($('#FTitle').val() == '' || $('#FNewsCategoryId').val() == '' /*|| $('#FContent').text() == ''*/) {
+                console.log($('#FTitle').val());
+                console.log($('#FNewsCategoryId').val());
+                SwalGreen.fire({
+                    title: '必填欄位未填寫',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+                return false;
+            } else {
+                return true;
+            }
+        }
+        //使用ckeditor5
+        ClassicEditor
+            .create(document.querySelector('#FContent'))
+            .then(editor => {
+                console.log(editor);
+            })
+        //預覽圖片jquery
+        var arrayBuffer = null;
+        document.querySelector("#imageFile").addEventListener("change", function () {
+            var reader = new FileReader();
+            reader.onload = function () {
+                arrayBuffer = this.result;
+                var arrayBufferView = new Uint8Array(arrayBuffer);
+                var blob = new Blob([arrayBufferView], { type: "image/jpg" });
+                var urlCreator = window.URL || window.webkitURL;
+                var url = urlCreator.createObjectURL(blob);
+                $("#imgPreivew").attr("src", url);
+            };
+            reader.readAsArrayBuffer(this.files[0]);
+        }, false);
+                            //沒寫好的防呆
+                            //const txtCategory = document.querySelector('#inputCategory');
+                            //const btnValue = document.querySelector('#btnSubmit');
+                            //btnSubmit.addEventListener('click', (evt) => {
+                            //    if (txtCategory.value.trim() === "") {
+                            //        txtCategory.innerHTML = "1312312";
+                            //        txtCategory.style.color = "RED";
+                            //    }
+                            //})
+    </script>
+    <script src="~/Scripts/jquery-3.4.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+}

@@ -1,0 +1,100 @@
+﻿@model prjIHealth.Models.TNews
+
+@{
+    ViewData["Title"] = "iHeath後臺";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+@section Styles{
+    <style>
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+    </style>
+}
+<h2 id="title">檢視文章</h2>
+<hr />
+<div class="contact-form spad">
+    <div class="container">
+        <form asp-action="Details" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" value="@Model.FNewsId" name="NewsId" />
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <label asp-for="FTitle" class="control-label">文章標題</label>
+                    <input asp-for="FTitle" class="form-control" readonly="readonly" />
+                    <span asp-validation-for="FTitle" class="text-danger"></span>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label asp-for="FNewsCategoryId" class="control-label">專欄類別</label>
+                    <input asp-for="FNewsCategoryId" class="form-control" readonly="readonly">
+                    <span asp-validation-for="FNewsCategoryId" class="text-danger"></span>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label asp-for="FMemberId" class="control-label">會員號碼</label>
+                    <input asp-for="FMemberId" class="form-control" readonly />
+                    <span asp-validation-for="FMemberId" class="text-danger"></span>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label asp-for="FNewsDate" class="control-label">建立時間</label>
+                    <input asp-for="FNewsDate" class="form-control" value="@DateTime.Now.ToString("yyyy'/'MM'/'dd' - 'HH':'mm")" readonly />
+                    <span asp-validation-for="FNewsDate" class="text-danger"></span>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label asp-for="FVideoUrl" class="control-label">影片連結</label>
+                    <input asp-for="FVideoUrl" class="form-control" placeholder="請輸入影片網址" />
+                    <span asp-validation-for="FVideoUrl" class="text-danger"></span>
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label class="control-label">專欄縮圖</label>
+                    <input type="file" name="photo" class="form-control" id="imageFile" />
+                </div>
+                <div class="col-lg-6 col-md-6">
+                </div>
+                <div class="col-lg-6 col-md-6">
+                    <label>預覽縮圖</label>
+                    <br />
+                    <img id="imgPreivew" style="width:150px" src="~/img/blog/@Model.FThumbnailPath" />
+                </div>
+                <div class="col-lg-12 text-center">
+                    <label asp-for="FContent" class="control-label">文章內容</label>
+                    <textarea asp-for="FContent" readonly="readonly" disabled="disabled"></textarea>
+                    <span asp-validation-for="FContent" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-md-6">
+                    <a asp-action="List" class="btn btn-success">返回列表</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'))
+            .then(editor => {
+                console.log(editor);
+            })
+
+        var arrayBuffer = null;
+        document.querySelector("#imageFile").addEventListener("change", function () {
+            var reader = new FileReader();
+            reader.onload = function () {
+                arrayBuffer = this.result;
+                var arrayBufferView = new Uint8Array(arrayBuffer);
+                var blob = new Blob([arrayBufferView], { type: "image/jpg" });
+                var urlCreator = window.URL || window.webkitURL;
+                var url = urlCreator.createObjectURL(blob);
+                $("#imgPreivew").attr("src", url);
+            };
+            reader.readAsArrayBuffer(this.files[0]);
+        }, false);
+    </script>
+}

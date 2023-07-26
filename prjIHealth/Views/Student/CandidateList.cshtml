@@ -1,0 +1,761 @@
+﻿@model prjIHealth.ViewModels.CCandidateListViewModel
+
+
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /*標題*/
+        .divTopic {
+            margin-bottom: 10px;
+        }
+
+        .divBar {
+            width: 200px;
+            height: 3px;
+            margin-left: 30px;
+            margin-bottom: 40px;
+            background-color: #7FAD39;
+        }
+
+        /*候選教練*/
+        .divCards {
+            padding: 0px 20px;
+            display: flex;
+        }
+
+        .divCard {
+            margin: 20px;
+            transition: .3s;
+            width: 22rem;
+        }
+
+            .divCard:hover {
+                border-color: seagreen;
+                box-shadow: 2px 2px 5px lightgray;
+            }
+
+        .divCandImg {
+            padding: 20px 10px;
+        }
+
+            .divCandImg img {
+                width: 160px;
+                height: 180px;
+            }
+
+        .divName {
+            padding: 0px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+            .divName > h5 {
+                margin: 0px;
+                font-weight: 700;
+                font-size: 26px;
+            }
+
+        .divDeleteCand {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 0px;
+        }
+
+        .btn-dark {
+            background-color: #7FAD39;
+            border: none;
+        }
+
+            .btn-dark:hover {
+                background-color: #4F6C24;
+                border: none;
+            }
+
+        /*教練專區連結*/
+        .divLink {
+            display: flex;
+            justify-items: center;
+            margin-top: 20px;
+            margin-left: 30px;
+            height: 70px;
+        }
+
+        .divOther {
+            padding: 0px;
+        }
+
+            .divOther span {
+                color: #7F965C;
+                line-height: 70px;
+            }
+
+            .divOther i {
+                color: #7F965C;
+            }
+
+        .divUrl {
+            margin-left: 10px;
+            padding: 15px;
+            line-height: 40px;
+            border: 1px solid #BFD69C;
+            border-radius: 20px;
+        }
+
+            .divUrl a {
+                color: #7FAD39;
+                text-decoration: none;
+                transition: .3s;
+            }
+
+            .divUrl i {
+                color: #DFEACE;
+            }
+
+            .divUrl a:hover {
+                color: #5F822B;
+            }        
+
+        /*彈出視窗-聯繫紀錄*/
+        .table {
+            table-layout: fixed;
+            word-break: break-all;
+        }
+
+        .thNo {
+            width: 10%;
+        }
+
+        .thName {
+            width: 12%;
+        }
+
+        .thPreferTime {
+            width: 16%;
+        }
+
+        .thTime {
+            width: 22%;
+        }
+
+        .thStatus {
+            width: 25%;
+        }
+
+        .thBtn {
+            width: 15%;
+        }
+
+        .btnView {
+            border: none;
+            color: white;
+            background-color: #7FAD39;
+            border-radius: 5px;
+            height: 36px;
+            vertical-align: bottom;
+            transition: .3s;
+        }
+
+            .btnView:hover {
+                background-color: #5F822B;
+                color: white;
+            }
+
+        .modal-body {
+            max-height: 80vh;
+            overflow-y: scroll;
+        }
+
+        td a {
+            color: #212529;
+        }
+
+            td a:hover {
+                color: #7fad39;
+            }
+
+        .modal-title {
+            color: #7fad39;
+            font-weight: 800;
+        }
+        .colorFinish {
+            color: silver;
+            font-weight: 700;
+        }
+        .colorIng {
+            color: #39ADA1;
+            font-weight: 700;
+        }
+        .colorWait {
+            color: lightcoral;
+            font-weight: 700;
+        }
+
+        /*會員專區導覽列*/
+        .blog__btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #1c1c1c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #b2b2b2;
+            padding: 14px 20px 12px;
+            border-radius: 25px;
+        }
+
+            .blog__btn:visited {
+                color: #1c1c1c;
+            }
+
+            .blog__btn:hover {
+                border: 1px solid #4F6C24;
+                color: #4F6C24;
+            }
+
+            .blog__btn:active {
+                color: black;
+                font-weight: 800;
+            }
+
+        .sidebar__item ul li a {
+            margin-bottom: 1vh;
+        }
+
+        .sidebar__item {
+            border: 1px solid lightgray;
+            box-shadow: 2px 2px 5px lightgray;
+            padding: 20px;
+            margin-right: 30px;
+            margin-bottom: 20px;
+        }
+
+            .sidebar__item h5 {
+                text-align: center;
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #4F6C24;
+                color: white;
+            }
+
+            .sidebar__item li:hover {
+                transition: .2s;
+                background-color: #EFF5E6;
+            }
+
+            .sidebar__item i {
+                margin-right: 5px;
+            }
+
+        .liThis {
+            background-color: #EFEDED;
+        }
+
+        /*select*/
+        #selStatus {
+            display: inline !important;
+            color: #fff;
+            background-color: #343a40;
+            border-color: #454d55;
+            font-weight: bold;
+        }
+
+        .nice-select {
+            display: none;
+        }
+
+        /*聊天室*/
+        .chatText {
+            border: 1px solid #7FAD39;
+            border-radius: 10px;
+            padding: 3px 8px 3px 8px;
+            background-color: ghostwhite;
+        }
+
+            .chatText small {
+                color: #7fad39;
+                margin-left: 5px;
+            }
+    </style>
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/banner/banner_mem.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">候選教練</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Student/CoachList">Home</a>
+                        <span>Training</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            @*會員專區垂直導覽列*@
+            <div class="col-lg-3 col-md-5 reveal_b1">
+                <div class="sidebar" style="position:sticky;top:150px;">
+                    <div class="sidebar__item">
+                        <h5>會員專區</h5>
+                        <ul>
+                            <li><a href="~/member/edit" class="row"><i class="fa-solid fa-user-pen col-2"></i>個人資料</a></li>
+                            <li><a href="~/Diary/DiaryMain" class="row"><i class="fa-solid fa-utensils col-2"></i>飲食日誌</a></li>
+                            <li><a href="~/Member/OrderList" class="row"><i class="fa-solid fa-cart-shopping col-2"></i>訂單查詢</a></li>
+                            <li class="liThis"><a href="~/Student/CandidateList" class="row"><i class="fa-solid fa-heart col-2"></i>候選教練</a></li>
+                            <li><a href="~/Student/CourseList" class="row"><i class="fa-solid fa-dumbbell col-2"></i>課程列表</a></li>
+                            <li><a href="~/Student/ViewCourseCalendar" class="row"><i class="fa-solid fa-calendar-day col-2"></i>課程行事曆</a></li>
+                            <li><a href="~/Problem/CheckReply" class="row"><i class="fa-solid fa-comments col-2"></i>客服記錄</a></li>
+                        </ul>
+                    </div>
+                    <a href="~/Coach/CreateResume" class="blog__btn"><span class="arrow_right"></span>教練專區</a>
+                </div>
+            </div>
+
+            <div class="col-lg-9 col-md-7">
+                <div>
+                    @*教練聯繫紀錄預覽*@
+                    <div>
+                        <div class="divTopic reveal_t1"><h3><b>教練聯繫紀錄</b></h3></div>
+                        <div class="divBar reveal_r1"></div>
+                        <table class="table reveal_b1">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th class="thNo">
+                                        No.
+                                    </th>
+                                    <th class="thName">
+                                        教練姓名
+                                    </th>
+                                    <th class="thPreferTime">
+                                        偏好時段
+                                    </th>
+                                    <th class="thTime">
+                                        發送時間
+                                    </th>
+                                    <th class="thStatus">
+                                        聯繫狀態
+                                    </th>
+                                    <th class="thBtn"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int count = 0;
+                                    foreach (var c in Model.ContactViewModels.OrderByDescending(c => c.ContactDate).Take(2))
+                                    {
+                                        count++;
+                                        <tr>
+                                            <td>
+                                                @count
+                                            </td>
+                                            <td>
+                                                <a href="~/Student/ViewCoachDetails/@c.FCoachId">
+                                                    @c.CoachName
+                                                </a>
+                                            </td>
+                                            <td>
+                                                @c.AvailableTime
+                                            </td>
+                                            <td>
+                                                @c.StrContactDate
+                                            </td>
+
+                                            @{
+                                                if (c.Status == "已聯繫，配對成功")
+                                                {
+                                                    <td class="colorIng">
+                                                        @c.Status
+                                                    </td>
+                                                }
+                                                else if (c.Status == "等待聯繫中")
+                                                {
+                                                    <td class="colorWait">
+                                                        @c.Status
+                                                    </td>
+                                                }
+                                                else
+                                                {
+                                                    <td class="colorFinish">
+                                                        @c.Status
+                                                    </td>
+                                                }
+                                            }
+
+
+                                            <td>
+                                                <input type="hidden" value="@c.FCoachContactId" />
+                                                <button class="btn btn-secondary btnChat" data-toggle="modal" data-target="#modalChat" data-coachname="@c.CoachName" onclick="getId();">訊息</button>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                <tr>
+                                    <td>...</td>
+                                    <td>.....</td>
+                                    <td>.....</td>
+                                    <td>.....</td>
+                                    <td>.....</td>
+                                    <td align="right">
+                                        <button class="btnView" data-toggle="modal" data-target="#modalContact"><i class="fa fa-expand" aria-hidden="true"></i>&nbsp&nbsp展開全部</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @*候選教練標題*@
+                    <div>
+                        <div class="reveal_t1 divTopic"><h3><b>候選教練</b></h3></div>
+                        <div class="divBar reveal_r1"></div>
+                    </div>
+                    @*候選教練卡*@
+                    <div class="row divCards">
+                        @foreach (var c in Model.CandidateViewModels)
+                        {
+                            <div class="card col-3 divCard reveal_b1">
+                                <div class="divCandImg">
+                                    <a href="~/Student/ViewCoachDetails/@c.FCoachId">
+                                        <img src="~/img/Coach/coachImage/@c.CoachImage" class="card-img-top" alt="...">
+                                    </a>
+                                </div>
+                                <div class="card-body divName">
+                                    <h5 class="card-title">@c.CoachName</h5>
+                                </div>
+                                <div class="card-body divDeleteCand">
+                                    <input type="hidden" value="@c.FCandidateId" id="inpCandidateId" />
+                                    <a class="btn btn-dark aDelCand" style="color:white">移除候選</a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    @*教練專區連結*@
+                    <div class="reveal_b1 divLink">
+                        <div class="divOther"><i class="fa-solid fa-magnifying-glass"></i><span><b>&nbsp;&nbsp;想多看看其他教練？</b></span></div>
+                        <div class="divUrl"><i class="fa-solid fa-arrow-right-long"></i><a href="~/Student/CoachList">&nbsp;&nbsp;前往<b>私人教練專區</b></a></div>
+                    </div>
+
+                    @*彈出視窗:教練聯繫紀錄*@
+                    <div class="modal fade" id="modalContact" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">教練聯繫紀錄<span></span></h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <table class="table">
+                                        <thead class="thead-dark">
+                                            <tr>
+                                                <th class="thNo">
+                                                    No.
+                                                </th>
+                                                <th class="thName">
+                                                    教練姓名
+                                                </th>
+                                                <th class="thPreferTime">
+                                                    偏好時段
+                                                </th>
+                                                <th class="thTime">
+                                                    發送時間<i class="fa fa-caret-down" aria-hidden="true"></i>
+                                                </th>
+                                                <th class="thStatus">
+                                                    <select id="selStatus">
+                                                        <option value="0" selected>所有聯繫狀態</option>
+                                                        <option value="50">等待聯繫中</option>
+                                                        <option value="52">已聯繫，配對成功</option>
+                                                        <option value="51">已聯繫，暫無課程</option>
+                                                    </select>
+                                                </th>
+                                                <th class="thBtn"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbdContact">
+                                            @{
+                                                int modalCount = 0;
+                                                foreach (var c in Model.ContactViewModels.OrderByDescending(c => c.ContactDate))
+                                                {
+                                                    modalCount++;
+                                                    <tr>
+                                                        <td>
+                                                            @modalCount
+                                                        </td>
+                                                        <td>
+                                                            <a href="~/Student/ViewCoachDetails/@c.FCoachId">
+                                                                @c.CoachName
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            @c.AvailableTime
+                                                        </td>
+                                                        <td>
+                                                            @c.StrContactDate
+                                                        </td>
+                                                        @{
+                                                            if (c.Status == "已聯繫，配對成功")
+                                                            {
+                                                                <td class="colorIng">
+                                                                    @c.Status
+                                                                </td>
+                                                            }
+                                                            else if (c.Status == "等待聯繫中")
+                                                            {
+                                                                <td class="colorWait">
+                                                                    @c.Status
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                <td class="colorFinish">
+                                                                    @c.Status
+                                                                </td>
+                                                            }
+                                                        }
+                                                        <td>
+                                                            <input type="hidden" value="@c.FCoachContactId" />
+                                                            <button class="btn btn-secondary btnChat" data-toggle="modal" data-target="#modalChat" data-coachname="@c.CoachName" onclick="getId();">訊息</button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+</section>
+
+
+@*彈出視窗:聯繫聊天室*@
+<div class="modal fade" id="modalChat" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="hMemberName">聯繫教練<span></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="height:60vh;overflow-y:scroll" id="divModalScroll">
+                <input type="hidden" id="inpChatContactId" />
+                <div class="row" id="divChatBox">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div style="width:100%" class="row">
+                    <textarea id="txtNewText" class="col-10"></textarea>
+                    <div class="col-2" style="justify-content: center; display: flex;">
+                        <button type="button" class="btn btn-success" id="btnSendText" style="height:40px">送出</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div>
+                    <button id="btnChatDemo1" class="btn btn-light">Demo2</button>
+                    <button id="btnChatDemo2" class="btn btn-light">Demo4</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+    <script>
+        //移除候選教練
+        $(".aDelCand").on("click", function () {
+            SwalGreen.fire({
+                title: `確定要移除嗎?`,
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: '確定移除',
+                cancelButtonText: '取消',
+                icon: 'question'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let theCandidate = $(this);
+                    $.get("@Url.Content("~/Student/delCandidate")", { id: theCandidate.prev("input").val() }, function (data) {
+                        theCandidate.closest(".divCard").remove();
+                    })
+                }
+            })
+        });
+
+        //教練聯繫紀錄Modal依聯繫時間排序
+        $(".thTime").click(function () {
+            if ($(".thTime").children("i").hasClass("fa-caret-down")) {
+                $(".thTime").children("i").removeClass("fa-caret-down").addClass("fa-caret-up");
+            }
+            else {
+                $(".thTime").children("i").removeClass("fa-caret-up").addClass("fa-caret-down");
+            }
+            loadContact();
+        });
+
+        //教練聯繫紀錄Modal依聯繫狀態篩選
+        $("#selStatus").on("change", loadContact);
+
+        //教練聯繫紀錄Modal依聯繫時間排序+依聯繫狀態篩選
+        function loadContact() {
+            let html = "";
+            if ($(".thTime").children("i").hasClass("fa-caret-up")) {
+                $.get("@Url.Content("~/Student/loadContact")", { flag: 0, statusNum:$("#selStatus").val() }, function (contacts) {
+                    $.each(contacts, function (index, value) {
+                        html += `<tr><td>${index+1}</td>`;
+                        html += `<td><a href="/Student/ViewCoachDetails/${value.fCoachId}">${value.coachName}</a></td>`;
+                        html += `<td>${value.availableTime}</td>`;
+                        html += `<td>${value.strContactDate}</td>`;
+                        if (value.status == "已聯繫，配對成功") {
+                            html += `<td class="colorIng">${value.status}</td>`;
+                        }
+                        else if (value.status == "等待聯繫中") {
+                            html += `<td class="colorWait">${value.status}</td>`;
+                        }
+                        else {
+                            html += `<td class="colorFinish">${value.status}</td>`;
+                        }
+                        html += `<td><input type="hidden" value="${value.fCoachContactId}" />`;
+                        html += `<button class="btn btn-secondary btnChat" data-toggle="modal" data-target="#modalChat" data-coachname="${value.coachName}" onclick="getId();">訊息</button></td></tr>`;
+                    })
+                    $("#tbdContact").html(html);
+                })
+            }
+            else {
+                $.get("@Url.Content("~/Student/loadContact")", { flag: 1, statusNum: $("#selStatus").val() }, function (contacts) {
+                    $.each(contacts, function (index, value) {
+                        html += `<tr><td>${index+1}</td>`;
+                        html += `<td><a href="/Student/ViewCoachDetails/${value.fCoachId}">${value.coachName}</a></td>`;
+                        html += `<td>${value.availableTime}</td>`;
+                        html += `<td>${value.strContactDate}</td>`;
+                        if (value.status == "已聯繫，配對成功") {
+                            html += `<td class="colorIng">${value.status}</td>`;
+                        }
+                        else if (value.status == "等待聯繫中") {
+                            html += `<td class="colorWait">${value.status}</td>`;
+                        }
+                        else {
+                            html += `<td class="colorFinish">${value.status}</td>`;
+                        }
+                        html += `<td><input type="hidden" value="${value.fCoachContactId}" />`;
+                        html += `<button class="btn btn-secondary btnChat" data-toggle="modal" data-target="#modalChat" data-coachname="${value.coachName}" onclick="getId();">訊息</button></td></tr>`;
+                    })
+                    $("#tbdContact").html(html);
+                })
+            }
+        }
+
+        //SignalR線上聯繫
+        var theContactId;
+        var theContactName;
+        function getId() {
+            theContactId = $(event.target).parent("td").children("input").val();
+            theContactName = $(event.target).attr("data-coachname");
+            $("#inpChatContactId").val(theContactId);
+        }
+
+        function loadChatText() {
+            if (theContactId != undefined) {
+                $.get("@Url.Content("~/Student/loadChatText")", { id: theContactId }, function (texts) {
+                    let html = "";
+                    $.each(texts, function (idx, text) {
+                        if (text.fIsCoach == false) {//學員自己
+                            html += `<div class="col-3" ></div><div class="col-9" style="float:right">`;
+                            html += `<p class="chatText" style="float: right; text-align: start;">${text.fContactText}`;
+                            html += `<small>${text.time}</small></p></div>`;
+                        }
+                        else {//對方教練
+                            html += `<div class="col-2"><label style="float:right;color:seagreen"><i class="fa fa-commenting-o" aria-hidden="true"></i> ${text.coachName}</label></div><div class="col-7">`;
+                            html += `<p class="chatText" style="float: left; text-align: start;">${text.fContactText}`;
+                            html += `<small>${text.time}</small></p></div><div class="col-3"></div></div >`;
+                        }
+                    })
+                    $("#divChatBox").html(html);
+                });
+            }
+        }
+
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        connection.on("ReceiveMessage", function (CoachContactId, IsCoach, ContactText) {
+            var now = new Date();
+            var time = `${now.getHours()}:${now.getMinutes()}`;
+            if (CoachContactId == theContactId) {
+                let html = "";
+                if (IsCoach == false) {//學員自己
+                    html += `<div class="col-3" ></div><div class="col-9" style="float:right">`;
+                    html += `<p class="chatText" style="float: right; text-align: start;">${ContactText}`;
+                    html += `<small>${time}</small></p></div>`;
+                }
+                else {//對方教練
+                    html += `<div class="col-2"><label style="float:right;color:seagreen"><i class="fa fa-commenting-o" aria-hidden="true"></i> ${theContactName}</label></div><div class="col-7">`;
+                    html += `<p class="chatText" style="float: left; text-align: start;">${ContactText}`;
+                    html += `<small>${time}</small></p></div><div class="col-3"></div></div >`;
+                }
+                $("#divChatBox").append(html);
+            }
+        });
+
+
+        $("#modalChat").on("show.bs.modal", function () {
+            loadChatText();
+            connection.start();
+        })
+        $("#modalChat").on("hide.bs.modal", function () {
+            connection.stop();
+            $("#divChatBox").html("");
+            $("#txtNewText").val("");
+        })
+
+
+        //送出訊息
+        $("#btnSendText").click(function () {
+            let id = $("#inpChatContactId").val();
+            let text = $("#txtNewText").val();
+
+            connection.invoke("SendMessage", `${id}`, false, `${text}`).catch(function (err) {
+                return console.error(err.toString());
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+
+            $("#txtNewText").val("");
+            $.get("@Url.Content("~/Student/saveText")", { FCoachContactId: id, FContactText: text });
+        })
+
+
+        //訊息Demo鍵
+        $("#btnChatDemo1").click(function () {
+            $("#txtNewText").val("那我可以改更早的時間嗎？")
+        })
+
+        $("#btnChatDemo2").click(function () {
+            $("#txtNewText").val("OKOK~再麻煩教練排課，謝謝！")
+        })
+
+
+    </script>
+}
+
+
+
+
+
+
+

@@ -1,0 +1,197 @@
+﻿@model prjIHealth.Models.TMember
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+@section Styles{
+    <style>
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+    </style>
+}
+<h2 id="title">會員資料編輯</h2>
+@*<h4>TMember</h4>*@
+<hr />
+<form asp-action="Edit" enctype="multipart/form-data">
+    <div class="container">
+        <div class="row">
+            <div class="col-4 ">
+                <div class="col-md-12" style="padding-left: 0px;  padding-right: 0px;">
+                    <div class="form-group row justify-content-center">
+                        <img src="~/img/member/@Model.FPicturePath" onerror="this.src='/img/member/defaultImage.jpg'" alt=" " class="rounded-circle img-responsive  border border-ligt" id="imgShow" />
+                    </div>
+
+                </div>
+                <div class="form-group  justify-content-center">
+                    <div class="col">
+                        <label id="lblPicture"
+                               class="col-form-label col-form-label-lg">
+                            <input id="imgLoad" type="file" name="photo" class="form-control" style="display:none;" />
+                            <i class="fa fa-photo"></i> 上傳圖片
+                        </label>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col border border-primary mt-md-8">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="FMemberId" />
+                <div class="form-group">
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FMemberName" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <input asp-for="FMemberName" class="form-control" />
+                    </div>
+                    <span asp-validation-for="FMemberName" class="text-danger"></span>
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FPassword" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <input asp-for="FPassword" class="form-control" />
+                    </div>
+                    <span asp-validation-for="FPassword" class="text-danger"></span>
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FBirthday" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <input asp-for="FBirthday" class="form-control" />
+                    </div>
+                    <span asp-validation-for="FBirthday" class="text-danger"></span>
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FGender" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="form-check form-check-inline">
+                            <input asp-for="FGender" class="form-check-input" type="radio" id="inlineCheckbox1" value="true" name="FGender">
+                            <label class="form-check-label" for="inlineCheckbox1">生理男性</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input asp-for="FGender" class="form-check-input" type="radio" id="inlineCheckbox2" value="false" name="FGender">
+                            <label class="form-check-label" for="inlineCheckbox2">生理女性</label>
+                        </div><span asp-validation-for="FGender" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FUserName" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <input asp-for="FUserName" class="form-control" />
+                    </div>
+                    <span asp-validation-for="FUserName" class="text-danger"></span>
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FAddress" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <input asp-for="FAddress" class="form-control" />
+                    </div>
+                    <span asp-validation-for="FAddress" class="text-danger"></span>
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FPhone" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <input asp-for="FPhone" class="form-control" />
+                    </div>
+                    <span asp-validation-for="FPhone" class="text-danger"></span>
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FEmail" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <input asp-for="FEmail" class="form-control" />
+                    </div>
+                    <span asp-validation-for="FEmail" class="text-danger"></span>
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FRegisterDate" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <input asp-for="FRegisterDate" class="form-control" />
+                    </div>
+                    <span asp-validation-for="FRegisterDate" class="text-danger"></span>
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FAuthorityId" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <select asp-for="FAuthorityId" class="form-control" asp-items="ViewBag.FAuthorityId"></select>
+                    </div>
+                    <span asp-validation-for="FAuthorityId" class="text-danger"></span>
+
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FDisabled" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="form-check form-check-inline">
+                            <input asp-for="FDisabled" class="form-check-input" type="radio" id="inlineCheckbox1" value="true" name="FDisabled">
+                            <label class="form-check-label" for="inlineCheckbox1">停權中</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input asp-for="FDisabled" class="form-check-input" type="radio" id="inlineCheckbox2" value="false" name="FDisabled">
+                            <label class="form-check-label" for="inlineCheckbox2">會員</label>
+                        </div><span asp-validation-for="FDisabled" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <label asp-for="FRemarks" class="control-label"></label>
+                    </div>
+                    <div class="col-md-7">
+                        <input asp-for="FRemarks" class="form-control" />
+                    </div>
+                    <span asp-validation-for="FRemarks" class="text-danger"></span>
+                </div>
+
+                <div class="form-group row justify-content-center">
+                    <div class="col-md-3">
+                        <input type="submit" value="存檔" class="btn btn-success" onclick="history.back()" />
+                    </div>
+                    <div class="col-md-7">
+                        <input type="button" value="回上一頁" onclick="history.back()">
+
+                        @*<a asp-action="Index" class="btn btn-success">回會員資料管理列表</a>*@
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</form>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $('#lblPicture').mouseover(function ()
+        {
+            $(this).css('cursor', 'pointer');
+        });
+        document.querySelector('#imgLoad').addEventListener("change", function ()
+        {
+            document.getElementById('imgShow').src = window.URL.createObjectURL(this.files[0]);
+        });
+
+    </script>
+}

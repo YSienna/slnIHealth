@@ -1,0 +1,418 @@
+﻿@model TNews
+
+
+@section Styles{
+    <style>
+        #btnDEMO{
+            margin-left:1%;
+        }
+        .btn-success {
+            background-color: #7FAD39;
+            color: white;
+            border: none;
+        }
+        #btnSubmit{
+            margin-left:7px;
+        }
+    </style>
+}
+<link rel="stylesheet" href="/css/ShoppingMallCategory.css" type="text/css">
+
+<!-- Blog Details Hero Begin -->
+
+
+<section class="breadcrumb-section set-bg" data-setbg="/img/blog/banner_news.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1" id="ntitle">@Model.FTitle</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/News/Blog">
+                            By @{
+                                IHealthContext dblHealth = new IHealthContext();
+                                var member = (from m in dblHealth.TMembers
+                                             where m.FMemberId == Model.FMemberId
+                                             select m.FMemberName).ToList().FirstOrDefault();
+                            }
+                            @member
+                        </a>
+                        <span>@Model.FNewsDate.Substring(0, Math.Min(Model.FNewsDate.Length, 10))</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!--<section class="blog-details-hero set-bg" data-setbg="img/blog/details/details-hero.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="blog__details__hero__text">
+                    <h2></h2>-->
+<!--<ul>
+    <li>By </li>-->
+<!--<li></li>-->
+<!--<li>8 Comments</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>-->
+<!-- Blog Details Hero End -->
+<!-- Blog Details Section Begin -->
+<section class="blog-details spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-5">
+                <div class="blog__sidebar">
+                    <div class="blog__sidebar__search">
+                        <form action="#">
+                            <input type="text" placeholder="Search..." @Html.TextBox("txtKeyword")
+                            <button type="submit"><span class="icon_search"></span></button>
+                        </form>
+                    </div>
+                    <div class="blog__sidebar__item" id="cateSe">
+                        <h4>專欄分類</h4>
+                        <ul id="cate">
+                            <li><a href="~/News/Blog"　class="categoryItem">所有顯示 (@ViewBag.Category0Count)</a></li>
+                            <li><a href="~/News/BlogCategory/1" data-id="1" class="categoryItem">運動健身 (@ViewBag.Category1Count)</a></li>
+                            <li><a href="~/News/BlogCategory/2" data-id="2" class="categoryItem">食物營養 (@ViewBag.Category2Count)</a></li>
+                            <li><a href="~/News/BlogCategory/3" data-id="3" class="categoryItem">新冠疫情 (@ViewBag.Category3Count)</a></li>
+                            <li><a href="~/News/BlogCategory/4" data-id="4" class="categoryItem">教練專欄 (@ViewBag.Category4Count)</a></li>
+                            <!--專欄分類使用處-->
+                        </ul>
+                    </div>
+                    <div class="blog__sidebar__item">
+                        <h4>近期專欄</h4>
+                        @{
+                            IHealthContext db = new IHealthContext();
+                            foreach (var item in db.TNews.OrderByDescending(t => t.FNewsDate).Take(3))
+                            {
+                                <a href="~/News/BlogDetail?id=@item.FNewsId" class="blog__sidebar__recent__item">
+                                    <div class="blog__sidebar__recent__item__pic">
+                                        <img src="~/img/blog/@item.FThumbnailPath" alt="" style="width:40px;height:40px">
+                                    </div>
+                                    <div class="blog__sidebar__recent__item__text">
+                                        <h6>
+                                            @item.FTitle.Substring(0, Math.Min(item.FTitle.Length, 18)).Replace("<p>", "").Replace("<strong>", "").Replace("<br />", "").Replace("</p>", "")
+                                            <br />
+                                            @*@item.FTitle.Substring(20, Math.Min(item.FContent.Length, 30)).Replace("<p>", "").Replace("<strong>", "").Replace("<br />", "").Replace("</p>", "")*@
+                                        </h6>
+                                        <span>@item.FNewsDate.Substring(0, Math.Min(item.FNewsDate.Length, 10))</span>
+                                    </div>
+                                </a>
+                            }
+                        }
+                    </div>
+                    <div class="blog__sidebar__item">
+                        <h4>快速搜尋</h4> @*快速功能待施工中，希望改成熱門作者*@
+                        <div class="blog__sidebar__item__tags">
+                            <a href="~/News/Blog?txtKeyword=健身#">健身</a>
+                            <a href="~/News/Blog?txtKeyword=食物#">食物</a>
+                            <a href="~/News/Blog?txtKeyword=新冠#">新冠</a>
+                            <a href="~/News/Blog?txtKeyword=營養#">營養</a>
+                            <a href="~/News/Blog?txtKeyword=飲食#">飲食</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-7 order-md-1 order-1" id="BlogShow">
+                <div class="blog__details__text" @*id="BlogShow"*@>
+                    <img src="~/img/blog/@Model.FThumbnailPath" alt="">
+                    <input type="hidden" data-id="@Model.FNewsId" value="@Model.FNewsId" name="NewsId" id="blodNewsId" />
+                    <p>
+                        @Html.Raw(@Model.FContent)
+                    </p>
+
+                    @*<div id="divReplyPartial">*@
+                    <div>
+
+                    </div>
+                </div>
+                <div class="blog__details__content" id="detail_content">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="blog__details__author">
+                                @{
+                                    IHealthContext ddblHealth = new IHealthContext();
+                                    var mmember = (from m in ddblHealth.TMembers
+                                                   where m.FMemberId == Model.FMemberId
+                                                   select m.FMemberName).ToList().FirstOrDefault();
+                                    var mmmmber = (from m in ddblHealth.TMembers
+                                                   where m.FMemberId == Model.FMemberId
+                                                   select m.FPicturePath).ToList().FirstOrDefault();
+                                }
+                                <div class="blog__details__author__pic">
+                                    <img src="~/img/member/@mmmmber" alt="">@*會員大頭貼路徑*@
+                                </div>
+                                <div class="blog__details__author__text">
+                                    <h6>
+                                        @mmember
+                                    </h6>
+                                    <span>作者</span>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-lg-6">
+                            <div class="blog__details__widget">
+                                <ul>
+                                    <li><span>文章分類:</span> Food</li>
+                                    <li><span>標籤:</span> All, Trending, Cooking, Healthy Food, Life Style</li>
+                                </ul>
+                                <div class="blog__details__social">
+                                    <a href="#"><i class="fa fa-facebook"></i></a>
+                                    <a href="#"><i class="fa fa-twitter"></i></a>
+                                    <a href="#"><i class="fa fa-google-plus"></i></a>
+                                    <a href="#"><i class="fa fa-linkedin"></i></a>
+                                    <a href="#"><i class="fa fa-envelope"></i></a>
+                                </div>
+                            </div>
+                        </div>*@
+                    </div>
+                    <form asp-action="ReplyComment" enctype="multipart/form-data" id="blogForm" onsubmit="return CheckRequired()">
+                        @*@foreach (var item in Model)
+                            {
+                                <input type="hidden" name="FNewsId" value="@Html.DisplayFor(modelItem => item.FNewsId)" />
+                                //<label>使用者名稱</label>
+                                <input type="hidden" id="FMemberID" name="FMemberID" value="8" />
+                            }*@
+                        <input type="hidden" name="FNewsId" id="testInput" />
+                        <br />
+                        @*<label>@Model.FMember.FMemberName</label>*@
+                        <input type="hidden" id="FMemberID" name="FMemberID" value="9 " />
+                        @*<label value="" >@item.MemberName.FMemberName</label>*@
+                        <label>留言回覆</label>
+                        <textarea id="FNewsReply" name="FNewsReply" style="height: 35px;width:200px;resize: none;"></textarea>
+                        <br />
+                        <button id="btnShow" type="button" class="btn btn-success" onclick="showPartial">顯示回覆</button>
+                        <input id="btnSubmit" value="發送回覆" class="btn btn-success" onclick="CheckCreate();" type="button" />
+                        <button id="btnDEMO" class="btn btn-success">DEMO</button>
+                    </form>
+                    <br />
+                    <div id="divReplyPartial" hidden>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Blog Details Section End -->
+<!-- Related Blog Section Begin -->
+<section class="related-blog spad" id="likesection">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title related-blog-title">
+                    <h2>您可能會喜歡的文章</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="randomBlog">
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        function CheckCreate() {
+            SwalGreen.fire({
+                title: `確定要留言嗎？`,
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: '確定',
+                cancelButtonText: '取消',
+                icon: 'question'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post("@Url.Content("~/News/ReplyComment")", $("#blogForm").serialize(), function () {
+                        //SwalGreen.fire({
+                        //    title: `留言成功`,
+                        //    showDenyButton: false,
+                        //    showCancelButton: false,
+                        //    confirmButtonText: '確定',
+                        //    icon: 'success'
+                        //})
+                        window.location.reload(true);
+                    })
+                }
+            })
+        }
+
+        function CheckRequired() {
+            if ($('#FNewsReply').val() == '') {
+                SwalGreen.fire({
+                    title: '請輸入留言內容',
+                    text: false,
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        $("#btnDEMO").click(function (event) {
+            event.preventDefault();
+            $("#FNewsReply").val("這是DEMO測試唷");
+        })
+        //let testInput = $('#testInput');
+        //var formData = new FormData(document.querySelector("#blogForm"));
+        //fetch("/News/BlogDetail", { body: formData, method: "Post" }).then(Response => Response.text()).(data => {
+        //    alert(data);
+        //    $('#testInput').val(data);
+
+        //});
+
+        let dd= $('#blodNewsId').val();
+        console.log(dd);
+        $("#testInput").val(dd);
+
+        let btnShow = document.querySelector('#btnShow');
+
+        btnShow.addEventListener('click', showPartial)
+
+        function showPartial() {
+            let divPartial = document.querySelector('#divReplyPartial');
+            if (divPartial.hasAttribute("hidden")) {
+                divPartial.removeAttribute("hidden")
+                btnShow.innerText = "隱藏回覆";
+                $('#divReplyPartial').load('@Url.Content("~/News/LoadComment")' + `?id=${@Model.FNewsId}`)
+                return;
+            } else {
+                divPartial.setAttribute("hidden", "")
+                btnShow.innerText = "顯示回覆";
+                //$('#divReplyPartial').empty();
+                return;
+            }
+        }
+        let newsID = $("#blodNewsId").val();
+        console.log(newsID);
+        $.get("@Url.Content("~/News/RandomBlog/")" + newsID, function (datas) {
+            let randomBlogShow = "";
+            $.each(datas, function (idx, news) {
+                let fixViews = '';                 /*處理篩選資料後，空值會顯示null字樣問題*/
+                let fixVideo = '';
+                let fixTitle = '';
+                let fixDate = '';
+                let fixContent = '';
+                let fixMember = '';
+                if (news.fTitle != null) {
+                    fixTitle = news.fTitle.substr(0, 10);
+                }
+                if (news.fNewsDate != null) {
+                    fixDate = news.fNewsDate.substr(0, 10);
+                }
+                if (news.fContent != null) {
+                    fixContent = news.fContent.substr(0, 20);
+                }
+                randomBlogShow +=
+                     `<div class="col-lg-4 col-md-4 col-sm-6">
+                      <div class="blog__item">
+                      <div class="blog__item__pic">
+                      <img src="/img/blog/${news.fThumbnailPath}" alt="">
+                      </div>
+                      <div class="blog__item__text">
+                      <ul>
+                      <li><i class="fa fa-calendar-o"></i>${fixDate}</li>
+                      <li><i class="fa fa-comment-o"></i> 5</li>
+                      </ul>
+                      <h5><a href="/News/BlogDetail/${news.fNewsId}">${fixTitle}</a></h5>
+                      <p>${fixContent}</p>
+                      </div>
+                      </div>
+                      </div>`
+            })
+            $("#randomBlog").html(randomBlogShow);
+        })
+        $(".categoryItem").click(function () {
+            $(".categoryItem").removeClass("selectedCategory");
+            $(this).addClass("selectedCategory");
+        })
+          @*$('#cate').on('click', CategorySelect)
+
+        let cateID = 0;
+        $("#cate").find("a").click(function (event) {
+            event.preventDefault();
+            cateID = $(this).attr("data-id");
+            console.log(this);
+        })
+        //類別篩選api，尚無法恢復分頁套件顯示
+        async function CategorySelect() {
+            $('#BlogShow').empty();
+            $('#blogForm').remove();
+            $('#btnShow').remove();
+            $('#detail_content').remove();
+            $('#likesection').remove();
+            document.getElementById("ntitle").innerHTML = "健康資訊";
+            if (cateID == 0) {
+                const response = await fetch('@Url.Content("~/News/BlogSelectCategoryAPI")');
+                const datas = await response.json();
+                let tr = '<div class="row">';
+                for (i = 0; i < datas.length; i++) {
+                    if (datas[i].fContent != null) {
+                        fixContent = datas[i].fContent.substr(0, 30);
+                    }
+                    tr += `<a href="/News/BlogDetail?id=${datas[i].fNewsId}"><div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="blog__item"><div class="blog__item__pic"><img src="/img/blog/${datas[i].fThumbnailPath}" />
+                  </div><div class="blog__item__text"><ul>
+                  <li><i class="fa fa-calendar-o"></i>${datas[i].fNewsDate}</li>
+                  <li><i class="fa fa-comment-o"></i>test</li>
+                  </ul>
+                  </a>
+                  <h5><a href="/News/BlogDetail?id=${datas[i].fNewsId}"></a>
+                  <a href="/News/BlogDetail?id=${datas[i].fNewsId}">${datas[i].fTitle}</a></h5>
+                  <p>
+                  ${fixContent}
+                  </p>
+                  <a href="/News/BlogDetail?id=${datas[i].fNewsId}" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
+                  </div>
+                  </div>
+                  </div>
+                  </a>`
+                    tr += `</div>`
+                    $('#BlogShow').append(tr);
+                }
+            }
+            if (cateID != 0) {
+            const response = await fetch('@Url.Content("~/News/BlogSelectCategoryAPI")' + `?id=${cateID}`);
+            //console.log(response);
+            const datas = await response.json();
+            //console.log(datas);
+            let tr = '';
+                    for (i = 0; i < datas.length; i++) {
+                        if (datas[i].fContent != null) {
+                            fixContent = datas[i].fContent.substr(0, 30);
+                        }
+                  tr = `<a href="/News/BlogDetail?id=${datas[i].fNewsId}"><div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="blog__item"><div class="blog__item__pic"><img src="/img/blog/${datas[i].fThumbnailPath}" />
+                  </div><div class="blog__item__text"><ul>
+                  <li><i class="fa fa-calendar-o"></i>${datas[i].fNewsDate}</li>
+                  <li><i class="fa fa-comment-o"></i> 5</li>
+                  </ul>
+                  </a>
+                  <h5><a href="/News/BlogDetail?id=${datas[i].fNewsId}"></a>
+                  <a href="/News/BlogDetail?id=${datas[i].fNewsId}">${datas[i].fTitle}</a></h5>
+                  <p>
+                  ${fixContent}
+                  </p>
+                  <a href="/News/BlogDetail?id=${datas[i].fNewsId}" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
+                  </div>
+                  </div>
+                  </div>
+                  </a>`
+                        $('#BlogShow').append(tr);
+                        console.log("A");
+                    }
+            }
+        }*@
+
+    </script>
+}

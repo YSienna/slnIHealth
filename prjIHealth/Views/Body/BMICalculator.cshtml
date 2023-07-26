@@ -1,0 +1,197 @@
+﻿
+@{
+    ViewData["Title"] = "BMICalculator";
+}
+
+
+@section Styles{
+    <style>
+        
+        .leftdiv,.rightdiv {
+            padding: 1vw;
+        }
+        
+        .rightdiv {
+            border: 2px dotted green;
+            border-radius: 5%;
+        }
+        
+        .form-group > label {
+            margin-left: 1vw;
+        }
+        
+        .text-danger {
+            float: right;
+        }
+        
+        .divResult {
+            border: 2px dotted green;
+            border-radius: 10px;
+            padding: 5px 20px 5px 20px;
+            margin-top: 1vw;
+            margin-bottom: 1vw;
+        }
+        
+        .blog__btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #1c1c1c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #b2b2b2;
+            padding: 14px 20px 12px;
+            border-radius: 25px;
+        }
+            
+        .blog__btn:visited {
+                color: #1c1c1c;
+            }
+
+            .blog__btn:hover {
+                color: black;
+                font-weight:800;
+            }
+
+            .blog__btn:active {
+                color: black;
+                font-weight: 800;
+            }
+    </style>
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/body/banner_cal.png">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2 class="reveal_t1">BMI計算器</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Body/BodyCalculatorMain">Home</a>
+                        <span>Body Calculator</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div class="contact-form spad">
+    <div class="container">
+        <div class="row">
+
+            @*說明文字*@
+            <div class="col-lg-12 reveal_b1">
+                <div class="contact__form__title">
+                    <div class="col-lg-8 centered" style="text-align:start">
+                        BMI的中文名稱為【身體質量指數】（Body Mass Index, BMI），世界衛生組織建議衡量肥胖程度的指標。
+                        根據國民健康署的建議，台灣成人BMI標準的正常理想範圍落在18.5~24之間。
+                    </div>
+                    <br />
+                    <div class="col-lg-8 centered">
+                        來算算看自己的 BMI 是否標準吧！
+                    </div>
+                </div>
+            </div>
+
+            @*BMI計算結果*@
+            <div class="col-lg-6 leftdiv reveal_b2">
+                <div class="section-title product__discount__title" style="margin-bottom:2vw">
+                    <h2 style="font-size:30px;" id="hResult">您的BMI值為：</h2>
+                </div>
+                <div class="divResult">
+                    BMI < 18.5<br />
+                    「體重過輕」，需要多運動，均衡飲食，以增加體能，維持健康！
+                </div>
+                <div class="divResult">
+                    18.5 ≤ BMI < 24<br />
+                    恭喜！「健康體重」，要繼續保持！
+                </div>
+                <div class="divResult">
+                    24 ≤ BMI < 27<br />
+                    「體重過重」了，要小心囉，趕快力行健康體重管理！
+                </div>
+                <div class="divResult" style="margin-bottom:0">
+                    BMI ≥ 27<br />
+                    啊～「肥胖」，需要立刻力行健康體重管理囉！
+                </div>
+            </div>
+
+            @*計算器*@
+            <div class="col-lg-6 rightdiv reveal_b3">
+                @*<form method="post">*@
+                <br />
+                <div class="form-group">
+                    <label class="control-label">身高(cm)</label><span class="text-danger"></span>
+                    <input class="form-control inpBmi" id="FHeight" type="number" pattern="^[0-9]+(.[0-9])?$$" placeholder="請輸入身高(cm)" required />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">體重(kg)</label><span class="text-danger"></span>
+                    <input class="form-control inpBmi" id="FWeight" type="number" pattern="^[0-9]+(.[0-9])?$" placeholder="請輸入體重(kg)" required />
+                </div>
+                <br />
+                <div class="text-center">
+                    <button class="site-btn" id="btnGetBMI">開始計算!</button>
+                    <button type="button" class="btn btn-outline-success" id="btnDemo">Demo</button>
+                </div>
+                <div class="text-center">想知道自己的每日總消耗熱量嗎？<a href="../Body/TDEECalculator" class="blog__btn" style="margin-left:1vw;margin-top:1vh"><span class="arrow_right"></span>TDEE計算器</a></div>
+                @*</form>*@
+            </div>
+        
+        </div>
+    </div>
+</div>
+@*※※※非會員專區的View的內容請從此處開始※※※*@
+
+@section Scripts {
+    @*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
+    <script>
+
+        //驗證空值+數字
+        $(".inpBmi").blur(function () {
+            let isNum = /^[0-9]+(.[0-9])?$/;
+            if ($(this).val() == "") {
+                $(this).prev().text("此為必填欄位");
+                $("#hResult").text("您的BMI值為：");
+            }
+            else if (!isNum.test($(this).val())) {
+                $(this).prev().text("請輸入數字");
+                $("#hResult").text("您的BMI值為：");
+            }
+            else {
+                $(this).prev().text("");
+            }
+        })
+
+        //show計算結果
+        $("#btnGetBMI").click(function () {
+            $(".inpBmi").blur();
+            $(".divResult").css("background-color", "transparent");
+            if ($(".text-danger").text() == "") {
+                $.get("@Url.Content("~/Body/getBMI")", { "FHeight": $("#FHeight").val(), "FWeight": $("#FWeight").val() }, function (numBMI) {
+                    if (numBMI < 18.5) {
+                        $(".divResult").first().css("transition", "1s").css("background-color", "#b5daa7");
+                    }
+                    else if (numBMI >= 18.5 && numBMI < 24) {
+                        $(".divResult").eq(1).css("transition", "1s").css("background-color", "#b5daa7");
+                    }
+                    else if (numBMI >= 24 && numBMI < 27) {
+                        $(".divResult").eq(2).css("transition", "1s").css("background-color", "#b5daa7");
+                    }
+                    else if (numBMI >= 27) {
+                        $(".divResult").eq(3).css("transition", "1s").css("background-color", "#b5daa7");
+                    }
+                    $("#hResult").text("您的BMI值為：" + numBMI);
+                })
+            }
+        })
+
+        //Demo鍵
+        $("#btnDemo").click(function () {
+            $("#FHeight").val("171");
+            $("#FWeight").val("85");
+            $(".inpBmi").blur();
+        })
+    </script>
+}

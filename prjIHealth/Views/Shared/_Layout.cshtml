@@ -1,0 +1,1200 @@
+﻿@using prjIHealth.Controllers
+
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Ogani Template">
+    <meta name="keywords" content="Ogani, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>iHealth</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+
+    <!-- Css Styles -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/elegant-icons.css" type="text/css">
+    <link rel="stylesheet" href="/css/nice-select.css" type="text/css">
+    <link rel="stylesheet" href="/css/jquery-ui.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link href="~/css/sweetalert2.css" rel="stylesheet" />
+    <script src="https://cdn.ckeditor.com/ckeditor5/34.2.0/classic/ckeditor.js"></script>
+
+    @await RenderSectionAsync("Styles", required: false)
+    <style>
+        .iHealthBackground {
+            /*            background-image: url('/img/home/Green.png');
+            background-size:cover;*/
+            /*background-color: #F0FFF0;*/
+        }
+
+        .btn-success {
+            background-color: #7fad39;
+            border: none;
+        }
+
+        .btn-light:hover {
+            color: #7fad39;
+        }
+
+        .btn-secondary:hover {
+            color: #7fad39;
+        }
+
+        .btn-outline-success {
+        }
+
+        #btnLayOutLogin {
+            cursor: pointer;
+        }
+        /*客服機器人用*/
+        .btnRobot {
+            float: right;
+            position: fixed;
+            right: 20px;
+            bottom: 100px;
+            background-color: transparent;
+            border-style: none;
+        }
+        .divRobotChat {
+            width: 300px;
+            position: fixed;
+            bottom: 0;
+            right: 100px;
+            z-index: 2;
+        }
+    </style>
+</head>
+
+<body>
+    @using prjIHealth.Models;
+    @using prjiHealth.Models;
+    @using prjIHealth.ViewModels;
+    @using prjiHealth.ViewModels;
+    @using Microsoft.AspNetCore.Http;
+    @using Microsoft.AspNetCore.Mvc;
+    @using System.Linq;
+    @using System.Text.Json;
+
+    @{
+        string LoginbuttonValue = "登入";
+        int loginId = 0;
+        int authorId = 0;
+        TMember loginMember = null;
+        string loginEmail = null;
+        string imgPath = "";
+
+        if (Context.Session.Keys.Contains(CDictionary.SK_Logined_User))
+        {
+            string logJson = Context.Session.GetString(CDictionary.SK_Logined_User);
+            loginMember = JsonSerializer.Deserialize<TMember>(logJson);
+            LoginbuttonValue = loginMember.FMemberName;
+            loginId = loginMember.FMemberId;
+            authorId = (int)loginMember.FAuthorityId;
+            loginEmail = loginMember.FEmail;
+            imgPath = loginMember.FPicturePath;
+        };
+    }
+    <!-- 載入動畫 -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- 窄版導覽列Begin -->
+    <div class="humberger__menu__overlay"></div>
+    <div class="humberger__menu__wrapper">
+        <div class="humberger__menu__logo">
+            <a href="/Home/Index"><h3>IHealth</h3></a>
+        </div>
+        <div class="humberger__menu__cart">
+            <ul>
+                <li><a href="#"><i class="fa fa-heart"></i> <span></span></a></li>
+                <li><a href="/Shopping/ShoppingCartList"><i class="fa fa-shopping-cart"></i> <span></span></a></li>
+                @if (LoginbuttonValue == "登入")
+                {
+                    <li class="header__top__right__auth"><a data-toggle="modal" data-target="#loginModal" href=""><i class="fa fa-user"></i>@LoginbuttonValue</a></li>
+                }
+                else
+                {
+                    <li class="header__top__right__auth"><a href="~/Member/Edit"><i class="fa fa-user"></i>會員專區</a></li>
+                    <li class="header__top__right__auth"><a href="~/Member/Logout">登出<i class="fa fa-sign-out" aria-hidden="true"></i></a></li>
+                }
+
+            </ul>
+        </div>
+        @*<div class="humberger__menu__widget">
+                <div class="header__top__right__auth">
+                    <a href="#"><i class="fa fa-user"></i> Login</a>
+                </div>
+            </div>*@
+        <nav class="humberger__menu__nav mobile-menu">
+            <ul>
+                <li><a href="~/News/Blog">健康資訊</a></li>
+                <li><a href="~/Student/CoachList">教練課程</a></li>
+                <li>
+                    <a href="~/shopping/ShowShoppingMall">周邊商城</a>
+                    @*<ul class="header__menu__dropdown">
+                            <li><a href="./shop-details">Shop Details</a></li>
+                            <li><a href="./shoping-cart">Shoping Cart</a></li>
+                            <li><a href="./checkout">Check Out</a></li>
+                            <li><a href="./blog-details">Blog Details</a></li>
+                        </ul>*@
+                </li>
+                <li><a href="~/Body/BodyCalculatorMain">BODY計算器</a></li>
+                <li><a href="~/problem/ReplyProblem">聯絡我們</a></li>
+
+            </ul>
+        </nav>
+        <div id="mobile-menu-wrap"></div>
+
+        <div class="humberger__menu__contact">
+            <ul>
+                @*<li><i class="fa fa-envelope"></i> hello@colorlib.com</li>
+                    <li>Free Shipping for all Order of $99</li>*@
+            </ul>
+        </div>
+    </div>
+    <!-- 窄版導覽列 End -->
+    <!-- Header Section Begin -->
+    <header class="header fixed-top reveal_t1">
+        <div class="header__top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-md-8">
+                        <div class="header__top__left">
+                            <ul>
+                                <li><a href="~/problem/ReplyProblem" style="color:black;"><i class="fa fa-envelope"></i>聯絡我們</a></li>
+                                @if (LoginbuttonValue == "登入")
+                                {
+                                    <li>歡迎<a href="" data-toggle="modal" data-target="#registerModal" data-dismiss="modal" style="color:#7fad39;font-weight:600">加入會員</a>和我們一起迎向健康新生活！</li>
+                                }
+                                else
+                                {
+                                    <li>歡迎來到 iHealth個人健康管理平台！商城100元折價券發放中～輸入折扣碼>><span style="color:#7fad39;font-weight:600">q9o2K33</span></li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-4">
+                        <div class="header__top__right">
+                            <div class="header__top__right__auth">
+                                <div class="header__cart" style="padding:0;">
+                                    <ul>
+                                        @if (LoginbuttonValue == "登入")
+                                        {
+                                            <li>
+                                                <a data-toggle="modal" href="" id="fa-heart">
+                                                    <i class="fa fa-heart" data-toggle="modal" href="" onclick="pleaseLogin();" data-nexthref="~/Member/ShowTrackList">
+                                                    </i> <span id="trackCount"></span>
+                                                </a>
+                                            </li>
+                                            <li></li>
+                                            <li>
+                                                <a data-toggle="modal" href="" id="fa-cart">
+                                                    <i class="fa fa-shopping-cart" data-toggle="modal" href="" onclick="pleaseLogin();" data-nexthref="~/Shopping/ShoppingCartList">
+                                                    </i> <span id="cartCount"></span>
+                                                </a>
+                                            </li>
+                                        }
+                                        else
+                                        {
+                                            <li><a href="~/Member/ShowTrackList2" id="fa-heart"><i class="fa fa-heart"></i> <span></span></a></li>
+                                            <li></li>
+                                            <li><a href="~/Shopping/ShoppingCartList" id="fa-cart"><i class="fa fa-shopping-cart"></i> <span></span></a></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="background-color: white;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-2">
+                        <div class="header__logo">
+                            <a href="~/Home/Index">
+                                @*</img src="/img/logo.png" alt="">*@
+                                <h3>iHealth</h3>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <nav class="header__menu">
+                            <ul>
+                                <li><a href="~/News/Blog">健康資訊</a></li>
+                                <li><a href="~/Student/CoachList">教練課程</a></li>
+                                <li>
+                                    <a href="~/shopping/ShowShoppingMall">周邊商城</a>
+                                </li>
+                                @*<ul class="header__menu__dropdown">
+                                        <li><a href="./shop-details">Shop Details</a></li>
+                                        <li><a href="./shoping-cart">Shoping Cart</a></li>
+                                        <li><a href="./checkout">Check Out</a></li>
+                                        <li><a href="./blog-details">Blog Details</a></li>
+                                    </ul>*@
+
+                                <li>
+                                    <a href="~/Body/BodyCalculatorMain">BODY計算器</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="col-lg-2">
+                        <div class="header__menu" style="padding:12px 0">
+                            <ul>
+                                <li>
+
+                                    <div class="header__top__right__auth">
+                                        <a id="btnLayOutLogin" data-toggle="modal" data-target="#loginModal">
+                                            @*<i class="fa fa-user"></i>*@
+                                            <img src="~/img/member/@imgPath" onerror="this.src='/img/member/defaultImage.jpg'" width="40" height="40" class="rounded-circle" />
+                                            <span>@LoginbuttonValue</span>
+                                            <p style="display:none">@authorId </p>
+                                        </a>
+                                        <ul class="header__menu__dropdown">
+                                            <li><a href="~/Member/Edit">會員專區</a></li>
+                                            <li><a href="~/Coach/CreateResume">教練專區</a></li>
+                                            <li><a href="~/Member/Logout"><i class="fa fa-user"></i>登出</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="humberger__open">
+                    <i class="fa fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header Section End -->
+    <!-- 各版頁面在此做轉換 -->
+    <div>@RenderBody()</div>
+    <!--頁尾在此開始-->
+    <footer class="footer spad" id="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="footer__about">
+                        <div class="footer__about__logo">
+                            <a href="~/Admin/Admin/AdminHome" id="adminAuthorID"><h3>iHealth</h3></a>
+                        </div>
+                        <ul>
+                            <li>Address: 台北市大安區復興南路一段390號2樓</li>
+                            <li>Phone: +886 2-6631-6588</li>
+                            <li>Email: msit141_iHealth@ispan.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-6 col-sm-6 offset-lg-1">
+                    <div class="footer__widget">
+                        <ul style="width:20%">
+                            <li><h6>會員中心</h6></li>
+                            <li><a data-toggle="modal" data-target="#registerModal" data-dismiss="modal">註冊會員</a></li>
+                            <li><a data-toggle="modal" data-target="#loginModal" data-dismiss="modal">會員登入</a></li>
+                            <li><a data-toggle="modal" data-target="#passwordForgotModal" data-dismiss="modal">忘記密碼</a></li>
+                            <li><a href="~/Member/Edit">個人資料</a></li>
+                        </ul>
+                        <ul style="width:20%">
+                            <li><h6>體態管理</h6></li>
+                            <li><a href="~/News/Blog">健康資訊</a></li>
+                            <li><a href="~/Diary/DiaryMain">飲食日誌</a></li>
+                            <li><a href="~/Body/BMICalculator">BMI計算器</a></li>
+                            <li><a href="~/Body/TDEECalculator">TDEE計算器</a></li>
+                        </ul>
+                        <ul style="width:20%">
+                            <li><h6>周邊商城</h6></li>
+                            <li><a href="~/Shopping/ShowShoppingMall">商品總覽</a></li>
+                            <li><a href="~/Member/ShowTrackList">追蹤商品</a></li>
+                            <li><a href="~/Shopping/ShoppingCartList">購物車</a></li>
+                            <li><a href="~/Member/OrderList">訂單查詢</a></li>
+                        </ul>
+                        <ul style="width:20%">
+                            <li><h6>預約平台</h6></li>
+                            <li><a href="~/Student/CoachList">教練總覽</a></li>
+                            <li><a href="~/Student/CandidateList">候選教練</a></li>
+                            <li><a href="~/Student/CourseList">課程列表</a></li>
+                            <li><a href="~/Student/ViewCourseCalendar">課程行事曆</a></li>
+                        </ul>
+                        <ul style="width:20%">
+                            <li><h6>教練專區</h6></li>
+                            <li><a href="~/Coach/CreateResume">履歷管理</a></li>
+                            <li><a href="~/Coach/RecruitmentList">招生紀錄</a></li>
+                            <li><a href="~/Coach/TeachingList">教課列表</a></li>
+                            @*<li><a href="~/Coach/CoachCalendar">課程行事曆</a></li>*@
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="footer__copyright">
+                        <div class="footer__copyright__text">
+                            <p>
+                                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                Copyright &copy MSIT141_iHealth
+                                <script>document.write(new Date().getFullYear());</script> All rights reserved @*| This template is made by <a href="https://colorlib.com" target="_blank">Colorlib</a>*@
+                                <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                            </p>
+                        </div>
+                        <div class="footer__copyright__payment"> @*<img src="/img/payment-item.png" alt="">*@</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    @*客服機器人的按鈕跟摺疊區*@
+    <button class="btnRobot" type="button" data-toggle="collapse" data-target="#collapseRobotChat" aria-expanded="false" aria-controls="collapseExample">
+        <img src="~/img/icons8-robot-66.png" />
+    </button>
+
+    <div class="divRobotChat">
+        <div class="collapse" id="collapseRobotChat" style="width:100%;position:absolute;bottom:0">
+            <div class="card card-body" style="padding:0">
+                <iframe src='https://webchat.botframework.com/embed/ihealth003msit141003qaservice-bot?s=4cbqjNyXaOI.V5H8nSbvq9EZJUl5_enuuE2EjTkDKDbdVOGpMISJGT0' style='min-width: 200px; width: 100%; min-height: 300px;'></iframe>
+            </div>
+        </div>
+    </div>
+    @*===================================================================================================
+        會員登入Modal*@
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content iHealthBackground">
+                <div class="modal-header">
+                    <h4 class="modal-title col-11 text-center" id="exampleModalLabel" style="color: #ffffff; text-shadow:1px 1px 10px black;font-weight:800">歡迎登入iHEALTH會員!</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="~/Member/Login" method="post" enctype="application/x-www-form-urlencoded" name="userInfo" id="loginForm">
+                        <input name="ReturnUrl" id="inpReturnUrl" type="hidden" />
+                        <div class="form-group">
+                            <label for="fUserName" style="font-weight:700">使用者帳號-必填</label>@*color: #ffffff; text-shadow:1px 1px 15px black;*@
+                            <input type="text" class="form-control" id="inpLogInUserName" name="fUserName" placeholder="帳號" autocomplete="off">
+                            <span id="spanLoginUsername"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="fPassword" style="font-weight:700">
+                                密碼 @*color: #ffffff; text-shadow:1px 1px 15px black;*@
+                                <i class="fa fa-eye-slash" aria-hidden="true" style="font-size:larger" id="showPassword"></i>
+                            </label>
+                            <input type="password" class="form-control" id="inpLogInPassword" name="fPassword" placeholder="密碼" autocomplete="off">
+                        </div>
+                        <div style="justify-content: center; display: flex; ">
+                            <button class="btn btn-light" data-toggle="modal" data-target="#registerModal" data-dismiss="modal" style="margin:0px 2px">
+                                <i class="fa fa-user"></i> 加入會員
+                            </button>
+                            <button class="btn btn-secondary" data-toggle="modal" data-target="#passwordForgotModal" data-dismiss="modal" style="margin:0px 2px">
+                                <i class="fa fa-key"></i> 忘記密碼
+                            </button>
+                            <button class="btn btn-success center" id="btnLoginModal" style="margin:0px 2px"><i class="fa fa-sign-in" aria-hidden="true"></i>會員登入</button>
+                        </div>
+                    </form>
+                    <br />
+
+                    <div style="justify-content: center; display: flex;">
+                        <button id="btnDemoUserLog" class="btn btn-outline-success" style="margin:0px 2px">Demo會員</button>
+                        <button id="btnDemoCoachLog" class="btn btn-outline-success" style="margin:0px 2px">Demo教練</button>
+                        <button id="btnDemoAdminLog" class="btn btn-outline-success" style="margin:0px 2px">Demo管理者</button>
+                        @*<div class="text-center col">  </div>
+                            <div class="text-center col"> </div>
+                            <div class="text-center col">   </div>*@
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @*會員註冊Modal*@
+    <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title col-11 text-center" id="exampleModalLabel" style="color: #ffffff; text-shadow:1px 1px 10px black;font-weight:800">歡迎加入iHEALTH會員!</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form asp-action="Register" asp-controller="Member" id="registerForm">
+                    <div class="modal-body row">
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="fUserName">使用者帳號-必填</label>
+                                <input type="text" class="form-control" id="inpRegisterUserName" name="fUserName" placeholder="帳號,至少需二個字(含)以上" autocomplete="off">
+                                <span id="spanRegUsername"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="fMemberName">姓名</label>
+                                <input type="text" class="form-control" id="inpRegisterMemberName" name="fMemberName" placeholder="姓名" autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <label for="fPassword">密碼-必填</label>
+                                <i class="fa fa-eye-slash" aria-hidden="true" style="font-size:larger" id="showRegisterPassword"></i>
+                                <input type="password" class="form-control" id="inpRegisterPassword" name="fPassword" placeholder="密碼需含數字, 大,小寫英文字母" autocomplete="off">
+                                <span id="spanRegPassword">密碼長度6~12位,要包含大小寫英文字, 數字,符號[!@@#$%^&*],至少各含一或以上</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">請輸入確認密碼-必填</label>
+                                <i class="fa fa-eye-slash" aria-hidden="true" style="font-size:larger" id="showRegisterConfirmPassword"></i>
+                                <input type="password" class="form-control" id="inpRegisterConfirmPassword" name="confirmPassword" placeholder="確認密碼 " autocomplete="off">
+                                <span id="spanRegConfirmPassword"></span>
+                            </div>
+
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label for="fEmail">電子郵件信箱-必填</label>
+                                <input type="text" class="form-control" id="inpRegisterEmail" name="fEmail" placeholder="電子郵件信箱" autocomplete="off">
+                                <span id="spanRegEmail"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="fBirthday">生日</label>
+                                <input type="date" class="form-control" id="inpRegisterBirthday" name="fBirthday" placeholder="生日,請依格式19991231輸入" autocomplete="off">
+                            </div>
+                            <div class="form-group">
+                                <label for="fPhone">電話</label>
+                                <input type="text" class="form-control" id="inpRegisterPhone" name="fPhone" placeholder="電話格式為09xxxxxxxx共10碼" autocomplete="off">
+                                <span id="spanRegPhone"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="fAddress">地址</label>
+                                <input type="text" class="form-control" id="inpRegisterAddress" name="fAddress" placeholder="地址" autocomplete="off">
+                            </div>
+                            <div class="form-group" id="divGender">
+                                <label>生理性別 </label>
+                                <br />
+                                <div class="form-check form-check-inline mb-0 me-4">
+                                    <input type="radio" class="form-check-input" id="femalGender" name="fGender" value="false" autocomplete="off">
+                                    <label class="form-check-label" for="fGender">女性</label>
+                                </div>
+                                <div class="form-check form-check-inline mb-0 me-4">
+                                    <input type="radio" class="form-check-input" id="maleGender" name="fGender" value="true" checked>
+                                    <label class="form-check-label" for="fGender">男性</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input type="hidden" class="form-check-input" name="fAuthorityId" value="5">
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input type="hidden" class="form-check-input" id="fRegisterDate" name="fRegisterDate">
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input type="hidden" value="false" name="fDisabled" class="form-control" />
+                        </div>
+                    </div>
+                    <div style="justify-content: center; display: flex; ">
+                        <button id="btnRegister" class="btn btn-success"><i class="fa fa-paper-plane" aria-hidden="true"></i> 送出</button>
+                    </div>
+                    <br />
+                    <div class="modal-footer" style="justify-content: center; display: flex; ">
+                        <button id="btnDemoRegister" class="btn btn-outline-success" type="button">Demo</button>
+                        <button type="reset" class="btn btn-secondary"><i class="fa fa-eraser" aria-hidden="true"></i> 重設</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @*忘記密碼*@
+    <div class="modal fade" id="passwordForgotModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 " id="exampleModalLabel">忘記密碼!</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="~/Member/ForgotPassword" method="post" enctype="application/x-www-form-urlencoded" name="userInfo" id="passwordForgotForm">
+                        <div class="form-group">
+                            <label for="fEmail">請輸入註冊時的電子信箱</label>
+                            <input type="text" class="form-control" id="inpForgotPassword" name="fEmail" placeholder="email" autocomplete="off">
+                            <span id="spanForgotEmail"></span>
+                        </div>
+                        <div style="justify-content: center; display: flex;">
+
+                            <button id="btnForgotPassword" class="btn btn-success"><i class="fa fa-paper-plane"></i>送出</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="justify-content: center; display: flex; ">
+                    <button id="btnDemoForgotPassword" class="btn btn-outline-success">Demo</button>
+                    <button class="btn btn-secondary" data-toggle="modal" data-target="#resetPasswordModal" data-dismiss="modal" style="margin-right:5px">
+                        <i class="fa fa-key"></i> 重設密碼
+                    </button>
+                    <button class="btn btn-light" data-toggle="modal" data-target="#loginModal" data-dismiss="modal" style="margin-left:5px">
+                        <i class="fa fa-user"></i> 回到登入頁面
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @*重設密碼*@
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header text-center">
+                    <h4 class="modal-title w-100 " id="exampleModalLabel">重設密碼! <span></span></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <form action="~/Member/ResetPassword" id="resetPasswordForm" method="post" enctype="application/x-www-form-urlencoded" name="userInfo">
+                        <div class="form-group">
+
+                            @if (LoginbuttonValue == "登入")
+                            {<label for="fEmail">請輸入註冊時的電子信箱</label>
+                                <input type="text" class="form-control" id="inpResetPasswordEmail" name="fEmail" placeholder="email" autocomplete="off" value="@loginEmail">
+                                <span id="spanResetEmail"></span>
+                            }
+                            else
+                            {<label for="fEmail">@LoginbuttonValue 您好, 請填入以下資料 </label>
+                            <input type="hidden" class="form-control" id="inpResetPasswordEmail" name="fEmail" placeholder="email" autocomplete="off" value="@loginEmail">
+                        }
+                        </div>
+                        <div class="form-group">
+                            <label for="fPassword">請輸入密碼</label>
+                            <i class="fa fa-eye-slash" aria-hidden="true" style="font-size:larger" id="showPassword1"></i>
+                            <input type="password" class="form-control" id="inpResetPassword" name="fPassword" placeholder="登入密碼" autocomplete="off">
+                            <span id="spanResetPassword"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstPassword">請輸入新的密碼</label>
+                            <i class="fa fa-eye-slash" aria-hidden="true" style="font-size:larger" id="showFirstPassword"></i>
+                            <input type="password" class="form-control" id="inpFirstPassword" name="firstPassword" placeholder="重設密碼 " autocomplete="off">
+                            <span id="passwordSpan">密碼長度6~12位,要包含大小寫英文字, 數字,符號[!@@#$%^&*],至少各含一或以上</span>
+                            <h6 id="newPasswordRestH6"></h6>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">請輸入確認密碼</label>
+                            <i class="fa fa-eye-slash" aria-hidden="true" style="font-size:larger" id="showConfirmPassword"></i>
+                            <input type="password" class="form-control" id="inpConfirmPassword" name="confirmPassword" placeholder="確認密碼 " autocomplete="off">
+                            <h6 id="confirmRestH6"></h6>
+                        </div>
+                        <div style="justify-content: center; display: flex;">
+                            <button id="btnResetPassword" value="送出" class="btn btn-success">
+                                <i class="fa fa-paper-plane"></i> 送出
+                            </button>
+                        </div>
+                        <br />
+                        <div class="modal-footer" style="justify-content: center; display: flex;">
+                            <button type="button" id="btnDemoResetPassword" class="btn btn-outline-success" style="margin-right:5px">Demo</button>
+                            <button type="button" class="btn btn-light" data-toggle="modal" data-target="#loginModal" data-dismiss="modal" style="margin-left:5px">
+                                <i class="fa fa-user"></i> 回到登入頁面
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Footer Section End -->
+    <!-- Js Plugins -->
+    <script src="/js/jquery-3.3.1.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/jquery.nice-select.min.js"></script>
+    <script src="/js/jquery-ui.min.js"></script>
+    <script src="/js/jquery.slicknav.js"></script>
+    <script src="/js/mixitup.min.js"></script>
+    <script src="/js/owl.carousel.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="~/js/ScrollReveal.js"></script>
+    <script src="~/js/sweetalert2.js"></script>
+    <script>
+
+        //==================登入時menu_dropdown顯示, 否則隱藏===============================
+        let spanTextUsername = $("#btnLayOutLogin span").text();
+        //let spanTextAutor = $('#header__top__right__auth>p').text();
+        if (spanTextUsername == "登入")
+        {
+            //console.log(spanTextUsername + "aa")
+            $(".header__menu__dropdown").css("display", "none");
+
+        } else
+        {
+            console.log(spanTextUsername + "BB")
+        }
+        //============================管理者權限才可以點擊進入後台(1<=authorID <=4====================
+        $('#adminAuthorID').on("click", (event) =>
+        {
+            let userAdmin = $("#btnLayOutLogin p").text();
+            if (userAdmin >= 1 && userAdmin <= 4) { event.stopPropagation();}
+            else { event.preventDefault(); }
+        });
+        //============================登入後,登入頁面不再出現=========================================
+        $('#btnLayOutLogin').on("click", (event) =>
+        {
+            let userName = $("#btnLayOutLogin span").text();
+            if (userName != "登入") { event.stopPropagation(); window.location.href = `/Member/Edit`; }
+            else { event.preventDefault(); }
+        });
+        //============================ajax 會員登入(fetch)============================================
+        $('#inpLogInUserName').on('blur', () =>
+        {
+            event.preventDefault();
+           var loginVal = $('#inpLogInUserName').val();
+            if (loginVal=="")
+            {
+                $('#spanLoginUsername').text("帳號不得空白").css("color","red");
+            } else
+            {
+                var formData = new FormData(document.querySelector("#loginForm"));
+                fetch("/Member/getUserName", {
+                    body: formData,
+                    method: "Post"
+                }).then(Response => Response.text()).then(data =>
+                {
+                    if (data == "false")
+                    {
+                        $('#spanLoginUsername').text("帳號錯誤, 請重新輸入").css("color", "red");
+                        $('#inpLogInUserName').val("");
+                        $('#inpLogInPassword').val("");
+                    } else
+                    {
+                        $('#spanLoginUsername').text("帳號正確, 請繼續").css("color", "blue");
+                    }
+                }); };
+        });
+
+        const btnUserName = document.querySelector('#btnLoginModal');
+        btnUserName.addEventListener('click', (event) =>
+        {
+            event.preventDefault();
+            var formData = new FormData(document.querySelector("#loginForm"));
+            fetch("/Member/login", {
+                body: formData,
+                method: "Post"
+            }).then(Response => Response.text()).then(data =>
+            {
+                if (data == "false")
+                {
+                    alert("登入資料錯誤, 請重新登入").css("color", "red");
+                    $('#inpLogInUserName').val("");
+                    $('#inpLogInPassword').val("");
+                } else if (data == "empty")
+                {
+                    alert("必填欄位, 不得空白, 請重新輸入").css("color", "red");
+                } else
+                {
+                    var str = data.substring(0, 5);
+                    var adminName = data.substring(5);
+                    if (str == "admin")
+                    {
+                        $('#loginModal').modal('hide');
+
+                        SwalGreen.fire({
+                            title: `${adminName} :歡迎登入`,
+                            icon: 'success'
+                        }).then(() =>
+                        {
+                            window.location.href = "/Admin/Admin/AdminHome";
+                            });
+                    } else
+                    {
+                        $('#loginModal').modal('hide');
+
+                        SwalGreen.fire({
+                            title: `${data} :歡迎登入`,
+                            icon: 'success'
+                        }).then(() =>
+                        {
+                            window.location.reload(true);//refresh page
+                        });
+                    }
+                    $(".header__menu__dropdown").css("display", "");
+                    $('#inpLogInUserName').val("");
+                    $('#inpLogInPassword').val("");
+                }
+            });
+        });
+        //==========================註冊取得系統日期========================================
+        var registerD = new Date();
+        var year = registerD.getFullYear().toString();
+        var month = (registerD.getMonth() + 101).toString().substring(1);
+        var day = (registerD.getDate() + 100).toString().substring(1);
+        var str = year + month + day;
+        $("#fRegisterDate").val(str);
+        //=========================註冊會員後,popup 登入頁面 by bootstrap modal==============
+        $("#showRegisterPassword").click(function ()
+        {
+            if ($(this).hasClass("fa-eye-slash"))
+            {
+                $(this).removeClass("fa-eye-slash").addClass("fa-eye");
+                $("#inpRegisterPassword").attr("type", "text");
+            }
+            else
+            {
+                $(this).removeClass("fa-eye").addClass("fa-eye-slash");
+                $("#inpRegisterPassword").attr("type", "password");
+            }
+        });
+        $("#showRegisterConfirmPassword").click(function ()
+        {
+            if ($(this).hasClass("fa-eye-slash"))
+            {
+                $(this).removeClass("fa-eye-slash").addClass("fa-eye");
+                $("#inpRegisterConfirmPassword").attr("type", "text");
+            }
+            else
+            {
+                $(this).removeClass("fa-eye").addClass("fa-eye-slash");
+                $("#inpRegisterConfirmPassword").attr("type", "password");
+            }
+        });
+        $('#inpRegisterUserName').on('blur', () =>
+        {
+            event.preventDefault();
+            var loginVal = $('#inpRegisterUserName').val();
+            if (loginVal == "")
+            {
+                $('#spanRegUsername').text("帳號不得空白").css("color", "red");
+            } else
+            {
+                var formData = new FormData(document.querySelector("#registerForm"));
+                fetch("/Member/getUserName", {
+                    body: formData,
+                    method: "Post"
+                }).then(Response => Response.text()).then(data =>
+                {
+                    if (data == "false")
+                    {
+                        $('#spanRegUsername').text("此帳號可使用").css("color", "blue");
+                    } else
+                    {
+                        $('#spanRegUsername').text("此帳號已有人使用, 請換個帳號").css("color", "red");
+                    }
+                });
+            };
+        });
+        $('#inpRegisterPassword').on('blur', () =>
+        {
+            var regEx = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@@#$%^&*]).{6,12}$/;
+            var resultReg = regEx.test($('#inpRegisterPassword').val());
+            if (resultReg) { $('#spanRegPassword').text("符合要求,請繼續").css("color", "blue"); } else
+            { $('#spanRegPassword').text("密碼格式不對,請重新輸入").css("color", "red"); };
+        });
+
+        $('#inpRegisterConfirmPassword').on('blur', () =>
+        {
+            $('#confirmH6').empty();
+            let firstPassword = $('#inpRegisterPassword').val();
+            let confirmPassword = $('#inpRegisterConfirmPassword').val();
+            if (firstPassword != confirmPassword) { $('#spanRegConfirmPassword').text("輸入密碼不一致").css("color", "red"); }
+            else { $('#spanRegConfirmPassword').text('密碼一致,請繼續').css("color", "blue"); }
+        });
+        //==================================email regex verification=============================
+        $('#inpRegisterEmail').on('blur', () =>
+        {
+            var regEx = /^\w+((-\w+)|(\.\w+))*\@@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+            var resultReg = regEx.test($('#inpRegisterEmail').val());
+            if (resultReg) { $('#spanRegEmail').text("符合要求,請繼續").css("color", "blue"); } else
+            { $('#spanRegEmail').text("格式不對,請重新輸入").css("color", "red"); };
+        });
+        //==================================phone regex verification=============================
+        $('#inpRegisterPhone').on('blur', () =>
+        {
+            var regEx = /^[0]{1}[9]{1}[0-9]{8}$/;
+            var resultReg = regEx.test($('#inpRegisterPhone').val());
+            if (resultReg) { $('#spanRegPhone').text("符合要求,請繼續").css("color", "blue"); } else
+            { $('#spanRegPhone').text("格式不對,請重新輸入").css("color", "red"); };
+        });
+        //========================================================================================
+        const btn = document.querySelector('#btnRegister');
+        btn.addEventListener('click', (event) => {
+            event.preventDefault();
+            let data = $("#registerForm").serialize();
+            $.ajax({
+                type: "Post",
+                url: "/Member/Register",
+                data: data,
+                success: function (data) {
+
+                    let userName = $("#inpRegisterUserName").val();
+                    if (data == "empty") {
+                        alert("請注意必填欄位不可空白, 請重新填入");
+                    } else if (data == "user") {
+                        alert(`${userName}:此帳號已有人使用`)
+                    } else if (data == "FCerror") {
+                        alert("密碼不一致");
+                    } else {
+                        alert("歡迎您成為IHealth會員!,請登入會員")
+                        $('#registerModal').modal('hide');
+                        $('#loginModal').modal('show');
+                    }
+                }
+            });
+        });
+        //=========================忘記密碼,輸入電子郵件正確,popup至重設密碼頁面=============
+
+        $('#inpForgotPassword').on('blur', () =>
+        {
+            if ($('#inpForgotPassword').val() == "")
+            {
+                $('#spanForgotEmail').text("電子信箱空白,請重新輸入").css("color", "red");
+             } else
+            {
+                let data = $("#passwordForgotForm").serialize();
+                $.ajax({
+                    type: "Post",
+                    url: "/Member/getEmail",
+                    data: data,
+                    success: function (data)
+                    {
+                        if (data == "false")
+                        {
+                            $('#spanForgotEmail').text("電子信箱錯誤,請重新輸入").css("color", "red");
+                            $('#inpForgotPassword').val("");
+                        } else
+                        {
+                            $('#spanForgotEmail').text("電子信箱正確,請繼續").css("color", "blue");
+                        }
+                    }
+                });
+            };
+        });
+
+        const btnFP = document.querySelector('#btnForgotPassword');
+        btnFP.addEventListener('click', (event) =>
+        {
+            event.preventDefault();
+            let data = $("#passwordForgotForm").serialize();
+            $.ajax({
+                type: "Post",
+                url: "/Member/ForgotPassword",
+                data: data,
+                success: function (data)
+                {
+                    if (data == "false")
+                    {
+                        $('#spanForgotEmail').text("電子信箱錯誤,請重新輸入").css("color", "red");
+                        $('#fEmailInput').val("");
+                    } else if (data == "empty") { $('#spanForgotEmail').text("電子信箱必填, 請重填").css("color", "red"); } else
+                    {
+                        alert(`${data}請收信,重設密碼`);
+                        $('#passwordForgotModal').modal('hide');
+                        $('#resetPasswordModal').modal('show');
+                    }
+                }
+            });
+        });
+        //=========================ajax重設密碼,popup登入頁面================================
+             //=========================驗證電子信箱ajax===============================
+        $("#inpResetPasswordEmail").on('blur', () =>
+        {
+            let data = $("#resetPasswordForm").serialize();
+            $.ajax({
+                type: "Post",
+                url: "/Member/getEmail",
+                data: data,
+                success: function (data)
+                {
+                    if (data == "false")
+                    {
+                        $('#spanResetEmail').text("電子信箱錯誤或空白,請重新輸入").css("color", "red");
+                        $('#fEmailReset').val(""); $('#fPasswordReset').val("");
+                    } else
+                    {
+                        $('#spanResetEmail').text("電子信箱正確,請繼續").css("color", "blue");
+                    }
+                }
+            });
+        });
+             //=========================驗證密碼ajax===================================
+        $("#showPassword1").click(function ()
+        {
+            if ($(this).hasClass("fa-eye-slash"))
+            {
+                $(this).removeClass("fa-eye-slash").addClass("fa-eye");
+                $("#inpResetPassword").attr("type", "text");
+            }
+            else
+            {
+                $(this).removeClass("fa-eye").addClass("fa-eye-slash");
+                $("#inpResetPassword").attr("type", "password");
+            }
+        });
+        $('#inpResetPassword').on('blur', () =>
+        {
+            let data = $("#resetPasswordForm").serialize();
+            $.ajax({
+                type: "Post",
+                url: "/Member/getPassword",
+                data: data,
+                success: function (data)
+                {
+                    if (data == "true")
+                    {
+                        $('#spanResetPassword').text("密碼正確, 請繼續").css("color", "blue");
+                    }
+                    else if (data == "false")
+                    {
+                        $('#spanResetPassword').text('密碼錯誤, 請重新輸入').css("color", "red");
+
+                    }
+                    else
+                    {
+                        $('#spanResetPassword').text('密碼或電子信箱空白, 請重新輸入').css("color", "red");
+                    }
+                }
+            });
+        });
+            //=========================驗證新密碼(前端驗證)====================================
+        $("#showFirstPassword").click(function ()
+        {
+            if ($(this).hasClass("fa-eye-slash"))
+            {
+                $(this).removeClass("fa-eye-slash").addClass("fa-eye");
+                $("#inpFirstPassword").attr("type", "text");
+            }
+            else
+            {
+                $(this).removeClass("fa-eye").addClass("fa-eye-slash");
+                $("#inpFirstPassword").attr("type", "password");
+            }
+        });
+        $('#inpFirstPassword').on('blur', () =>
+        {
+            var regEx = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@@#$%^&*]).{6,12}$/;
+            var resultReg=regEx.test($('#inpFirstPassword').val());
+            if (resultReg) { $('#passwordSpan').text("格式符合要求,請繼續").css("color", "blue"); } else
+            { $('#passwordSpan').text("密碼格式不符").css("color", "red");  };
+        });
+              $("#showConfirmPassword").click(function ()
+        {
+            if ($(this).hasClass("fa-eye-slash"))
+            {
+                $(this).removeClass("fa-eye-slash").addClass("fa-eye");
+                $("#inpConfirmPassword").attr("type", "text");
+            }
+            else
+            {
+                $(this).removeClass("fa-eye").addClass("fa-eye-slash");
+                $("#inpConfirmPassword").attr("type", "password");
+            }
+        });
+        $('#inpConfirmPassword').on('blur', () =>
+        {
+            $('#confirmRestH6').empty();
+            let firstPassword = $('#inpFirstPassword').val();
+            let confirmPassword = $('#inpConfirmPassword').val();
+            if (firstPassword != confirmPassword)
+            {
+                $('#confirmRestH6').text("輸入密碼不一致").css("color", "red");
+            }
+            else
+            {
+                $('#confirmRestH6').text('密碼一致,請繼續').css("color", "blue");
+            }
+        });
+
+        const btnRP = document.querySelector('#btnResetPassword');
+        btnRP.addEventListener('click', (event) =>
+        {
+            event.preventDefault();
+            let data = $("#resetPasswordForm").serialize();
+            $.ajax({
+                type: "Post",
+                url: "/Member/ResetPassword",
+                data: data,
+                success: function (data)
+                {
+                    if (data == "empty") { alert(" 電子信箱不得空白,請重新輸入").css("color", "red"); }
+                    else if (data == "false")
+                    {
+                        alert("電子信箱錯誤,請重新輸入");
+                        $('#fEmailReset').val("");
+                        $('#fPasswordReset').val("");
+                        $('#firstPassword').val("");
+                        $('#confirmPassword').val("");
+
+                    } else if (data == "PasswordError")
+                    {
+                        alert(`密碼錯誤或空白, 請重新輸入`);
+                    } else if (data == "ConfirmPasswordError")
+                    {
+                        alert(`重設密碼不一致, 請重新輸入`)
+                    } else
+                    {
+                        $('#fEmailReset').val("");
+                        $('#fPasswordReset').val("");
+                        $('#firstPassword').val("");
+                        $('#confirmPassword').val("");
+                        @*if (@loginId== 0) {*@
+                            alert(`${data},密碼重設成功, 請登入`); $('#resetPasswordModal').modal('hide');
+                            $('#loginModal').modal('show');
+                    }
+                }
+            });
+        });
+        //==========================SweetAlert Button樣式調整================================
+        const SwalGreen = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-success',
+                cancelButton: 'btn btn-secondary'
+            },
+            buttonsStyling: false
+        })
+        //================================密碼顯示切換=======================================
+        $("#showPassword").click(function () {
+            if ($(this).hasClass("fa-eye-slash")) {
+                $(this).removeClass("fa-eye-slash").addClass("fa-eye");
+                $("#inpLogInPassword").attr("type", "text");
+            }
+            else {
+                $(this).removeClass("fa-eye").addClass("fa-eye-slash");
+                $("#inpLogInPassword").attr("type", "password");
+            }
+        });
+
+        //登入Demo
+        $("#btnDemoUserLog").click(function ()
+        {
+            $("#inpLogInUserName").val("jay0513");
+            $("#inpLogInPassword").val("Jay0513!1388");
+        });
+        $("#btnDemoCoachLog").click(function ()
+        {
+            $("#inpLogInUserName").val("Alisa");
+            $("#inpLogInPassword").val("Alisa&78015343");
+        });
+        $("#btnDemoAdminLog").click(function ()
+        {
+            $("#inpLogInUserName").val("crystal");
+            $("#inpLogInPassword").val("Crystal@8913434aa");
+        });
+
+        //註冊Demo
+        $("#btnDemoRegister").click(function () {
+            $("#inpRegisterUserName").val("summer21");
+            $("#inpRegisterMemberName").val("林佳辰");
+            $("#inpRegisterPassword").val("1qaz@WSX");
+            $("#inpRegisterEmail").val("summer21@gmail.com");
+            $("#inpRegisterBirthday").val("19990605");
+            $("#inpRegisterPhone").val("0919660550");
+            $("#inpRegisterAddress").val("台北市松山區南京東路四段2號");
+        });
+
+        //忘記密碼Demo
+        $("#btnDemoForgotPassword").click(function () {
+            $("#inpForgotPassword").val("charles.chou570114@gmail.com");
+        });
+
+        //重設密碼Demo
+        $("#btnDemoResetPassword").click(function () {
+            $("#inpResetPasswordEmail").val("charles.chou570114@gmail.com");
+            $("#inpResetPassword").val("!QAZ2wsx");
+            $("#inpFirstPassword").val("1qaz@WSX");
+            $("#inpConfirmPassword").val("1qaz@WSX");
+        });
+
+        //需登入的頁面導去登入
+        function pleaseLogin() {
+            //$("#inpReturnUrl").val($(event.target).attr("data-nexthref"));
+            //console.log($("#inpReturnUrl").val());
+            SwalGreen.fire({
+                title: `您尚未登入`,
+                showDenyButton: false,
+                showCancelButton: false,
+                confirmButtonText: '前往登入',
+                icon: 'warning'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $("#loginModal").modal("show");
+                }
+            })
+        }
+        $("#btnLayOutLogin").click(function () {
+            $("#inpReturnUrl").val("");
+        })
+
+        //動畫
+        ScrollReveal().reveal('.reveal_t1', { duration: 1000, origin: 'top', distance: '100px' });
+        ScrollReveal().reveal('.reveal_b1', { duration: 1100, origin: 'bottom', distance: '500px' });
+        ScrollReveal().reveal('.reveal_b2', { duration: 1100, origin: 'bottom', distance: '500px', delay: 100 });
+        ScrollReveal().reveal('.reveal_b3', { duration: 1100, origin: 'bottom', distance: '500px', delay: 200 });
+        ScrollReveal().reveal('.reveal_l1', { duration: 1100, origin: 'left', distance: '500px' });
+        ScrollReveal().reveal('.reveal_r1', { duration: 1100, origin: 'right', distance: '500px' });
+        var onResize = function () {
+            $("body").css("padding-top", $(".fixed-top").height());
+        };
+        $(window).resize(onResize);
+        $(function () {
+            onResize();
+        });
+
+
+        //商城部份
+        var trackCount = 0;
+        var newTrackCount = 0;
+        $(document).ready(showTrackCount);
+        async function showTrackCount() {
+            if (@loginId == 0) {
+                $("#fa-heart").children("span").text("");
+                $("#fa-heart").children("span").hide();
+            }
+            else {
+                url = "@Url.Content("~/Member/ShowTrackCount/")" + @loginId;
+                let response = await fetch(url);
+                let datas = await response.json();
+                trackCount = datas;
+                if (datas == 0) {
+                    $("#fa-heart").children("span").text("");
+                    $("#fa-heart").children("span").hide();
+                }
+                else {
+                    $("#fa-heart").children("span").text(datas);
+                    $("#fa-heart").children("span").show();
+                }
+            }
+        }
+        $(document).ready(showCartCount);
+
+        async function showCartCount() {
+            if (@loginId == 0) {
+                $("#fa-cart").children("span").text("");
+                $("#fa-cart").children("span").hide();
+            }
+            else {
+            url = "@Url.Content("~/Shopping/ShowCartCount/")";
+                    let response = await fetch(url);
+                let datas = await response.json();
+
+                if (datas == 0) {
+                    $("#fa-cart").children("span").text("");
+                    $("#fa-cart").children("span").hide();
+                }
+                else {
+                    $("#fa-cart").children("span").text(datas);
+                    $("#fa-cart").children("span").show();
+                }
+                //console.log(datas)
+            }
+        }
+
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

@@ -1,0 +1,279 @@
+﻿@model prjIHealth.Models.TOrderDetail
+
+@{
+    ViewData["Title"] = "OrderdetailEdit";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+
+<h1>修改明細</h1>
+
+<hr />
+
+<div class="container">
+    <div class="row">
+
+        <form asp-action="OrderdetailEdit" style="margin-left:34%" onsubmit="return CheckRequired()">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" value="@Html.DisplayFor(modelItem => Model.FOrderId)" id="FOrderId" name="FOrderId" />
+            <input type="hidden" value="@Html.DisplayFor(modelItem => Model.FOrderDetailsId)" id="FOrderDetailsId" name="FOrderDetailsId" />
+
+            <div class="form-group col-md-4">
+                <div class="row">
+                    <div class="col-md-4"><label class="control-label" style="font-size:30px;">商品</label></div>
+                    <div class="col-md-8">
+                        <select name="qtypee" id="qtypee" class="custom-select">
+                            <option value="999" disabled selected hidden>商品</option>
+                            <option value="1">金牌巧克力乳清蛋白</option>
+                            <option value="2">金牌草莓乳清蛋白</option>
+                            <option value="3">無添加濃縮乳清蛋白</option>
+                            <option value="4">多效乳清蛋白飲</option>
+                            <option value="5">法國西印度櫻桃萃取維他命C</option>
+                            <option value="6">三得利 芝麻名ex</option>
+                            <option value="7">訓練彈力帶 CORENGTH</option>
+                            <option value="8">皮拉提斯球 S: 22cm</option>
+                            <option value="9">男款超柔軟修身長褲 DOMYOS</option>
+                            <option value="10">男款保暖刷毛運動上衣 DOMYOS</option>
+                            <option value="11">MARS醇奶茶風味</option>
+                            <option value="12">白蘭氏鷄精</option>
+                            <option value="13">每日綜合B群RDV錠</option>
+                            <option value="14">LC靜音健腹輪</option>
+                            <option value="15">DHC維他命B群</option>
+                            <option value="16">智能運動啞鈴</option>
+                            <option value="17">瑪莉菲絲 雙色基礎瑜珈墊</option>
+                            <option value="18">Joined® 牛角袖訓練衣</option>
+                            <option value="19 ">OMNI THE REMAKE 復刻訓練背心 </option>
+                            <option value="20">修身動感褲</option>
+                            <option value="21">女款舒適輕盈跑步鞋</option>
+                            <option value="22 ">女款初階健身短袖上衣 DOMYOS</option>
+                            <option value="23">女款羽球吸濕排汗短褲</option>
+                            <option value="24">女款印花快乾海灘夾腳拖鞋</option>
+                            <option value="25">女款登山健行防曬防潑水輕量外套</option>
+                            <option value="26">女款有氧健身訓練髮圈</option>
+                            <option value="27">女款網球輕量快乾連身裙</option>
+                            <option value="28">男款輕量緩震跑步鞋 KALENJI RUN CUSHION</option>
+                            <option value="29 ">迷彩狩獵短袖上衣 SOLOGNAC </option>
+                            <option value="30 ">男款登山健行快乾抗臭短袖上衣  FORCLAZ</option>
+                            <option value="31">自行車透氣排汗運動襪</option>
+                            <option value="32">成人款網球遮陽運動帽 ARTENGO</option>
+                            <option value="33">重量訓練手套 CORENGTH 500</option>
+                            <option value="34 ">多功能跑步頭巾脖圍 KALENJI</option>
+                            <option value="35">精氣神瑪卡粉包</option>
+                            <option value="36">惡魔神纖子2.0/1盒組</option>
+                            <option value="37 ">益生菌革命3.0 </option>
+                            <option value="38">白蘭氏 深海魚油+蝦紅素30錠</option>
+                            <option value="39">海藻鈣+足量專利BONEPEP水解蛋黃粉</option>
+                            <option value="40">MUSCLETECH™ WHEY GOLD耐如鐵</option>
+                            <option value="41">【加拿大ALLMAX】奧美仕經典乳清蛋白</option>
+                            <option value="42">果果堅果乳清蛋白</option>
+                            <option value="43">BSIN Syntha-6乳清蛋白</option>
+                            <option value="44﹚">多角度可摺健身椅﹙背墊及座墊可調節﹚</option>
+                            <option value="45">A型省空間3對啞鈴架</option>
+                            <option value="46">17/9合1 多功能俯臥撑板</option>
+                            <option value="47">半圓平衡球板</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-md-4">
+                <div class="row">
+                    <div class="col-md-4"> <label for="FQuantity" class="control-label" style="font-size:30px;">數量</label></div>
+                    <div class="col-md-8"> <input id="FQuantity" name="FQuantity" class="form-control" value="@Html.DisplayFor(modelItem => Model.FQuantity)" /></div>
+                </div>
+            </div>
+
+            <div class="form-group col-md-4">
+                <div class="row">
+                    <div class="col-md-4"><label for="FUnitprice" class="control-label" style="font-size:30px;">價錢</label></div>
+                    <div class="col-md-8">  <input id="FUnitprice" name="FUnitprice" value="@Html.DisplayFor(modelItem => Model.FUnitprice)" class="form-control" /> </div>
+                </div>
+            </div>
+
+            <div class="form-group col-md-4">
+                <div class="row">
+                    <div class="col-md-4"><label  class="control-label" style="font-size:30px;">折扣</label></div>
+                    <div class="col-md-8">
+                        <select name="qtype" id="qtype" class="custom-select">
+                            <option value="999" disabled selected hidden>折扣</option>
+                            <option value="無折扣用資料">無折扣用資料</option>
+                            <option value="開站優惠活動">開站優惠活動</option>
+                            <option value="母親節優惠">母親節優惠</option>
+                            <option value="父親節優惠">父親節優惠</option>
+                            <option value="情人節優惠">情人節優惠</option>
+                            <option value="會員連續登入優惠">會員連續登入優惠</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div id="AddFdiscount"></div>
+            <div id="AddFproduct"></div>
+            <div class="form-group col-md-4">
+                <input type="submit" value="送出" class="site-btn" />
+                <a asp-action="OrderList" class="site-btn">返回清單</a>
+            </div>
+        </form>
+        @*}*@
+
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<script>
+        let FDiscountId = 0;
+        var input = '';
+        function SelectedFDiscountId() {          /*判斷所選類別對應的ID*/
+            if ($('#qtype').val() == "無折扣用資料")
+                FDiscountId = 10;
+            if ($('#qtype').val() == "開站優惠活動")
+                FDiscountId = 1;
+            if ($('#qtype').val() == "母親節優惠")
+                FDiscountId = 2;
+            if ($('#qtype').val() == "父親節優惠")
+                FDiscountId = 3;
+            if ($('#qtype').val() == "情人節優惠")
+                FDiscountId = 4;
+            if ($('#qtype').val() == "會員連續登入優惠")
+                FDiscountId = 5;
+            input = `<input type="hidden" id="FDiscountId" value="${FDiscountId}" name="FDiscountId" />`
+            $('#AddFdiscount').append(input)   /*change事件發生時才產生存放資料的input*/
+        };
+        $('#qtype').on("change", SelectedFDiscountId)
+
+
+        let FProductId = 0;
+        var inputt = '';
+        function SelectedProduct() {
+            $('#AddFproduct>input').remove();
+            if ($('#qtypee').val() == "1")
+                FProductId = 1;
+            if ($('#qtypee').val() == "2")
+                FProductId = 2;
+            if ($('#qtypee').val() == "3")
+                FProductId = 3;
+            if ($('#qtypee').val() == "4")
+                FProductId = 4;
+            if ($('#qtypee').val() == "5")
+                FProductId = 5;
+            if ($('#qtypee').val() == "6")
+                FProductId = 6;
+            if ($('#qtypee').val() == "7")
+                FProductId = 7;
+            if ($('#qtypee').val() == "8")
+                FProductId = 8;
+            if ($('#qtypee').val() == "9")
+                FProductId = 9;
+            if ($('#qtypee').val() == "10")
+                FProductId = 10;
+            if ($('#qtypee').val() == "11")
+                FProductId = 11;
+            if ($('#qtypee').val() == "12")
+                FProductId = 12;
+            if ($('#qtypee').val() == "13")
+                FProductId = 13;
+            if ($('#qtypee').val() == "14")
+                FProductId = 14;
+            if ($('#qtypee').val() == "15")
+                FProductId = 15;
+            if ($('#qtypee').val() == "16")
+                FProductId = 16;
+            if ($('#qtypee').val() == "17")
+                FProductId = 17;
+            if ($('#qtypee').val() == "18")
+                FProductId = 18;
+            if ($('#qtypee').val() == "19 ")
+                FProductId = 19;
+            if ($('#qtypee').val() == "20")
+                FProductId = 20;
+            if ($('#qtypee').val() == "21")
+                FProductId = 21;
+            if ($('#qtypee').val() == "22")
+                FProductId = 22;
+            if ($('#qtypee').val() == "23")
+                FProductId = 23;
+            if ($('#qtypee').val() == "24")
+                FProductId = 24;
+            if ($('#qtypee').val() == "25")
+                FProductId = 25;
+            if ($('#qtypee').val() == "26")
+                FProductId = 26;
+            if ($('#qtypee').val() == "27")
+                FProductId = 27;
+            if ($('#qtypee').val() == "28")
+                FProductId = 28;
+            if ($('#qtypee').val() == "29 ")
+                FProductId = 29;
+            if ($('#qtypee').val() == "30")
+                FProductId = 30;
+            if ($('#qtypee').val() == "31")
+                FProductId = 31;
+            if ($('#qtypee').val() == "32")
+                FProductId = 32;
+            if ($('#qtypee').val() == "33")
+                FProductId = 33;
+            if ($('#qtypee').val() == "34")
+                FProductId = 34;
+            if ($('#qtypee').val() == "35")
+                FProductId = 35;
+            if ($('#qtypee').val() == "36")
+                FProductId = 36;
+            if ($('#qtypee').val() == "37 ")
+                FProductId = 37;
+            if ($('#qtypee').val() == "38")
+                FProductId = 38;
+            if ($('#qtypee').val() == "39")
+                FProductId = 39;
+            if ($('#qtypee').val() == "40")
+                FProductId = 40;
+            if ($('#qtypee').val() == "41")
+                FProductId = 41;
+            if ($('#qtypee').val() == "42")
+                FProductId = 42;
+            if ($('#qtypee').val() == "43")
+                FProductId = 43;
+            if ($('#qtypee').val() == "44")
+                FProductId = 44;
+            if ($('#qtypee').val() == "45")
+                FProductId = 45;
+            if ($('#qtypee').val() == "46")
+                FProductId = 46;
+            if ($('#qtypee').val() == "47")
+                FProductId = 47;
+            inputt = `<input type="hidden" id="FProductId" value="${FProductId}" name="FProductId" />`
+            $('#AddFproduct').append(inputt)
+        };
+        $('#qtypee').on("change", SelectedProduct)
+      //=======================================================================================
+        async function Prciechange() {       
+        let changepri = qtypee.options[qtypee.selectedIndex].value;
+        console.log(qtypee.options[qtypee.selectedIndex].value)
+        let response = await fetch("@Url.Content("~/Admin/OrderManage/Pricechange")" + `?id=${changepri}`);
+        let datas = await response.json();
+        console.log(datas.fUnitprice);
+        $("#FUnitprice").val(datas.fUnitprice);
+        //let tr = '';
+        //tr = `<input id="fUnitprice" name="fUnitprice" value="${datas.fUnitprice}" class="form-control" />`
+        //$('#productUnitPrice').append(tr);
+    }
+    $('#qtypee').on('change', Prciechange);
+    //===========================================================================================
+    function CheckRequired() {
+        if ($('#FProductId').val() == null || $('#FDiscountId').val() == null) {
+            SwalGreen.fire({
+                title: '必填欄位未填寫',
+                text: false,
+                icon: 'warning',
+                confirmButtonText: '確認',
+                showCloseButton: true
+            })
+            return false;
+        } else {
+            return true;
+        }
+    }
+</script>
+}
+
+
+

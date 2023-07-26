@@ -1,0 +1,170 @@
+﻿@model prjIHealth.Models.TProduct
+@using prjIHealth.Controllers
+
+@section Styles{
+
+    <style>
+        #word_wrap {
+            word-wrap: break-word;
+            text-align: justify;
+        }
+    </style>
+
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/banner/banner_mem.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">追蹤商品清單</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Shopping/ShowShoppingMall">Home</a>
+                        <span>Shopping</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shoping__cart__table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="shoping__product col-lg-4" style="margin-left:auto">產品名稱</th>
+                                <th class="col-lg-4" style="margin-left: auto">介紹</th>
+                                <th class="col-lg-2" style="margin-left: auto">售價</th>
+                                <th class="col-lg-0"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="showTrack">
+                                @*動態生成*@
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+@section Scripts{
+    <script>
+    @using prjIHealth.Models;
+    @using prjiHealth.Models;
+    @using prjIHealth.ViewModels;
+    @using prjiHealth.ViewModels;
+    @using Microsoft.AspNetCore.Http;
+    @using Microsoft.AspNetCore.Mvc;
+    @using System.Linq;
+    @using System.Text.Json;
+
+    @{
+        string LoginbuttonValue = "登入";
+        int loginId = 0;
+        TMember loginMember = null;
+
+        if (Context.Session.Keys.Contains(CDictionary.SK_Logined_User))
+        {
+            string logJson = Context.Session.GetString(CDictionary.SK_Logined_User);
+            loginMember = JsonSerializer.Deserialize<TMember>(logJson);
+            LoginbuttonValue = loginMember.FMemberName;
+            loginId = loginMember.FMemberId;
+        };
+    }
+        let MemberID = @loginId; //member id
+        function showTrackList(url) {
+            $.get(url, function (data) {
+                console.log(data);
+                let htmlShowProduct = "";
+                //顯示追蹤清單
+                $.each(data, function (idx, list) {
+                    list.fUnitprice = "NT$"+toCurrency(list.fUnitprice);
+                    htmlShowProduct += `<tr class="product_item">
+                                         <td class="shoping__cart__item" style="col-lg-4" data-id="${list.fProductId}">
+                                            <img src="/img/product/${list.fCoverImage}" alt="" style="width:40%"><br><br><h5>${list.fProductName}</h5>
+                                         <td class="shoping__cart__price col-lg-4" id="word_wrap" style="margin:auto">
+                                            <div style="width:400px">${list.fDescription}</div>
+                                         </td>
+                                         <td style="col-lg-2">
+                                            ${list.fUnitprice}
+                                         </td>
+                                         <td class="shoping__cart__item__close" style="margin-left: auto">
+                                            <span class="fa fa-shopping-bag" data-id="${list.fProductId}"></span>
+                                         </td>
+                                         <td class="shoping__cart__item__close" style="margin-left: auto">
+                                            <span href="#" class="icon_close" style="margin-left:auto" data-id="${list.fProductId}"></span>
+                                         </td>
+                                       </tr>`
+                })
+                $("#showTrack").html(htmlShowProduct);
+             })
+        }
+
+        //js轉換數字為千分位型態方法
+        function toCurrency(num) {
+            var parts = num.toString().split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return parts.join('.');
+        }
+
+        //以MemberID去找他所追蹤的商品
+        showTrackProduct();
+        function showTrackProduct() {
+            let url = "@Url.Content("~/Member/ShowTrackProduct/")" + MemberID;
+            showTrackList(url);
+        }
+
+        //
+        async function showTrackCount() {
+            url = "@Url.Content("~/Member/ShowTrackCount/")" + MemberID;
+            let response = await fetch(url);
+            let datas = await response.json();
+            console.log(datas);
+            $("#fa-heart").children("span").text(datas);
+        }
+
+        //以ProductID刪除追蹤商品
+        $("#showTrack").delegate(".icon_close", "click", function (event) {
+            let productID = $(this).attr("data-id");
+            $(event.currentTarget).parent().parent().remove();
+            DeleteTrack(productID);
+            let count = $("#fa-heart").children("span").text();
+            let newCount = count - 1;
+            if (newCount == 0) {
+                $("#fa-heart").children("span").text("");
+            }
+            else {
+                $("#fa-heart").children("span").text(newCount);
+            }
+            //showTrackCount();
+            //$("#showTrack").delegate(".product_item").remove();
+        })
+         function DeleteTrack(id) {
+             url = "@Url.Content("~/Member/DeleteTrackList/")" + id;
+             showTrackList(url);
+         }
+
+        //顯示商品詳情
+        $("#showTrack").delegate(".fa-shopping-bag", "click", function () {
+            let productID = $(this).attr("data-id");
+            location.href = `/Shopping/ShowProductDetail/${productID}`;
+            console.log(productID);
+            showProductDetail(productID);
+        })
+        $("#showTrack").delegate(".shoping__cart__item", "click", function () {
+            let productID = $(this).attr("data-id");
+            location.href = `/Shopping/ShowProductDetail/${productID}`;
+            console.log(productID);
+            showProductDetail(productID);
+        })
+
+    </script>
+}

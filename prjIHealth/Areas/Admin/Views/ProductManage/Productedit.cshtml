@@ -1,0 +1,169 @@
+﻿@model IEnumerable<prjIHealth.ViewModels.CProductViewModel>
+@{
+    ViewData["Title"] = "ProductEdit";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+@section Styles{
+    <style>
+        .btn-light {
+            background-color: #DFEACE !important;
+            color: black;
+        }
+
+        .btn-success {
+            background-color: #7FAD39;
+            color: white;
+            border: none;
+        }
+
+        table.table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .selectbox {
+            margin-bottom: 5%;
+            margin-left: -10%;
+        }
+
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+    </style>
+}
+<h2 id="title">產品修改</h2>
+<hr />
+
+    <div class="container">
+        <div class="row">
+
+            <div style="margin-left:34%">
+                @foreach (var item in Model)
+                {
+
+                    <form asp-action="ProductEdit" enctype="multipart/form-data" onsubmit="return CheckCategory(),Checkproduct()">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" id="FProductId" name="FProductId" value="@Html.DisplayFor(modelItem => item.FProductId)" />
+
+                        <div class="form-group col-md-4">
+                            <label for="FProductName" class="control-label" style="font-size:30px;">@Html.DisplayNameFor(modelItem => item.FProductName)</label>
+                            <input name="FProductName" id="FProductName" class="form-control" style="text-align:center;" value="@Html.DisplayFor(modelItem => item.FProductName)" />
+
+                        </div>
+                        <div class="form-group col-md-4">
+                            @*<input type="hidden" value=" @Html.DisplayFor(modelItem => item.FCategoryId)" id="FCategoryId" name="FCategoryId" />*@
+                            <label for="FCategoryId" class="control-label" style="font-size:30px;">@Html.DisplayNameFor(modelItem => item.FCategoryId)</label>
+                            <select name="FCategoryId" id="FCategoryId" class="custom-select" style="text-align:center;" required >
+                                <option value="999" disabled selected hidden>@Html.DisplayFor(modelItem => item.FCategoryName.FCategoryName)</option>
+                                <option value="1">乳清蛋白</option>
+                                <option value="2">健康食品</option>
+                                <option value="3">運動用品</option>
+                                <option value="4">男裝</option>
+                                <option value="5">女裝</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label for="FUnitprice" class="control-label" style="font-size:30px;">@Html.DisplayNameFor(modelItem => item.FUnitprice)</label>
+                            <input id="FUnitprice" name="FUnitprice" class="form-control" style="text-align:center;" value="@Html.DisplayFor(modelItem => item.FUnitprice)" />
+
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="FDescription" class="control-label" style="font-size:30px;">@Html.DisplayNameFor(modelItem => item.FDescription)</label>
+                            <input id="FDescription" name="FDescription" class="form-control" style="text-align:center;" value="@Html.DisplayFor(modelItem => item.FDescription)" />
+
+                        </div>
+                        <div class="form-group form-check col-md-4">
+                            <label class="form-label" style="font-size:30px;">@Html.DisplayNameFor(modelItem => item.FVisible)</label>
+                            <select name="qtypee" id="qtypee" class="custom-select" style="text-align:center;">
+                                <option value="999" disabled selected hidden>上/下架</option>
+                                <option value="上架">上架</option>
+                                <option value="下架">下架</option>
+                            </select>
+                        </div><br />
+
+                        <div class="form-group custom-file  col-md-4" style="margin-right:65%;padding:40px;padding-top:30px;">
+
+                            <input type="file" class="custom-file-input" id="customFile" name="photo">
+                            <label class="custom-file-label" for="customFile">上傳圖片</label>
+                        </div>
+                        <div class="form-group col-md-4">
+                            @*<div id="AddFCategory"></div>*@
+                            <div id="AddFVisible"></div>
+                            <input type="submit" class="btn btn-success" value="確定修改" />
+                            <a asp-action="ProductList" class="btn btn-secondary">返回清單</a>
+                        </div>
+                    </form>
+                }            
+            </div>
+        </div>
+    </div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        //let FCategoryId = 0;
+        //var input = '';
+        //function SelectedfCategory() {          /*判斷所選類別對應的ID*/
+        //    $('#AddFCategory>input').remove();
+        //    if ($('#qtype').val() == "1")
+        //        FCategoryId =1;
+        //    if ($('#qtype').val() == "2")
+        //        FCategoryId =2;
+        //    if ($('#qtype').val() == "3")
+        //        FCategoryId =3;
+        //    if ($('#qtype').val() == "4")
+        //        FCategoryId =4;
+        //    if ($('#qtype').val() == "5")
+        //        FCategoryId =5;
+        //    input = `<input type="hidden" id="FCategoryId" value="${FCategoryId}" name="FCategoryId" />`
+        //    $('#AddFCategory').append(input)   /*change事件發生時才產生存放資料的input*/
+        //};
+        //$('#qtype').on("change", SelectedfCategory) /*選擇類別時會產生寫入資料庫所需的FStatusNumber*/
+        //===============================================================================================      
+        let FVisible = true;
+        var inputt = '';
+        function SelectedFVisible() {
+            $('#AddFVisible>input').remove();
+            if ($('#qtypee').val() == "上架")
+                FVisible = true;
+            if ($('#qtypee').val() == "下架")
+                FVisible = false;          
+            inputt = `<input type="hidden" id="FVisible" value="${FVisible}" name="FVisible" />`
+            $('#AddFVisible').append(inputt)
+        };
+        $('#qtypee').on("change", SelectedFVisible)
+        //================================================================================================
+        function CheckCategory() {
+            if ($('#FCategoryId').val() == null ) {
+                SwalGreen.fire({
+                    title: '尚未選擇種類',
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                });            
+                return false;
+            } else {
+                return true;
+            }
+        }
+        function Checkproduct() {
+            if ($('#FProductName').val() == '' || $('#FUnitprice').val() == '' || $('#FUnitprice').val() <= 0) {
+                SwalGreen.fire({
+                    title: '請確認品名不得空白/價錢不得小於0',
+                    icon: 'warning',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                });
+                return false;
+            } else {
+                return true;
+            }
+        }
+    </script>
+}

@@ -1,0 +1,134 @@
+﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@model IPagedList<prjIHealth.Models.TMember>
+@{ ViewData["Title"] = "iHeath後臺";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml"; }
+@{
+    ViewData["Title"] = "Index";
+}
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+<link href="/css/PagedList.css" rel="stylesheet" type="text/css" />
+@section Styles{
+    <style>
+
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+        .col{
+            margin-bottom:10px;
+        }
+    </style>
+}
+<h2 id="title">會員資料管理列表</h2>
+
+ 
+<hr />
+
+<div class="row ">
+    <div class="col">
+        <form asp-action="Index" method="get">
+            @using (@Html.BeginForm())
+            {
+                @:關鍵字 @Html.TextBox("txtKeyword")
+            <button class="btn "><i class="fa fa-search"></i></button>}
+
+        </form>
+    </div>
+    <div class="col">
+        <a asp-action="Create" class="btn btn-success">會員資料新增</a>
+    </div>
+</div>
+
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+               <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().FUserName)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().FBirthday)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().FGender)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().FEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().FRegisterDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().FDisabled)
+                
+            </th>
+            @*<th>
+            @Html.DisplayNameFor(model => model.FirstOrDefault().FRemarks)
+        </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.FirstOrDefault().FAuthority.FAuthorityName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{      
+            foreach (var item in Model)
+            {
+               
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FUserName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FBirthday)
+                    </td>
+                    <td >
+                       @Html.DropDownListFor(m => @item.FGender, new SelectList(new[] {
+                       new { Value = "", Text = "-- Choose YES or NO --" },
+                       new { Value = "true", Text = "生理男性" },
+                       new { Value = "false", Text = "生理女性" },  },
+                           "Value",  "Text"  ))
+                    </td>
+                    <td>
+                       
+                        @Html.DisplayFor(modelItem => item.FEmail)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FRegisterDate)
+                    </td>
+                    <td  >
+                        @Html.DropDownListFor(m => @item.FDisabled, new SelectList(new[] {
+                     new { Value = "", Text = "-- Choose YES or NO --" },
+                     new { Value = "true", Text = "停權中" },
+                     new { Value = "false", Text = "有效會員" },  },
+                         "Value", "Text") )
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FAuthority.FAuthorityName)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.FMemberId" class="btn btn-success"><i class="fas fa-edit"></i></a> |
+                        <a asp-action="Delete" asp-route-id="@item.FMemberId" class="btn btn-danger"><i class="fas fa-trash-alt"></i></a>
+                    </td>
+                </tr>
+        }}
+    </tbody>
+</table>
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+
+@section Scripts{
+    <script>
+        $('td select').prop("disabled", "true").css("width", "100px").css("border", "none").css("-webkit-appearance", "none").css("background-color","transparent");
+    </script>
+}
+
+

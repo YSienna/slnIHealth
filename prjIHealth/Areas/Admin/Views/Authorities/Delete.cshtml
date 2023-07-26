@@ -1,0 +1,67 @@
+﻿@model prjIHealth.Models.TAuthority
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+
+}
+
+@section Styles{
+    <style>
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+        /*        <h2 id="title">管理頁Demo</h2>*/
+    </style>
+}
+<h2 id="title">會員權限刪除</h2>
+<hr />
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+.    <hr />
+    <dl class="row">
+        <dt class="offset-md-2 col-md-3">
+            @Html.DisplayNameFor(model => model.FAuthorityName)
+        </dt>
+        <dd class="col-md-3">
+            @Html.DisplayFor(model => model.FAuthorityName)
+        </dd>
+        <dt class="offset-md-2 col-md-3">
+            @Html.DisplayNameFor(model => model.FRemarks)
+        </dt>
+        <dd class="col-md-3">
+            @Html.DisplayFor(model => model.FRemarks)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete" id="deleteForm">
+        <input type="hidden" asp-for="FAutorityId" />
+        <input id="btnDelete" type="button" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
+@section Scripts{
+    <script>
+
+        $('#btnDelete').on('click', (event) =>
+        {
+           event.preventDefault();
+            var formData = new FormData(document.querySelector("#deleteForm"));
+            fetch("/Admin/MemberManage/Delete", {
+                body: formData,
+                method: "Post"
+            }).then(Response => Response.text()).then(data =>
+            {
+                if (data == "false")
+                {
+                    alert("資料繫結其它資料表, 不可刪除!")
+                }
+                window.location.href = "/Admin/Authorities/Index";
+            });
+        });
+    </script>
+}

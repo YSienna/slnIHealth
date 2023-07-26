@@ -1,0 +1,41 @@
+﻿@model prjIHealth.Models.TAuthority
+
+@{
+    ViewData["Title"] = "Details";
+}
+@section Styles{
+    <style>
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+        /*        <h2 id="title">管理頁Demo</h2>*/
+    </style>
+}
+<h2 id="title">Details</h2>
+<hr />
+
+<div>
+    <h4>TAuthority</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FAuthorityName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FAuthorityName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FRemarks)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FRemarks)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.FAutorityId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

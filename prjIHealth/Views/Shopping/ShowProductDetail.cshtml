@@ -1,0 +1,381 @@
+﻿@model prjIHealth.Models.TProduct
+@using prjIHealth.Controllers
+
+@section Styles{
+    <style>
+        .haveTrackButton {
+            background-color: #7fad39;
+        }
+    </style>
+}
+
+@using prjIHealth.Models;
+@using prjiHealth.Models;
+@using prjIHealth.ViewModels;
+@using prjiHealth.ViewModels;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Mvc;
+@using System.Linq;
+@using System.Text.Json;
+
+@{
+    string LoginbuttonValue = "登入";
+    int loginId = 0;
+    TMember loginMember = null;
+
+    if (Context.Session.Keys.Contains(CDictionary.SK_Logined_User))
+    {
+        string logJson = Context.Session.GetString(CDictionary.SK_Logined_User);
+        loginMember = JsonSerializer.Deserialize<TMember>(logJson);
+        LoginbuttonValue = loginMember.FMemberName;
+        loginId = loginMember.FMemberId;
+    };
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/product/banner_shop.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">商品詳情</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Shopping/ShowShoppingMall">Home</a>
+                        <span>Shopping</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6">
+                        <div class="product__details__pic">
+                            <div class="product__details__pic__item">
+                                <img class="product__details__pic__item--large"
+                                     src="/img/product/@Model.FCoverImage" alt="" style="height:575px;width:555px">
+                            </div>
+                            <div class="product__details__pic__slider owl-carousel">
+                                @{
+                                    //由於CSS關係 只取4張或以下圖片
+                                    IHealthContext dblIHealth = new IHealthContext();
+                                    var images = (from p in dblIHealth.TProducts
+                                                  join i in dblIHealth.TProductsImages
+                                                  on p.FProductId equals i.FProductId
+                                                  where p.FProductId == Model.FProductId
+                                                  select i).Take(4);
+                                    foreach (var item in images)
+                                    {
+                                        <img data-imgbigurl="/img/product/@item.FImage"
+                                             src="/img/product/@item.FImage" alt="" style="width:125px;height:125px;">
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6">
+                        <div class="product__details__text">
+                            <h3>@Model.FProductName</h3>
+                            <div class="product__details__price">@Model.FUnitprice.ToString("C0")</div>
+                            <p style="height:345px">
+                                @Model.FDescription
+                            </p>
+                            <div class="product__details__quantity">
+                                <div class="quantity">
+                                    <div class="pro-qty">
+                                        @*<span class="dec qtybtn">-</span>*@
+                                        <input type="text" value="1" id="ProductCount" readonly="readonly">
+                                        <input type="hidden" data-id="@Model.FProductId" id="productID" />
+                                        @*<span class="inc qtybtn">+</span>*@
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#" class="primary-btn" id="addToCart" data-id="@Model.FProductId">加到購物車</a>
+                            @{
+                                IHealthContext dblHealth = new IHealthContext();
+                                var q = dblHealth.TTrackLists.Where(t => t.FMemberId == loginId && t.FProductId == Model.FProductId).ToList();
+                                if (q.Count > 0)
+                                {
+                                    <a href="#" class="heart-icon haveTrackButton" style="background-color: #7fad39;"  data-id="@Model.FProductId"><span class="icon_heart_alt"></span></a>
+                                }
+                                else
+                                {
+                                    <a href="#" class="heart-icon" id="addToTrack" data-id="@Model.FProductId"><span class="icon_heart_alt"></span></a>
+                                }
+                            }
+
+
+                            <br />
+                            <a href="/Shopping/ShowShoppingMall" class="primary-btn" style="width:343px;text-align:center">返回商城主頁</a>
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+                <br />
+                <br />
+                <section class="related-product">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="section-title related__product__title">
+                                    <h2>推薦商品</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="suggestProduct">
+                            @*動態生成*@
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+
+        //加進購物車
+        $("#addToCart").click(function (event) {
+            event.preventDefault();
+            let id = $(this).attr("data-id");
+            let count = $("#ProductCount").val();
+
+            if (@loginId== 0) {
+                pleaseLogin();
+            }
+            else {
+                 $("#fa-cart").children("span").show();
+                addCart(id,count);
+                SwalGreen.fire({
+                    title: '已成功加入購物車',
+                    text: false,
+                    icon: 'success',
+                    confirmButtonText: '確認',
+                    showCloseButton: true
+                })
+            }
+        })
+
+        //js轉換數字為千分位型態方法
+        function toCurrency(num) {
+            var parts = num.toString().split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return parts.join('.');
+        }
+
+        $(".haveTrackButton").click(function () {
+            event.preventDefault();
+            SwalGreen.fire({
+                title: '已在追蹤清單中',
+                text: false,
+                icon: 'warning',
+                confirmButtonText: '確認',
+                showCloseButton: true
+            })
+        })
+        //加入追蹤清單
+        $("#addToTrack").click(function (event) {
+            event.preventDefault();
+            id = $(this).attr("data-id");
+            if (@loginId== 0) {
+                pleaseLogin();
+            }
+            else {
+                console.log("text");
+                addTrack(id);
+                console.log($("#addToTrack").hasClass("haveTrackButton"));
+                if ($("#addToTrack").hasClass("haveTrackButton")) {
+                    console.log("text2");
+                    SwalGreen.fire({
+                        title: '已在追蹤清單中',
+                        text: false,
+                        icon: 'warning',
+                        confirmButtonText: '確認',
+                        showCloseButton: true
+                    })
+                }
+                else {
+                    $("#fa-heart").children("span").show();
+                    $(this).prop("style", "background-color:#7fad39");
+                    SwalGreen.fire({
+                        title: '已成功加入追蹤清單',
+                        text: false,
+                        icon: 'success',
+                        confirmButtonText: '確認',
+                        showCloseButton: true
+                    }).then((result) => {
+                    if (result.isConfirmed)
+                       $("#addToTrack").addClass("haveTrackButton");
+                    })
+                }
+            }
+        })
+        async function addTrack(id) {
+                    url = "@Url.Content("~/Shopping/AddToTrack/")" + id;
+                    let response = await fetch(url);
+                    let datas = await response.json();
+                    console.log(datas);
+                    $("#fa-heart").children("span").text(datas);
+        }
+
+
+        //推薦商品的部份
+        let productID = $("#productID").attr("data-id");
+        console.log(productID);
+        $.get("@Url.Content("~/Shopping/SuggestProduct/")" + productID, function (datas) {
+            let htmlShowProduct = "";
+            $.each(datas, function (idx, product) {
+                product.fUnitprice = "NT$"+toCurrency(product.fUnitprice);
+                htmlShowProduct += `<div class="col-lg-3 col-md-4 col-sm-6">
+                                    <div class="product__item">
+                                        <div class="product__item__pic set-bg showProductDetailInDetail" data-id="${product.fProductId}" data-setbg="/img/product/${product.fCoverImage}" style="background-image: url(&quot;/img/product/${product.fCoverImage}&quot;);cursor:pointer;">
+                                            <ul class="product__item__pic__hover">
+                                                <li><a href="#" data-id="${product.fProductId}" class="addToTrackInDetail"><i class="fa fa-heart"></i></a></li>
+                                        <li><a href="#" data-id="${product.fProductId}" class="addToCartInDetail"><i class="fa fa-shopping-cart"></i></a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="product__item__text">
+                                            <h6 href="#" class="showProductDetailInDetail" data-id="${product.fProductId}" style="cursor:pointer">${product.fProductName}</h6>
+                                            <h5 class="showProductDetailInDetail" style="cursor:pointer" data-id="${product.fProductId}">${product.fUnitprice}</h5>
+                                        </div>
+                                    </div>
+                                </div>`
+            })
+            $("#suggestProduct").html(htmlShowProduct);
+        })
+
+        ////點選圖片進showPrductDetail，讓心心/購物車正常運作
+        $("#suggestProduct").delegate(".addToTrackInDetail", "mouseover", function () {
+            $(".product__item__pic").removeClass("showProductDetailInDetail");
+        })
+        $("#suggestProduct").delegate(".addToTrackInDetail", "mouseleave", function () {
+            $(".product__item__pic").addClass("showProductDetailInDetail");
+        })
+        $("#suggestProduct").delegate(".addToCartInDetail", "mouseover", function () {
+            $(".product__item__pic").removeClass("showProductDetailInDetail");
+        })
+        $("#suggestProduct").delegate(".addToCartInDetail", "mouseleave", function () {
+            $(".product__item__pic").addClass("showProductDetailInDetail");
+        })
+
+        //按品名會彈出相對應商品明細
+                $("#suggestProduct").delegate(".showProductDetailInDetail", "click", function () {
+                    id = $(this).attr("data-id");
+                    location.href = `/Shopping/ShowProductDetail/${id}`;
+                    showProductDetail(id);
+                })
+                async function showProductDetail(id) {
+                    var data = {};
+                    data.FProductId = id;
+                    data.FProductName = 1;
+                    data.discountValue = 0;
+                    data.discountID = 10;
+                    $.ajax({ type: "POST", url: "@Url.Action("ShowProductDetail")",data:data });
+                }
+
+                //按心心會加入追蹤清單
+                $("#suggestProduct").delegate(".addToTrackInDetail", "click", function (event) {
+                    event.preventDefault();
+
+                    id = $(this).attr("data-id");
+                    if (@loginId== 0) {
+                        pleaseLogin();
+                    }
+                    else {
+                        $("#fa-heart").children("span").show();
+                        SwalGreen.fire({
+                            title: '已成功加入追蹤清單',
+                            text: false,
+                            icon: 'success',
+                            confirmButtonText: '確認',
+                            showCloseButton: true
+                        })
+                        addTrack(id);
+                    }
+
+                })
+                async function addTrack(id) {
+                    url = "@Url.Content("~/Shopping/AddToTrack/")" + id;
+                    let response = await fetch(url);
+                    let datas = await response.json();
+                    //變更右上追蹤清單顯示數量
+                    $("#fa-heart").children("span").text(datas);
+                }
+
+
+                //按購物車會加入到購物車
+                $("#suggestProduct").delegate(".addToCartInDetail", "click", function (event) {
+                    event.preventDefault();
+                    id = $(this).attr("data-id");
+                    if (@loginId == 0) {
+                        pleaseLogin();
+                    }
+                    else
+                    {
+                        addCart(id, 1);
+                        $("#fa-cart").children("span").show();
+                        SwalGreen.fire({
+                            title: '已成功加入購物車',
+                            text: false,
+                            icon: 'success',
+                            confirmButtonText: '確認',
+                            showCloseButton: true
+                        })
+                    }
+                })
+                async function addCart(id,count) {
+                    //傳值回AddToCartViewModel
+                    var data = {};
+                    data.txtFid = id;
+                    data.txtCount = count;
+                    data.discountValue = 0;
+                    data.discountID = 10;
+                    await $.ajax({ type: "POST", url: "@Url.Action("ShowProductDetail")", data: data });
+
+                    //變更右上購物車顯示數量
+                    url = "@Url.Content("~/Shopping/ShowCartCount/")"
+                    let response = await fetch(url);
+                    let datas = await response.json();
+                    await $("#fa-cart").children("span").text(datas);
+                }
+
+        @*//顯示商品圖片
+        function showImages() {
+            let url = "@Url.Content("~/Shopping/ShowProductImages/")" + @Model.FProductId;
+            console.log(url);
+            $.get(url, function (datas) {
+                console.log(datas);
+                let htmlProductImages = "";
+                $.each(datas, function (idx, images) {
+                    console.log(images);
+                    //htmlProductImages += `<div class="owl-item cloned" style="width: 67.5px; margin-right: 20px;">
+                    //                        <img data-imgbigurl="/img/product/${images}" src="/img/product/${images}" alt="">
+                    //                      </div>
+                    //                      <div class="owl-item active" style="width: 67.5px; margin-right: 20px;">
+                    //                        <img data-imgbigurl="/img/product/${images}" src="/img/product/${images}" alt="">
+                    //                      </div>
+                    //                      <div class="owl-item cloned " style="width: 67.5px; margin-right: 20px;">
+                    //                        <img data-imgbigurl="/img/product/${images}" src="/img/product/${images}" alt="">
+                    //                      </div>`
+                    htmlProductImages += `<img data-imgbigurl="/img/product/${images}"
+                                           src="/img/product/${images}" alt="">`
+                })
+                $(".product__details__pic__slider owl-carousel").html(htmlProductImages);
+            })*@
+        /*}*/
+
+
+
+
+    </script>
+}

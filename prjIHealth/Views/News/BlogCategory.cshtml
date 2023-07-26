@@ -1,0 +1,216 @@
+﻿@model System.Collections.Generic.IEnumerable<prjIHealth.Models.TNews>
+
+
+@section Styles{
+    <link href="/css/PagedList.css" rel="stylesheet" />
+}
+<link rel="stylesheet" href="/css/ShoppingMallCategory.css" type="text/css">
+
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="/img/blog/banner_news.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">健康資訊</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/News/Blog">Home</a>
+                        <span>News</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+
+<section class="blog spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-md-5">
+                <div class="blog__sidebar">
+                    <div class="blog__sidebar__search">
+                        <form action="#">
+                            <input type="text" placeholder="Search..." @Html.TextBox("txtKeyword")
+                            <button type="submit"><span class="icon_search"></span></button>
+                        </form>
+                    </div>
+                    <div class="blog__sidebar__item" id="cateSe">
+                        <h4>專欄分類</h4>
+                        <ul id="cate">
+                            <li><a href="~/News/Blog"　class="categoryItem">所有顯示 (@ViewBag.Category0Count)</a></li>
+                            <li><a data-id="1" class="categoryItem @ViewBag.AddClass1">運動健身 (@ViewBag.Category1Count)</a></li>
+                            <li><a data-id="2" class="categoryItem @ViewBag.AddClass2">食物營養 (@ViewBag.Category2Count)</a></li>
+                            <li><a data-id="3" class="categoryItem @ViewBag.AddClass3">新冠疫情 (@ViewBag.Category3Count)</a></li>
+                            <li><a data-id="4" class="categoryItem @ViewBag.AddClass4">教練專欄 (@ViewBag.Category4Count)</a></li>
+                            <!--專欄分類使用處-->
+                        </ul>
+                    </div>
+                    <div class="blog__sidebar__item" id="recentBlog">
+                        <h4>近期專欄</h4>
+                        <div class="blog__sidebar__recent">
+                            @{
+                                IHealthContext db = new IHealthContext();
+                                foreach (var item in db.TNews.OrderByDescending(t => t.FNewsDate).Take(3))
+                                {
+                                    <a href="~/News/BlogDetail?id=@item.FNewsId" class="blog__sidebar__recent__item">
+                                        <div class="blog__sidebar__recent__item__pic">
+                                            <img src="~/img/blog/@item.FThumbnailPath" alt="" style="width:40px;height:40px">
+                                        </div>
+                                        <div class="blog__sidebar__recent__item__text">
+                                            <h6>
+                                                @item.FTitle.Substring(0, Math.Min(item.FContent.Length, 18)).Replace("<p>", "").Replace("<strong>", "").Replace("<br />", "").Replace("</p>", "")
+                                                <br />
+                                                @*@item.FTitle.Substring(20, Math.Min(item.FContent.Length, 30)).Replace("<p>", "").Replace("<strong>", "").Replace("<br />", "").Replace("</p>", "")*@
+                                            </h6>
+                                            <span>@item.FNewsDate.Substring(0, Math.Min(item.FNewsDate.Length, 10))</span>
+                                        </div>
+                                    </a>
+                                }
+                            }
+                            <!--近期專欄使用處-->
+                        </div>
+                    </div>
+                    <div class="blog__sidebar__item">
+                        <h4>快速搜尋</h4> @*快速功能待施工中，希望改成熱門作者*@
+                        <div class="blog__sidebar__item__tags">
+                            <a href="~/News/Blog?txtKeyword=健身#">健身</a>
+                            <a href="~/News/Blog?txtKeyword=食物#">食物</a>
+                            <a href="~/News/Blog?txtKeyword=新冠#">新冠</a>
+                            <a href="~/News/Blog?txtKeyword=營養#">營養</a>
+                            <a href="~/News/Blog?txtKeyword=飲食#">飲食</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8 col-md-7">
+                <div class="row" id="BlogShow">
+                    @{ //測試迴圈顯示
+                        foreach (var item in Model)
+                        {
+                            <a href="~/News/BlogDetail?id=@item.FNewsId">
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <div class="blog__item">
+                                        <div class="blog__item__pic">
+                                            <img src="~/img/blog/@item.FThumbnailPath" />@*圖片路徑*@
+                                        </div>
+                                        <div class="blog__item__text">
+                                            <ul>
+                                                <li><i class="fa fa-calendar-o"></i>@item.FNewsDate</li>
+                                                @*日期*@
+                                                <li><i class="fa fa-comment-o"></i>@item.TNewsComments.Count()</li>
+                                            </ul>
+                                            <h5><a href="~/News/BlogDetail?id=@item.FNewsId">@Html.DisplayFor(modelItem => item.FTitle)</a></h5>
+                                            <p>
+                                                @*@Html.DisplayFor(modelItem => item.FNewsContent.Substring(0,29))*@
+                                                @*@item.FNewsContent.Substring(0, item.FNewsContent.Length > 20 ? 20 : item.FNewsContent.Length)*@
+                                                @item.FContent.Substring(0, Math.Min(item.FContent.Length, 30)).Replace("<p>", "").Replace("<strong>", "").Replace("<br/>", "").Replace("</p>", "")
+                                            </p>
+                                            <a href="~/News/BlogDetail?id=@item.FNewsId" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
+                                            @*<a @Html.ActionLink("READ MORE", "BlogDetail", new { id = item.FNewsId }, new { @class = "blog__btn" })></a>*@
+                                            @*<span class="arrow_right"></span>*@
+                                            @* //<a asp-action="BlogDetail" class="blog__btn"></a> *@
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        }
+                    }
+                    @*BLOG專欄一覽位置*@
+                    <div class="col-lg-12">
+                        <div class="product__pagination blog__pagination">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Blog Section End -->
+
+@section Scripts{
+    <script>
+
+        $('#cate').on('click', CategorySelect)
+
+        let cateID = 0;
+        $("#cate").find("a").click(function (event) {
+            event.preventDefault();
+            cateID = $(this).attr("data-id");
+            console.log(this);
+        })
+        //類別篩選api，尚無法恢復分頁套件顯示
+        async function CategorySelect() {
+            $('#BlogShow').empty();
+            if (cateID == 0) {
+                const response = await fetch('@Url.Content("~/News/BlogSelectCategoryAPI")');
+                const datas = await response.json();
+                let tr = '';
+                for (i = 0; i < datas.length; i++) {
+                    if (datas[i].fContent != null) {
+                        fixContent = datas[i].fContent.substr(0, 30);
+                    }
+                    tr = `<a href="/News/BlogDetail?id=${datas[i].fNewsId}"><div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="blog__item"><div class="blog__item__pic"><img src="/img/blog/${datas[i].fThumbnailPath}" />
+                  </div><div class="blog__item__text"><ul>
+                  <li><i class="fa fa-calendar-o"></i>${datas[i].fNewsDate}</li>
+                  <li><i class="fa fa-comment-o"></i>test</li>
+                  </ul>
+                  </a>
+                  <h5><a href="/News/BlogDetail?id=${datas[i].fNewsId}"></a>
+                  <a href="/News/BlogDetail?id=${datas[i].fNewsId}">${datas[i].fTitle}</a></h5>
+                  <p>
+                  ${fixContent}
+                  </p>
+                  <a href="/News/BlogDetail?id=${datas[i].fNewsId}" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
+                  </div>
+                  </div>
+                  </div>
+                  </a>`
+                    $('#BlogShow').append(tr);
+                }
+            }
+            if (cateID != 0) {
+            const response = await fetch('@Url.Content("~/News/BlogSelectCategoryAPI")' + `?id=${cateID}`);
+            //console.log(response);
+            const datas = await response.json();
+            //console.log(datas);
+            let tr = '';
+                    for (i = 0; i < datas.length; i++) {
+                        if (datas[i].fContent != null) {
+                            fixContent = datas[i].fContent.substr(0, 30);
+                        }
+                        tr = `<a href="/News/BlogDetail?id=${datas[i].fNewsId}"><div class="col-lg-6 col-md-6 col-sm-6">
+                  <div class="blog__item"><div class="blog__item__pic"><img src="/img/blog/${datas[i].fThumbnailPath}" />
+                  </div><div class="blog__item__text"><ul>
+                  <li><i class="fa fa-calendar-o"></i>${datas[i].fNewsDate}</li>
+                  <li><i class="fa fa-comment-o"></i> 5</li>
+                  </ul>
+                  </a>
+                  <h5><a href="/News/BlogDetail?id=${datas[i].fNewsId}"></a>
+                  <a href="/News/BlogDetail?id=${datas[i].fNewsId}">${datas[i].fTitle}</a></h5>
+                  <p>
+                  ${fixContent}
+                  </p>
+                  <a href="/News/BlogDetail?id=${datas[i].fNewsId}" class="blog__btn">READ MORE <span class="arrow_right"></span></a>
+                  </div>
+                  </div>
+                  </div>
+                  </a>`
+                        $('#BlogShow').append(tr);
+                        console.log("A");
+                    }
+            }
+        }
+        $(".categoryItem").click(function () {
+            $(".categoryItem").removeClass("selectedCategory");
+            $(this).addClass("selectedCategory");
+        })
+
+        async function CommentCountsN() {
+
+        }
+    </script>
+}

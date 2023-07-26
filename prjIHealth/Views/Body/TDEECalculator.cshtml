@@ -1,0 +1,255 @@
+﻿
+@{
+    ViewData["Title"] = "BMICalculator";
+}
+
+
+@section Styles{
+    <style>
+
+        .leftdiv, .rightdiv {
+            padding: 1vw;
+        }
+
+        .leftdiv {
+            border: 2px dotted green;
+            border-radius: 5%;
+        }
+
+        .form-group > label {
+            margin-left: 1vw;
+        }
+
+        #inpGender {
+            margin-left: 1vw;
+        }
+
+        .text-danger {
+            float: right;
+        }
+
+        .divResult {
+            border: 2px dotted green;
+            border-radius: 10px;
+            padding: 5px 20px 5px 20px;
+            margin-top: 1vw;
+            margin-bottom: 1vw;
+        }
+
+        .blog__btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #1c1c1c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #b2b2b2;
+            padding: 14px 20px 12px;
+            border-radius: 25px;
+        }
+
+            .blog__btn:visited {
+                color: #1c1c1c;
+            }
+
+            .blog__btn:hover {
+                color: black;
+                font-weight: 800;
+            }
+
+            .blog__btn:active {
+                color: black;
+                font-weight: 800;
+            }
+    </style>
+}
+
+@using prjIHealth.Models;
+@using prjiHealth.Models;
+@using prjIHealth.ViewModels;
+@using prjiHealth.ViewModels;
+@using Microsoft.AspNetCore.Http;
+@using Microsoft.AspNetCore.Mvc;
+@using System.Linq;
+@using System.Text.Json;
+
+@{
+    string LoginbuttonValue = "登入";
+
+    if (Context.Session.Keys.Contains(CDictionary.SK_Logined_User))
+    {
+        string logJson = Context.Session.GetString(CDictionary.SK_Logined_User);
+        TMember loginMember = JsonSerializer.Deserialize<TMember>(logJson);
+        LoginbuttonValue = loginMember.FMemberName;
+    };
+}
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/body/banner_cal.png">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2 class="reveal_t1">TDEE計算器</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Body/BodyCalculatorMain">Home</a>
+                        <span>Body Calculator</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<div class="contact-form spad">
+    <div class="container">
+        <div class="row">
+
+            @*說明文字*@
+            <div class="col-lg-12 reveal_b1">
+                <div class="contact__form__title">
+                    <div class="col-lg-8 centered" style="text-align:start">
+                        TDEE的中文名稱為【每日消耗熱量】（Total Daily Energy Expenditure, TDEE），也就是「每天總消耗的能量」。
+                        如果你想要維持你目前的體重，那就是大約要吃到你TDEE的數字。
+                    </div>
+                    <br />
+                    <div class="col-lg-8 centered">
+                        今天不管你的目標是增肌或是減脂，了解你的TDEE會讓你能夠更快達成你的目標喔！
+                    </div>
+                </div>
+            </div>
+
+            @*計算器*@
+            <div class="col-lg-6 leftdiv reveal_b2">
+                <form method="post" id="frmBMI">
+                    <br />
+                    <div style="width:50%;float:left;">
+                        <label class="control-label" style="margin-left:1vw">性別</label><span class="text-danger"></span>
+                        <br />
+                        <input style="width:auto;height:auto" id="inpGender" name="Gender" type="radio" value="1" checked />男
+                        <input style="width:auto;height:auto" id="inpGender" name="Gender" type="radio" value="0" />女
+                    </div>
+                    <div class="form-group" id="divWorkload" style="width:50%;float:left;">
+                        @*<label class="control-label">活動量</label><span class="text-danger"></span>
+                            <br />
+                            <select id="selWorkload" required>
+                                <option value="1.2">趨於靜態</option>
+                                <option value="1.375">每周運動1~3天</option>
+                                <option value="1.55">每周運動3~5天</option>
+                                <option value="1.72">每周運動6~7天</option>
+                                <option value="1.9">長時間運動或體力勞動工作者</option>
+                            </select>*@
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">年齡</label><span class="text-danger"></span>
+                        <input class="form-control inputTdee" name="Age" id="inpAge" type="number" placeholder="請輸入年齡" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">身高(cm)</label><span class="text-danger"></span>
+                        <input class="form-control inputTdee" name="FHeight" id="inpHeight" type="number" pattern="^[0-9]+(.[0-9])?$$" placeholder="請輸入身高(cm)" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">體重(kg)</label><span class="text-danger"></span>
+                        <input class="form-control inputTdee" name="FWeight" id="inpWeight" type="number" pattern="^[0-9]+(.[0-9])?$" placeholder="請輸入體重(kg)" required />
+                    </div>
+
+                    <div class="section-title product__discount__title" style="margin-bottom:2vh">
+                        <button type="button" class="site-btn" id="btnGetTDEE" style="margin:0px 0px 0px 40px">開始計算!</button>
+                        <button type="button" class="btn btn-outline-success" id="btnDemo">Demo</button>
+                        <h2 style="font-size:25px;margin-left:10px" id="hResult">您的TDEE為：</h2>
+                    </div>
+                </form>
+            </div>
+
+            @*增肌減脂小筆記*@
+        <div class="col-lg-6 rightdiv reveal_b3">
+            <div class="section-title product__discount__title" style="margin-bottom:2vw">
+                <h2 style="font-size:30px;">增肌減脂小筆記</h2>
+            </div>
+            <div class="divResult">
+                ．維持－ 維持 TDEE 的熱量攝取。
+                <br />
+                當你對每日消耗熱量有概念後，每天攝取到 TDEE 數字熱量時，就是維持你原有的體重；
+            </div>
+            <div class="divResult">
+                ．減脂－ 低於原 TDEE 數字的 10%-20% 。
+                <br />
+                減少 10%-20% 時，就是減肥、減脂的人需要做的，身體會將不夠的熱量透過燃燒脂肪來取得，但同時也不建議少太多，人體機制也有可能會將肌肉拿來分解取得能量，所以減脂的過程中還是要透過訓練以及足夠的蛋白飲食來維持肌肉；
+            </div>
+            <div class="divResult">
+                ．增肌－ 超過原 TDEE 數字的 5%-10%。
+                <br />
+                超過 5%-10% 時，是許多增肌的人該做的，在許多台灣營養的文章中都有提及，若要肌肉增長需要超過你的每日消耗量，多餘的熱量將會被拿去合成肌肉，但同時也有可能被合成脂肪，只能透過較高的蛋白質攝取量，讓肌肉獲得的比例遠大於脂肪。
+            </div>
+            @if (LoginbuttonValue == "登入")
+            {
+                <div class="text-center">歡迎使用飲食日誌，幫您紀錄熱量攝取唷！<a data-toggle="modal" href="" onclick="pleaseLogin();" data-nexthref="~/Diary/DiaryMain" class="blog__btn" style="margin-left:1vw"><span class="arrow_right"></span>飲食日誌</a></div>
+            }
+            else
+            {
+                <div class="text-center">歡迎使用飲食日誌，幫您紀錄熱量攝取唷！<a href="~/Diary/DiaryMain" class="blog__btn" style="margin-left:1vw"><span class="arrow_right"></span>飲食日誌</a></div>
+            }
+        </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @*@{await Html.RenderPartialAsync("_ValidationScriptsPartial");}*@
+    <script>
+
+    //產生select
+    $("#divWorkload").html('<label class="control-label">活動量</label><span class="text-danger"></span><br /><select name="FWorkload" id="selWorkload" required><option value="1.2">趨於靜態</option><option value="1.375">每周運動1~3天</option><option value="1.55">每周運動3~5天</option><option value="1.72">每周運動6~7天</option><option value="1.9">長時間運動或體力勞動工作者</option></select>');
+
+    //驗證空值+數字
+        $(".inputTdee").blur(function () {
+            let isNum = /^[0-9]+(.[0-9])?$/;
+            if ($(this).val() == "") {
+                $(this).prev("span").text("此為必填欄位");
+                $("#hResult").text("您的TDEE為：");
+            }
+            else if (!isNum.test($(this).val())) {
+                $(this).prev("span").text("請輸入數字");
+                $("#hResult").text("您的TDEE為：");
+            }
+            else {
+                $(this).prev("span").text("");
+            }
+        })
+
+    //計算TDEE
+    $("#btnGetTDEE").click(function () {
+        event.preventDefault();
+        $(".inputTdee").blur();
+        if ($(".text-danger").text() == "") {
+            //let w = $("#inpWeight").val();
+            //let h = $("#inpHeight").val();
+            //let age = $("#inpAge").val();
+            //let gender = $("input[name='inpGender']:checked").val();
+            //let workload = $("#selWorkload").val();
+            //let numTDEE = 0;
+            //if (gender == 1) {
+            //    numTDEE = Math.round((((10 * w) + (6.25 * h) - (5 * age) + 5) * workload), 0);
+            //}
+            //else {
+            //    numTDEE = Math.round((((10 * w) + (6.25 * h) - (5 * age) - 161) * workload), 0);
+            //}
+            //$("#hResult").text("您的TDEE為：" + numTDEE.toString()+"大卡");
+
+            @*錯誤訊息: Failed to load resource: net::ERR_HTTP2_PROTOCOL_ERROR*@
+            $.post("@Url.Content("~/Body/getTDEE")", $("#frmBMI").serialize(), function (numTDEE) {
+                $("#hResult").text("您的TDEE為：" + numTDEE + "大卡");
+            })
+        }
+    })
+
+
+    //Demo鍵
+    $("#btnDemo").click(function () {
+        $("#inpAge").val("40");
+        $("#inpHeight").val("171");
+        $("#inpWeight").val("85");
+        $(".inputTdee").blur();
+    })
+    </script>
+}

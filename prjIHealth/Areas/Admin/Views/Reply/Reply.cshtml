@@ -1,0 +1,213 @@
+﻿@*@model prjiHealth.Models.TProblem*@
+@model IEnumerable<prjiHealth.ViewModels.CProblemViewModel>
+
+@{
+    ViewData["Title"] = "iHeath後臺";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+@section Styles{
+    <style>
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+        .btn-light {
+            background-color: #DFEACE !important;
+            color: black;
+        }
+
+        .btn-success {
+            background-color: #7FAD39;
+            color: white;
+            border: none;
+        }
+
+        .btn-demo {
+            background-color: #6c757d;
+            color: #fff;
+            border: none;
+        }
+
+        table.table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .selectbox {
+            margin-bottom: 5%;
+            margin-left: -10%;
+        }
+    </style>
+}
+<h2 id="title">意見回覆</h2>
+<hr />
+@*<section class="product spad">*@
+<div class="container">
+    @foreach (var item in Model)
+    {
+        <div class="row">
+
+            <div class="col-4" id="divLeft">
+                <form asp-action="Reply">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label class="control-label">問題時間</label>
+                        <input class="form-control" readonly="readonly" value="@Html.DisplayFor(modelItem => item.FProblemTime)" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">類別</label>
+                        <input class="form-control" readonly="readonly" value="@Html.DisplayFor(modelItem => item.FProblemCategory.FProblemCategory)" />
+                    </div>
+                    <div class="form-group">
+                        @{
+                            string adjmemberid = "";
+                            if (item.FMemberId == 9)
+                            {
+                                adjmemberid = "遊客";
+                            }
+                            else
+                            {
+                                adjmemberid = item.FMemberId.ToString();
+                            }
+                        }
+                        <label class="control-label">會員編號</label>
+                        <input class="form-control" readonly="readonly" value="@adjmemberid" />
+
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">訂單編號</label>
+                        <input class="form-control" readonly="readonly" value="@Html.DisplayFor(modelItem => item.FOrderId)" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Email</label>
+                        <input class="form-control" value="@Html.DisplayFor(modelItem => item.FEmail)" />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">連絡電話</label>
+                        <input class="form-control" value="@Html.DisplayFor(modelItem => item.FContactPhone)" />
+                    </div>
+                </form>
+                <div class="col-lg-12 text-center">
+                    <button id="buttonAdd" class="site-btn btn btn-success" data-toggle="modal" data-target="#bModal">讀取附件</button>
+                    <input type="button" value="DEMO" class=" site-btn btn btn-demo" id="demo"/>
+                </div>
+            </div>
+            <div class="col-8">
+                <label class="control-label">問題內容</label>
+                <div class="form-group">
+                    <textarea readonly="readonly" style="resize: none; width: 100%; height: 220px ">@Html.DisplayFor(modelItem => item.FProblemContent)</textarea>
+                </div>
+                <form asp-action="Reply">
+                    <div class="form-group">
+                        <textarea placeholder="在此回覆內容" id="FReplyContent" style="resize: none; width: 100%; height: 220px" name="FReplyContent"></textarea>
+                    </div>
+                    <div class="col-lg-6 col-md-6" style="float:right">
+                        <label class="control-label">狀態</label>
+                        <select name="stype" id="stype" class="custom-select">
+                            <option value="999" disabled selected hidden>(原狀態)@Html.DisplayFor(modelItem => item.Status.FStatus)</option>
+                            <option value="未處理">未處理</option>
+                            <option value="處理中">處理中</option>
+                            <option value="已完成">已完成</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-6 col-md-6" style="float:right">
+                        <label class="control-label">回覆方式</label>
+                        <select name="rtype" id="rtype" class="custom-select">
+                            <option value="999" disabled selected hidden>請選擇回覆方式</option>
+                            <option value="Email">Email</option>
+                            <option value="電話聯絡">電話聯絡</option>
+                        </select>
+                    </div>
+
+                    @*隱藏寫入資料庫不可NULL欄位，時間，處理狀態，會員ID，問題類別
+                        會員ID之後應改用session傳遞
+                    *@
+                    <div id="AddFStatusNumber"></div>
+                    <div id="AddFReplyType"></div>
+                    <input type="hidden" value=@DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss") name="FReplyTime" id="FReplyTime" />
+                    <input type="hidden" value=1 name="FReplierId" id="FReplierId" />
+                    <input type="hidden" value=@Html.DisplayFor(modelItem => item.FProblemId) name="FProblemId" id="FProblemId" />
+                    <div class="col-lg-12 text-center">
+                        <input type="submit" value="回覆儲存" class="site-btn btn btn-success" style="float: right; margin-top: 20px" onclick="return confirm('1.請確認回覆內容已填2.請確認處理狀態與回覆方式已選')" />
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        <div class="blog__item__text">
+            <a asp-action="ProblemReplyList" class="blog__btn">返回客服回覆<span class="arrow_right"></span></a>
+        </div>
+
+    }
+</div>
+<!-- Modal 讀取附件彈跳視窗-->
+<div class="modal fade" id="bModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">附件內容 <span></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @foreach (var item in Model)
+                {
+                    if (@item.FFilePath == null)
+                    {
+                        <img src="~/img/problem/nopic.jpg" width="400" height="300" />
+                    }
+                    else
+                    {
+                        <img src="~/img/problem/@item.FFilePath" width="400" height="300" />
+                    }
+
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*</section>*@
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        let FStatusNumber = 0;
+        var input = '';
+        function SelectedFStatusNumber() {          /*判斷所選類別對應的Number*/
+            $('#AddFStatusNumber>input').remove();  /*避免重複點擊持續增加*/
+            if ($('#stype').val() == "未處理")
+                FStatusNumber = 80;
+            if ($('#stype').val() == "處理中")
+                FStatusNumber = 81;
+            if ($('#stype').val() == "已完成")
+                FStatusNumber = 82;
+            input = `<input type="hidden" asp-for="FStatusNumber" id="FStatusNumber" value="${FStatusNumber}" name="FStatusNumber" />`
+            $('#AddFStatusNumber').append(input)   /*change事件發生時才產生存放資料的input*/
+        };
+        $('#stype').on("change", SelectedFStatusNumber) /*選擇類別時會產生寫入資料庫所需的FStatusNumber*/
+        let FReplyType = '';
+        var rtinpt = '';
+        function SelectedFReplyType() {          /*判斷所選內容*/
+            $('#AddFReplyType>input').remove();  /*避免重複點擊持續增加*/
+            if ($('#rtype').val() == "Email")
+                FReplyType = "Email";
+            if ($('#rtype').val() == "電話聯絡")
+                FReplyType = "電話聯絡";
+            input = `<input type="hidden" id="FReplyType" value="${FReplyType}" name="FReplyType" />`
+            $('#AddFReplyType').append(input)   /*change事件發生時才產生存放資料的input*/
+        };
+        $('#rtype').on("change", SelectedFReplyType) /*選擇類別時會產生寫入資料庫所需的FReplyType*/
+        //demo用按鈕
+        $('#demo').on('click', demo)
+        function demo() {
+            $('#FReplyContent').val("金牌乳清蛋白香草冰淇淋口味將於近期上架商城，敬請密切關注商城更新，以便及時購買")
+        }
+    </script>
+}

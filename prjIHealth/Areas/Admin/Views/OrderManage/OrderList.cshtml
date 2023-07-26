@@ -1,0 +1,309 @@
+﻿@model IEnumerable<prjIHealth.ViewModels.COrderViewModel>
+@using X.PagedList.Mvc.Core
+@using X.PagedList
+
+@{
+    ViewData["Title"] = "OrderList";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+
+}
+@section Styles{
+    <link href="/css//PagedList.css" rel="stylesheet" />
+   
+<style>
+    .a-ellipsis {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .btn-light {
+        background-color: #DFEACE !important;
+        color: black;
+    }
+
+    .btn-success {
+        background-color: #7FAD39;
+        color: white;
+        border: none;
+    }
+
+    table.table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .selectbox {
+        margin-bottom: 5%;
+        margin-left: -5%;
+    }
+
+    #title {
+        font-weight: 800;
+        color: #599e32;
+        margin-left: 20vw;
+        margin-right: 20vw;
+    }
+
+    .abc {
+        height: 35px;
+        white-space: nowrap;
+    }
+    #divPage div div ul li{
+        background-color:red;
+    }
+</style>
+}
+<h2 id="title">訂單管理</h2>
+<hr />
+<section class="">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shoping__cart__table">
+                    <div class="col-lg-4"  style="display:flex;">
+                        <select id="Statussearch" name="Statussearch" class="custom-select selectbox " style="flex:none">
+                            <option disabled selected hidden>依狀態篩選</option>
+                            <option value="70">等待賣家確認訂單</option>
+                            <option value="71">已確認訂單，待出貨</option>
+                            <option value="72">已出貨</option>
+                            <option value="73">待收貨</option>
+                            <option value="74">交易完成</option>
+                        </select>
+                        <button style="flex:none;height:40px" class="primary-btn ml-3 btn-success btn" name="btnreset" id="btnreset" >清空篩選</button>
+                    </div>
+                    @*<div class="col-lg-2" style="margin-left:0%;padding:20px">
+                        
+                    </div>*@
+
+                    <table class="table" style="table-layout:fixed">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th class="col-lg-1">
+                                    @Html.DisplayNameFor(model => model.FMemberId)
+                                </th>
+                                <th class="col-lg-1">
+                                    @Html.DisplayNameFor(model => model.FContact)
+                                </th>
+                                <th class="col-lg-1">
+                                    @Html.DisplayNameFor(model => model.FPhone)
+                                </th>
+                                <th class="col-lg-1">
+                                    @Html.DisplayNameFor(model => model.FAddress)
+                                </th>
+                                <th class="col-lg-1">
+                                    @Html.DisplayNameFor(model => model.FDate)
+                                </th>
+                                <th class="col-lg-1">
+                                    @Html.DisplayNameFor(model => model.FPaymentCategoryId)
+                                </th>
+                                <th class="col-lg-1">
+                                    @Html.DisplayNameFor(model => model.FStatusNumber)
+                                </th>
+                                <th class="col-lg-1">
+                                    @Html.DisplayNameFor(model => model.FRemarks)
+                                </th>
+                                <th class="col-lg-1"></th>
+                                <th class="col-lg-1"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="ListPro">
+                            @{
+
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td style="margin-left: auto;text-align:center;">
+                                            <input type="hidden" value=" @Html.DisplayFor(modelItem => item.FOrderId)" id="FOrderId" name="FOrderId" />
+                                            <input type="hidden" value=" @Html.DisplayFor(modelItem => item.FMemberId)" id="FMemberId" name="FMemberId" />
+                                            <input type="hidden" value=" @Html.DisplayFor(modelItem => item.FStatusNumber)" id="FStatusNumber" name="FStatusNumber" />
+                                            <input type="hidden" value=" @Html.DisplayFor(modelItem => item.fstatus.FStatusNumber)" id="fstatus.FStatusNumber" name="fstatus.FStatusNumber" />
+                                            <input type="hidden" value=" @Html.DisplayFor(modelItem => item.fPayment.FPaymentCategoryId)" id="fPayment.FPaymentCategoryId" name="fPayment.FPaymentCategoryId" />
+                                            @Html.DisplayFor(modelItem => item.fmember.FMemberName)
+                                        </td>
+                                        <td style="margin-left: auto;text-align:center;">
+                                            @Html.DisplayFor(modelItem => item.FContact)
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;" class="a-ellipsis" title="@Html.DisplayFor(modelItem => item.FPhone)">                                           
+                                            @item.FPhone.Substring(0, Math.Min(item.FPhone.Length, 6))...
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;" class="a-ellipsis" title="@Html.DisplayFor(modelItem => item.FAddress)">                    
+                                            @item.FAddress.Substring(0, Math.Min(item.FAddress.Length, 5))...
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                            @Html.DisplayFor(modelItem => item.FDate)
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                            <input type="hidden" value="@Html.DisplayFor(modelItem => item.FPaymentCategoryId)" id="FPaymentCategoryId" name="FPaymentCategoryId" />
+                                            @Html.DisplayFor(modelItem => item.fPayment.FPaymentCategory)
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                            @Html.DisplayFor(modelItem => item.fstatus.FStatus)
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;" title="  @Html.DisplayFor(modelItem => item.FRemarks)">
+                                            @item.FRemarks.Substring(0, Math.Min(item.FRemarks.Length, 10))
+
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                            @Html.ActionLink("訂單修改", "OrderEdit", new { id = item.FOrderId },
+                                              new { @class = "btn-light btn abc" })                                          
+                                        </td>
+                                        <td>
+                                            @Html.ActionLink("訂單明細", "OrderdetailList", new { id = item.FOrderId },
+                                             new { @class = "btn-success btn abc" })
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                    <div id="divPage">
+                        <div style="text-align:center;">
+                            @Html.PagedListPager((IPagedList)ViewBag.OnePageOfPro, page => Url.Action("OrderList", new { page }))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+    <script>
+        $('#Statussearch').on('change', Catrgorychange);
+        $('#btnreset').on('click', resetclick);
+
+        async function Catrgorychange() {
+            $('#ListPro>tr').remove();
+            const changecat = Statussearch.options[Statussearch.selectedIndex].value;
+            const response = await fetch("@Url.Content("~/Admin/OrderManage/Statusselect")" + `?id=${changecat}`);
+            const datas = await response.json();
+            console.log(datas);
+            let tr = '';
+
+            for (i = 0; i < datas.length; i++) {
+                let fixrem = '';
+                let fixadr = '';
+                let fixpho = '';
+                if (datas[i].fRemarks != null) {
+                    fixrem = datas[i].fRemarks.substr(0,10);
+                }
+                if (datas[i].fAddress != null) {
+                    fixadr = datas[i].fAddress.substr(0, 5);
+                }
+                if (datas[i].fPhone != null) {
+                    fixpho = datas[i].fPhone.substr(0, 6);
+                }
+                tr = `<tr>
+                                        <td style="margin-left: auto;text-align:center;">
+                                            <input type="hidden" value="${datas[i].fOrderId}" id="FOrderId" name="FOrderId" />
+                                            <input type="hidden" value="${datas[i].fMemberId}" id="FMemberId" name="FMemberId" />
+                                            <input type="hidden" value="${datas[i].fStatusNumber}" id="FStatusNumber" name="FStatusNumber" />
+                                            <input type="hidden" value="${datas[i].fstatus.fStatusNumber}" id="fstatus.FStatusNumber" name="fstatus.FStatusNumber" />
+                                            <input type="hidden" value="${datas[i].fPayment.fPaymentCategoryId}" id="fPayment.FPaymentCategoryId" name="fPayment.FPaymentCategoryId" />
+                                           ${datas[i].fmember.fMemberName}
+                                        </td>
+                                        <td style="margin-left: auto;text-align:center;">
+                                           ${datas[i].fContact}
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;  overflow: hidden; white-space: nowrap; text-overflow: ellipsis; ">
+                                           ${fixpho}...
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center; ">
+                                           ${fixadr}...
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                           ${datas[i].fDate}
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                           <input type="hidden" value="${datas[i].fPaymentCategoryId}" id="FPaymentCategoryId" name="FPaymentCategoryId" />
+                                           ${datas[i].fPayment.fPaymentCategory}
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                          ${datas[i].fstatus.fStatus}
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                           ${fixrem}
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                           <a class="btn btn-light abc" href="/Admin/OrderManage/OrderEdit/${datas[i].fOrderId}">訂單修改</a><br />
+                                        </td>
+                                        <td>
+                                           <a class="btn btn-success abc" href="/Admin/OrderManage/OrderdetailList/${datas[i].fOrderId}">訂單明細</a>
+                                        </td>
+                                    </tr>`
+                $('#ListPro').append(tr);
+            }
+        }
+         //=======================================================================================================================================
+        async function resetclick() {
+            window.location.reload(true);
+            @*$('#ListPro>tr').remove();
+            const response = await fetch("@Url.Content("~/Admin/OrderManage/Statusselectall")" );
+            const datas = await response.json();
+            let tr = '';
+
+            for (i = 0; i < datas.length; i++) {
+                let fixrem = '';
+                let fixadr = '';
+                let fixpho = '';
+                if (datas[i].fRemarks != null) {
+                    fixrem = datas[i].fRemarks.substr(0,10);
+                }
+                if (datas[i].fAddress != null) {
+                    fixadr = datas[i].fAddress.substr(0, 5);
+                }
+                if (datas[i].fPhone != null) {
+                    fixpho = datas[i].fPhone.substr(0, 6);
+                }
+                tr = `<tr>
+                                        <td style="margin-left: auto;text-align:center;">
+                                            <input type="hidden" value="${datas[i].fOrderId}" id="FOrderId" name="FOrderId" />
+                                            <input type="hidden" value="${datas[i].fMemberId}" id="FMemberId" name="FMemberId" />
+                                            <input type="hidden" value="${datas[i].fStatusNumber}" id="FStatusNumber" name="FStatusNumber" />
+                                            <input type="hidden" value="${datas[i].fstatus.fStatusNumber}" id="fstatus.FStatusNumber" name="fstatus.FStatusNumber" />
+                                            <input type="hidden" value="${datas[i].fPayment.fPaymentCategoryId}" id="fPayment.FPaymentCategoryId" name="fPayment.FPaymentCategoryId" />
+                                           ${datas[i].fmember.fMemberName}
+                                        </td>
+                                        <td style="margin-left: auto;text-align:center;">
+                                           ${datas[i].fContact}
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;  overflow: hidden; white-space: nowrap; text-overflow: ellipsis; ">
+                                           ${fixpho}...
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center; ">
+                                           ${fixadr}...
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                           ${datas[i].fDate}
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                           <input type="hidden" value="${datas[i].fPaymentCategoryId}" id="FPaymentCategoryId" name="FPaymentCategoryId" />
+                                           ${datas[i].fPayment.fPaymentCategory}
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                          ${datas[i].fstatus.fStatus}
+                                        </td>
+                                        <td style="margin-left: auto; text-align: center;">
+                                           ${fixrem}
+                                        </td>
+                                         <td style="margin-left: auto; text-align: center;">
+                                           <a class="btn btn-light abc" href="/Admin/OrderManage/OrderEdit/${datas[i].fOrderId}">訂單修改</a><br />
+                                        </td>
+                                        <td>
+                                           <a class="btn btn-success abc" href="/Admin/OrderManage/OrderdetailList/${datas[i].fOrderId}">訂單明細</a>
+                                        </td>
+                                    </tr>`
+                $('#ListPro').append(tr);*@
+            /*}*/
+        }
+        //===========================================================================================================================================================
+
+        //$(function () {
+        //    $("#ListPro").on("mouseenter", ".a-ellipsis", function () {
+        //        if (!this.title) this.title = $(this).text();
+        //    });
+        //});
+    </script>
+}

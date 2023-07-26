@@ -1,0 +1,294 @@
+﻿@model IEnumerable<prjIHealth.ViewModels.COrderDetailViewModel>
+
+@{
+    ViewData["Title"] = "OrderdetailList";
+}
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /*上方訂單明細樣式*/
+        .orderDetailsForm {
+            margin-bottom: 3vw;
+        }
+            .orderDetailsForm fieldset {
+                border: 2px dotted #4F6C24;
+                border-radius: 20px;
+                padding-bottom: 1vw;
+            }
+
+            .orderDetailsForm legend {
+                margin-left: 3vw;
+                padding: 5px;
+                width: 130px;
+                font-size: 20px;
+            }
+        .form-group{
+            margin:0;
+        }
+        .col-form-label {
+            color: black;
+            font-weight: 600;
+        }
+        .lblDetails {
+            margin-left: 1vw;
+            color: #4F6C24;
+        }
+        /*會員專區導覽列*/
+        .blog__btn {
+            display: inline-block;
+            font-size: 14px;
+            color: #1c1c1c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #b2b2b2;
+            padding: 14px 20px 12px;
+            border-radius: 25px;
+        }
+
+            .blog__btn:visited {
+                color: #1c1c1c;
+            }
+
+            .blog__btn:hover {
+                border: 1px solid #4F6C24;
+                color: #4F6C24;
+            }
+
+            .blog__btn:active {
+                color: black;
+                font-weight: 800;
+            }
+
+        .sidebar__item ul li a {
+            margin-bottom: 1vh;
+        }
+
+        .sidebar__item {
+            border: 1px solid lightgray;
+            box-shadow: 2px 2px 5px lightgray;
+            padding: 20px;
+            margin-right: 30px;
+            margin-bottom: 20px;
+        }
+
+            .sidebar__item h5 {
+                text-align: center;
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #4F6C24;
+                color: white;
+            }
+
+            .sidebar__item li:hover {
+                transition: .2s;
+                background-color: #EFF5E6;
+            }
+
+            .sidebar__item i {
+                margin-right: 5px;
+            }
+
+        .liThis {
+            background-color: #EFEDED;
+        }
+        .btn-success {
+            background-color: #7FAD39;
+            width: 100px;
+            color: white;
+            border: none;
+        }
+        .btn-demo {
+            background-color: #6c757d;
+            color: #fff;
+            border: none;
+        }
+    </style>
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/banner/banner_mem.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">訂單明細</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Shopping/ShowShoppingMall">Home</a>
+                        <span>Shopping</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="product spad">
+    <div class="container">
+        <div class="row">
+            @*會員專區垂直導覽列*@
+            <div class="col-lg-3 col-md-5 reveal_b1">
+                <div class="sidebar" style="position:sticky;top:150px;">
+                    <div class="sidebar__item">
+                        <h5>會員專區</h5>
+                        <ul>
+                            <li><a href="~/member/edit" class="row"><i class="fa-solid fa-user-pen col-2"></i>個人資料</a></li>
+                            <li><a href="~/Diary/DiaryMain" class="row"><i class="fa-solid fa-utensils col-2"></i>飲食日誌</a></li>
+                            <li class="liThis"><a href="~/Member/OrderList" class="row"><i class="fa-solid fa-cart-shopping col-2"></i>訂單查詢</a></li>
+                            <li><a href="~/Student/CandidateList" class="row"><i class="fa-solid fa-heart col-2"></i>候選教練</a></li>
+                            <li><a href="~/Student/CourseList" class="row"><i class="fa-solid fa-dumbbell col-2"></i>課程列表</a></li>
+                            <li><a href="~/Student/ViewCourseCalendar" class="row"><i class="fa-solid fa-calendar-day col-2"></i>課程行事曆</a></li>
+                            <li><a href="~/Problem/CheckReply" class="row"><i class="fa-solid fa-comments col-2"></i>客服記錄</a></li>
+                        </ul>
+                    </div>
+                    <a href="~/Coach/CreateResume" class="blog__btn"><span class="arrow_right"></span>教練專區</a>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-7">
+                @*※※※會員專區View內容請從此開始※※※*@
+                <div class="col-lg-12 reveal_b1 orderDetailsForm" data-sr-id="5" style="visibility: visible; opacity: 1; transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); transition: opacity 1.1s cubic-bezier(0.5, 0, 0, 1) 0s, transform 1.1s cubic-bezier(0.5, 0, 0, 1) 0s;">
+                    <form>
+                        @{ 
+                            string phone = "";
+                            string address = "";
+                            string remark = "";
+                            string contact = "";
+                            int orderid = 0;
+                            string date = "";
+                            //int payment = 0;
+                            //int status = 0;
+                            decimal pay = 0;
+                            decimal discount = 0;
+                            decimal total = 0;
+                            string payment = "";
+                            string status = "";
+
+                            foreach (var item in Model)
+                            {
+                                phone = item.forder.FPhone;
+                                address = item.forder.FAddress;
+                                remark = item.forder.FRemarks;
+                                contact = item.forder.FContact;
+                                orderid = item.FOrderId;
+                                date = item.forder.FDate;
+                                payment = item.pay.FPaymentCategory;
+                                status = item.sta.FStatus;
+                                discount = Convert.ToInt32(item.fdiscount.FDiscountValue);
+                                pay += item.FUnitprice;
+                                total = pay - discount;
+                            }
+                        }
+                        <fieldset class="row">
+                            <legend> <i class="fa fa-list-alt" aria-hidden="true"></i>   訂單明細</legend>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label class="col-form-label">訂單編號:<label class="lblDetails">@orderid</label></label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">下單日期:<label class="lblDetails">@date</label></label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">收件人:<label class="lblDetails">@contact</label></label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">電話:<label class="lblDetails">@phone</label></label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">地址:<label class="lblDetails">@address</label></label>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+
+                                <div class="form-group">
+                                    <label class="col-form-label">折扣金額:<label class="lblDetails">@discount.ToString("C0")</label></label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">結帳金額:<label class="lblDetails">@total.ToString("C0")</label></label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">付款方式:<label class="lblDetails" id="payment">@payment</label></label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">交易狀態:<label class="lblDetails" id="status">@status</label></label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-form-label">備註:<label class="lblDetails">@remark</label></label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+
+                </div>
+
+
+                <div class="col-lg-12">
+                    <div class="shoping__cart__table">
+                        <table class="table">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th style="margin-left:auto">
+                                        編號
+                                    </th>
+                                    <th style="margin-left:auto">
+                                        @Html.DisplayNameFor(model => model.FProductId)
+                                    </th>
+                                    <th style="margin-left:auto">
+                                        @Html.DisplayNameFor(model => model.FQuantity)
+                                    </th>
+                                    <th style="margin-left:auto">
+                                        @Html.DisplayNameFor(model => model.FUnitprice)
+                                    </th>                       
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{                                  
+                                    int count = 0;                                  
+                                    foreach (var item in Model)
+                                    {                                       
+                                        count++;
+                                                                         
+                                        <tr>
+                                            <td style="margin-left:auto">
+                                                @count
+                                                <input type="hidden" value=" @Html.DisplayFor(model =>item.FOrderId)" name="FOrderId" id="FOrderId" />
+                                                <input type="hidden" value=" @Html.DisplayFor(model =>item.FProductId)" name="FProductId" id="FProductId" />
+                                                <input type="hidden" value=" @Html.DisplayFor(model =>item.FDiscountId)" name="FDiscountId" id="FDiscountId" />
+                                                <input type="hidden" value="@Html.DisplayFor(model =>item.FOrderDetailsId)" name="FOrderDetailsId" id="FOrderDetailsId" />
+                                            </td>
+                                            <td style="margin-left:auto">
+                                                @Html.DisplayFor(modelItem => item.fproduct.FProductName)
+                                            </td>
+                                            <td style="margin-left:auto">
+                                                @Html.DisplayFor(modelItem => item.FQuantity)
+                                            </td>
+                                            <td style="margin-left:auto">
+                                                @Html.DisplayFor(modelItem => item.FUnitprice)
+                                            </td>                                  
+                                        </tr>
+
+                                    }
+                                }
+                            </tbody>
+                        </table>                     
+                        @*<div class="checkout__order__total">折扣金額:<span>@discount.ToString("C0")</span></div>
+                        交易金額:@total.ToString("C0")*@
+                        <div class="form-group " style="padding:10px;">
+
+                            @*<div class="checkout__order__total">折扣金額:<span>@discount.ToString("C0")</span></div>
+                               交易金額:@total.ToString("C0")*@
+                            <div class="form-group " style="padding:10px;float:left">
+
+                                <a asp-action="OrderList" class=" btn btn-success">返回清單</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts{
+
+}

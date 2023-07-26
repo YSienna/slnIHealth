@@ -1,0 +1,251 @@
+﻿@model prjIHealth.Models.TProduct
+@using prjIHealth.Controllers
+
+@section Styles{
+
+    <style>
+        #body {
+            font-family: "Quicksand", sans-serif;
+            display: grid;
+            place-items: center;
+        }
+
+        #container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1200px;
+            margin-block: 2rem;
+            gap: 2rem;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            width: clamp(20rem, calc(20rem + 2vw), 22rem);
+            overflow: hidden;
+            box-shadow: 0 .1rem 1rem rgba(0, 0, 0, 0.1);
+            border-radius: 1em;
+            background: #ECE9E6;
+            background: linear-gradient(to right, #FFFFFF, #ECE9E6);
+        }
+
+        .card__body {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+
+
+        .tag {
+            align-self: flex-start;
+            padding: .25em .75em;
+            border-radius: 1em;
+            font-size: .75rem;
+        }
+
+            .tag + .tag {
+                margin-left: .5em;
+            }
+
+        .tag-blue {
+            background: #7fad39;
+            /*background: linear-gradient(to bottom, #2F80ED, #56CCF2);*/
+            color: #fafafa;
+        }
+
+        .card__body h4 {
+            font-size: 1.5rem;
+            text-transform: capitalize;
+        }
+
+        .card__footer {
+            display: flex;
+            padding: 1rem;
+            margin-top: 10px;
+        }
+
+        .user {
+            display: flex;
+            gap: .5rem;
+        }
+
+        .user__image {
+            border-radius: 50%;
+        }
+
+        .user__info > small {
+            color: #666;
+        }
+
+        .btnRemove {
+            float: right;
+            background-color: #e33d3d;
+            border: none
+        }
+
+        .btnShow {
+            background-color: #3aea1a;
+            border: none
+        }
+    </style>
+
+}
+
+@*banner大圖*@
+<section class="breadcrumb-section set-bg" data-setbg="/img/banner/banner_mem.png" id="bannerTop">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    @*h2內容請自行更換*@
+                    <h2 class="reveal_t1">追蹤商品清單</h2>
+                    <div class="breadcrumb__option reveal_t1">
+                        <a href="~/Shopping/ShowShoppingMall">Home</a>
+                        <span>Shopping</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section class="product spad" id="body">
+    <div id="container" class="reveal_b2">
+        @*動態生成*@
+    </div>
+</section>
+@section Scripts{
+    <script>
+    @using prjIHealth.Models;
+    @using prjiHealth.Models;
+    @using prjIHealth.ViewModels;
+    @using prjiHealth.ViewModels;
+    @using Microsoft.AspNetCore.Http;
+    @using Microsoft.AspNetCore.Mvc;
+    @using System.Linq;
+    @using System.Text.Json;
+
+    @{
+        string LoginbuttonValue = "登入";
+        int loginId = 0;
+        TMember loginMember = null;
+
+        if (Context.Session.Keys.Contains(CDictionary.SK_Logined_User))
+        {
+            string logJson = Context.Session.GetString(CDictionary.SK_Logined_User);
+            loginMember = JsonSerializer.Deserialize<TMember>(logJson);
+            LoginbuttonValue = loginMember.FMemberName;
+            loginId = loginMember.FMemberId;
+        };
+    }
+        let MemberID = @loginId; //member id
+        function showTrackList(url) {
+            $.get(url, function (data) {
+                console.log(data);
+                let htmlShowProduct = "";
+                //顯示追蹤清單
+                $.each(data, function (idx, list) {
+                    list.fUnitprice = "NT$"+toCurrency(list.fUnitprice);
+                    htmlShowProduct += ` <div class="card">
+                                            <div class="card__header btnShow" data-id="${list.fProductId}">
+                                                <img src="/img/product/${list.fCoverImage}" alt="card__image" class="card__image" width="600" height="339.64">
+                                            </div>
+                                            <div class="shoping__cart__item">
+                                                <button class="col-lg-6 btnShow" data-id="${list.fProductId}"><span class="fa fa-shopping-bag"></span></button>
+                                                <button type="button" class="col-lg-6 btnRemove" data-id="${list.fProductId}"><span class="fa icon_close"></span></button>
+                                                
+                                            </div>
+                                            <div class="card__body">
+                                                <span class="tag tag-blue">${list.fUnitprice}</span>
+                                                <h4>${list.fProductName}</h4>
+                                                <p>${list.fDescription}</p>
+                                            </div>                                       
+                                        </div>`
+                })
+                $("#container").html(htmlShowProduct);
+             })
+        }
+
+        //js轉換數字為千分位型態方法
+        function toCurrency(num) {
+            var parts = num.toString().split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            return parts.join('.');
+        }
+
+        //以MemberID去找他所追蹤的商品
+        showTrackProduct();
+        function showTrackProduct() {
+            let url = "@Url.Content("~/Member/ShowTrackProduct/")" + MemberID;
+            showTrackList(url);
+        }
+
+        //
+        async function showTrackCount() {
+            url = "@Url.Content("~/Member/ShowTrackCount/")" + MemberID;
+            let response = await fetch(url);
+            let datas = await response.json();
+            console.log(datas);
+            $("#fa-heart").children("span").text(datas);
+        }
+
+        //以ProductID刪除追蹤商品
+        
+        $("#container").delegate(".btnRemove", "click", function (event) {
+            event.preventDefault();
+            let productID = $(this).attr("data-id");
+            SwalGreen.fire({
+                title: `確定取消追蹤嗎?`,
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: '確定',
+                cancelButtonText: '取消',
+                icon: 'question'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $(event.currentTarget).parent().parent().remove();
+                    DeleteTrack(productID);
+
+                    let count = $("#fa-heart").children("span").text();
+                    let newCount = count - 1;
+                    if (newCount == 0) {
+                        $("#fa-heart").children("span").text("");
+                        $("#fa-heart").children("span").hide();
+                    }
+                    else {
+                        $("#fa-heart").children("span").text(newCount);
+                        $("#fa-heart").children("span").show();
+                    }
+                }
+            })
+        })      
+         function DeleteTrack(id) {
+             url = "@Url.Content("~/Member/DeleteTrackList/")" + id;
+             showTrackList(url);
+         }
+
+        //顯示商品詳情
+        $("#container").delegate(".btnShow", "click", function () {
+            let productID = $(this).attr("data-id");
+            location.href = `/Shopping/ShowProductDetail/${productID}`;
+            console.log(productID);
+            showProductDetail(productID);
+        })
+        $("#container").delegate(".btnShow", "click", function () {
+            let productID = $(this).attr("data-id");
+            location.href = `/Shopping/ShowProductDetail/${productID}`;
+            console.log(productID);
+            showProductDetail(productID);
+        })
+
+    </script>
+}

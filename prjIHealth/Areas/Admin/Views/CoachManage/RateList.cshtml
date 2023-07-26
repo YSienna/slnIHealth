@@ -1,0 +1,248 @@
+﻿@model IEnumerable<prjIHealth.ViewModels.CCoachRateViewModel>
+
+@{
+    ViewData["Title"] = "iHeath後臺";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+@section Styles{
+    <style>
+        .tdRateText {
+            max-width: 400px;
+            text-align: justify;
+        }
+
+        .btn-success {
+            background-color: #7FAD39;
+            color: white;
+        }
+
+            .btn-success:hover {
+                background-color: #4F6C24;
+                color: white;
+            }
+
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+        /*未公開*/
+        .colorFalse {
+            color: lightcoral;
+            font-weight: 700;
+        }
+        /*公開*/
+        .colorTrue {
+            color: #39ADA1;
+            font-weight: 700;
+        }
+    </style>
+}
+<h2 id="title">教練評論管理</h2>
+<hr />
+@*篩選*@
+<div class="divSearch row">
+    <div class="col-1 col-form-label" id="divCount" style="font-weight:600">共 @Model.Count() 筆</div>
+    <div class="col-lg-3">
+        <select class="custom-select" id="selStarCount">
+            <option value="1" selected>排序: 依日期由近至遠</option>
+            <option value="0">排序: 依日期由遠至近</option>
+            <option value="2">排序: 依星等由高至低</option>
+            <option value="3">排序: 依星等由低至高</option>
+        </select>
+    </div>
+    <div class="col-lg-1" style="padding-right:0">
+        <label class="col-form-label" style="float:right;font-weight:600">搜尋:</label>
+    </div>
+    <div class="col-lg-5 divKeyword">
+        <input type="text" class="form-control" id="inpKeyword" placeholder="請輸入評價內容">
+    </div>
+    <div class="col-lg-2" style="padding-right:0">
+        <button class="btn btn-success" id="btnReset">清除篩選條件</button>
+    </div>
+</div>
+<br />
+<table class="table">
+    <thead class="thead-dark">
+        <tr>
+            <th>
+                No.
+            </th>
+            <th>
+                會員(編號)
+            </th>
+            <th>
+                教練(編號)
+            </th>
+            <th>
+                星等
+            </th>
+            <th>
+                心得內容
+            </th>
+            <th>
+                評價時間
+            </th>
+            <th>
+                公開
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="tbdRates">
+        @{
+            int count = 0;
+            foreach (var r in Model)
+            {
+                count++;
+                <tr>
+                    <td>
+                        @count
+                    </td>
+                    <td>
+                        @r.MemberName (@r.FMemberId)
+                    </td>
+                    <td>
+                        @r.CoachName (@r.FCoachId)
+                    </td>
+                    <td>
+                        @r.FRateStar
+                    </td>
+                    <td class="tdRateText">
+                        @r.FRateText
+                    </td>
+                    <td>
+                        @r.RateDate
+                    </td>
+                    @{
+                        if (r.Visible == "是")
+                        {
+                            <td class="tdVisible colorTrue">
+                                @r.Visible
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="tdVisible colorFalse">
+                                @r.Visible
+                            </td>
+                        }
+                    }
+                    <td>
+                        <button class="btn btn-success btnVisible">公開</button>
+                        <button class="btn btn-secondary btnHidden">隱藏</button>
+                        <input type="hidden" value="@r.FRateId" />
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@section Scripts{
+    <script>
+
+        $(".btnVisible").click(function () {
+            theTr = $(this).parent("td").parent("tr");
+            $.get("@Url.Content("~/Admin/CoachManage/editVisible")", { flag: 1, FRateId: $(this).parent("td").find("input").val() }, function () {
+                SwalGreen.fire(
+                    '成功',
+                    '您已成功顯示此則評價!',
+                    'success'
+                )
+                theTr.find(".tdVisible").text("是");
+                theTr.find(".tdVisible").removeClass("colorTrue").removeClass("colorFalse").addClass("colorTrue");
+            })
+        });
+
+        $(".btnHidden").click(function () {
+            theTr = $(this).parent("td").parent("tr");
+            $.get("@Url.Content("~/Admin/CoachManage/editVisible")", { flag: 0, FRateId: $(this).next("input").val() }, function () {
+                SwalGreen.fire(
+                    '隱藏',
+                    '您已成功隱藏此則評價!',
+                    'error'
+                )
+                theTr.find(".tdVisible").text("否");
+                theTr.find(".tdVisible").removeClass("colorTrue").removeClass("colorFalse").addClass("colorFalse");
+            })
+        });
+
+
+
+        //關鍵字查詢+排序
+        function loadRate() {
+            let isDesc = $("#selStarCount").val();
+            let keyword = $("#inpKeyword").val();
+            $.get("@Url.Content("~/Admin/CoachManage/loadRate")", { IsDesc: isDesc, Keyword: keyword }, function (trates) {
+                let html = "";
+                if (trates != null) {
+                    $.each(trates, function (idx, r) {
+                        html += `<tr><td>${idx + 1}</td>`;
+                        html += `<td>${r.memberName} (${r.fMemberId})</td>`;
+                        html += `<td>${r.coachName} (${r.fCoachId})</td>`;
+                        html += `<td>${r.fRateStar}</td>`;
+                        html += `<td class="tdRateText">${r.fRateText}</td>`;
+                        html += `<td>${r.rateDate}</td>`;
+                        if (r.visible == "是") {
+                            html += `<td class="tdVisible colorTrue">${r.visible}</td>`;
+                        }
+                        else {
+                            html += `<td class="tdVisible colorFalse">${r.visible}</td>`;
+                        }
+                        html += `<td><button class="btn btn-success btnVisible">公開</button>`;
+                        html += `<button class="btn btn-secondary btnHidden">隱藏</button>`;
+                        html += `<input type="hidden" value="${r.fRateId}" /></td></tr>`;
+                    })
+                    $("#divCount").text(`共${trates.length}筆`)
+                }
+                else {
+                        $("#divCount").text(`共0筆`)
+                }
+                $("#tbdRates").html(html);
+                $(".btnVisible").click(function () {
+                    theTr = $(this).parent("td").parent("tr");
+                    $.get("@Url.Content("~/Admin/CoachManage/editVisible")", { flag: 1, FRateId: $(this).parent("td").find("input").val() }, function () {
+                        SwalGreen.fire(
+                            '成功',
+                            '您已成功顯示此則評價!',
+                            'success'
+                        )
+                        theTr.find(".tdVisible").text("是");
+                        theTr.find(".tdVisible").removeClass("colorTrue").removeClass("colorFalse").addClass("colorTrue");
+                    })
+                });
+
+                $(".btnHidden").click(function () {
+                    theTr = $(this).parent("td").parent("tr");
+                    $.get("@Url.Content("~/Admin/CoachManage/editVisible")", { flag: 0, FRateId: $(this).next("input").val() }, function () {
+                        SwalGreen.fire(
+                            '隱藏',
+                            '您已成功隱藏此則評價!',
+                            'error'
+                        )
+                        theTr.find(".tdVisible").text("否");
+                        theTr.find(".tdVisible").removeClass("colorTrue").removeClass("colorFalse").addClass("colorFalse");
+                    })
+                });
+            })
+        };
+        $("#selStarCount").on("change", loadRate);
+        $("#inpKeyword").on("keyup", loadRate);
+
+        //清除篩選內容
+        $("#btnReset").click(function () {
+            $("#selStarCount").val(1);
+            $("#inpKeyword").val("");
+            loadRate();
+        })
+
+
+        //頁碼
+
+
+
+    </script>
+}

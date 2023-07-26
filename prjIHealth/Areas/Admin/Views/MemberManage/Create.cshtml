@@ -1,0 +1,227 @@
+﻿@model prjIHealth.Models.TMember
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+
+}
+@section Styles{
+    <style>
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+        /*        <h2 id="title">管理頁Demo</h2>*/
+    </style>
+}
+<h2 id="title">會員資料新增</h2>
+<hr/>
+@*<h4>TMember</h4>*@
+<hr />
+<div class="row justify-content-center ">
+    <div class="col-md-4 border border-primary mt-md-8">
+        <form asp-action="Create" id="registerForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group row justify-content-center">
+                <div class="col-md-4 ">
+                    <label asp-for="FUserName" class="control-label"></label>
+                </div>
+                <div class="col-md-7">
+                    <input id="inpRegisterUserName" asp-for="FUserName" class="form-control" autocomplete="off" />
+                    <span id="spanRegUsername"></span>
+                </div>
+                <span asp-validation-for="FUserName" class="text-danger"></span>
+            </div>
+            <div class="form-group row justify-content-center">
+                <div class="col-md-4 ">
+                    <label asp-for="FMemberName" class="control-label"></label>
+                </div>
+                <div class="col-md-7">
+                    <input asp-for="FMemberName" class="form-control" autocomplete="off" />
+                </div>
+                <span asp-validation-for="FMemberName" class="text-danger"></span>
+            </div>
+            <div class="form-group row justify-content-center">
+                          <div class="col-md-7">
+                    <input type="hidden" asp-for="FPassword" class="form-control" value="1qaz@WSX" autocomplete="off" />
+                </div>
+                <span asp-validation-for="FPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group row justify-content-center">
+                <div class="col-md-4 ">
+                    <label asp-for="FBirthday" class="control-label"></label>
+                </div>
+                <div class="col-md-7">
+                    <input type="date" asp-for="FBirthday" class="form-control" autocomplete="off" />
+                </div>
+                <span asp-validation-for="FBirthday" class="text-danger"></span>
+            </div>
+            <div class="form-group row justify-content-center">
+                <div class="col-md-4">
+                    <label asp-for="FGender" class="control-label"></label>
+                </div>
+                <div class="col-md-7">
+                    <div class="form-check form-check-inline">
+                        <input asp-for="FGender" class="form-check-input" type="radio" id="inlineCheckbox1" value="true" name="FGender" checked>
+                        <label class="form-check-label" for="inlineCheckbox1">生理男性</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input asp-for="FGender" class="form-check-input" type="radio" id="inlineCheckbox2" value="false" name="FGender">
+                        <label class="form-check-label" for="inlineCheckbox2">生理女性</label>
+                    </div><span asp-validation-for="FGender" class="text-danger"></span>
+                </div>
+            </div>
+           <div>
+                <div class="col-md-7">
+                    <input type="hidden" asp-for="FPicturePath" class="form-control" autocomplete="off" />
+                </div>
+                <span asp-validation-for="FPicturePath" class="text-danger"></span>
+
+            </div>
+
+            <div class="form-group row justify-content-center">
+                <div class="col-md-4 ">
+                    <label asp-for="FAddress" class="control-label"></label>
+                </div>
+                <div class="col-md-7">
+                    <input asp-for="FAddress" class="form-control" autocomplete="off" />
+                </div>
+                <span asp-validation-for="FAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group row justify-content-center">
+                <div class="col-md-4 ">
+                    <label asp-for="FPhone" class="control-label"></label>
+                </div>
+                <div class="col-md-7">
+                    <input id="inpRegisterPhone" asp-for="FPhone" class="form-control" placeholder="電話格式為09xxxxxxxx共10碼" autocomplete="off" />
+                    <span id="spanRegPhone"></span>
+                </div>
+                <span asp-validation-for="FPhone" class="text-danger"></span>
+            </div>
+            <div class="form-group row justify-content-center">
+                <div class="col-md-4 ">
+                    <label asp-for="FEmail" class="control-label"></label>
+                </div>
+                <div class="col-md-7">
+                    <input id="inpRegisterEmail" asp-for="FEmail" class="form-control" autocomplete="off" />
+                    <span id="spanRegEmail"></span>
+                </div>
+                <span asp-validation-for="FEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group row justify-content-center">
+                <div class="col-md-7">
+                    <input type="hidden" asp-for="FRegisterDate" class="form-control" autocomplete="off" id="fRegisterDate" />
+                </div>
+                <span asp-validation-for="FRegisterDate" class="text-danger"></span>
+
+            </div>
+            <div class="form-group row justify-content-center">
+                <div class="col-md-4 ">
+                    <label asp-for="FAuthorityId" class="control-label"></label>
+                </div>
+                <div class="col-md-7">
+                    <select asp-for="FAuthorityId" class="form-control" asp-items="ViewBag.FAuthorityId"></select>
+                </div>
+            </div>
+
+            <div class="form-group row justify-content-center">
+                <div class="col-md-4">
+                    <label asp-for="FDisabled" class="control-label"></label>
+                </div>
+                <div class="col-md-7">
+                    <div class="form-check form-check-inline">
+                        <input asp-for="FDisabled" class="form-check-input" type="radio" id="inlineCheckbox1" value="true" name="FDisabled">
+                        <label class="form-check-label" for="inlineCheckbox1">停權中</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input asp-for="FDisabled" class="form-check-input" type="radio" id="inlineCheckbox2" value="false" name="FDisabled" checked>
+                        <label class="form-check-label" for="inlineCheckbox2">會員</label>
+                    </div><span asp-validation-for="FDisabled" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row justify-content-center">
+
+
+                <div class="col-md-4 ">
+                    <label asp-for="FRemarks" class="control-label"></label>
+                </div>
+                <div class="col-md-7">
+                    <input asp-for="FRemarks" class="form-control" autocomplete="off" />
+                </div>
+                <span asp-validation-for="FRemarks" class="text-danger"></span>
+
+            </div>
+
+            <div class="form-group row justify-content-center">
+                <div class="col-md-4 ">
+                    <input type="submit" value="送出" class="btn btn-primary" />
+                </div>
+                <div class="col-md-7">
+                    <a asp-action="Index" class="btn btn-success">回會員資料管理列表</a>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+<script>     
+    //==========================註冊取得系統日期========================================
+    var registerD = new Date();
+    var year = registerD.getFullYear().toString();
+    var month = (registerD.getMonth() + 101).toString().substring(1);
+    var day = (registerD.getDate() + 100).toString().substring(1);
+    var str = year + month + day;
+    $("#fRegisterDate").val(str);
+        //==========================註冊userName check========================================
+
+    $('#inpRegisterUserName').on('blur', () =>
+    {
+        event.preventDefault();
+        var loginVal = $('#inpRegisterUserName').val();
+        if (loginVal == "")
+        {
+            $('#spanRegUsername').text("帳號不得空白").css("color", "red");
+        } else
+        {
+            var formData = new FormData(document.querySelector("#registerForm"));
+            fetch("/Member/getUserName", {
+                body: formData,
+                method: "Post"
+            }).then(Response => Response.text()).then(data =>
+            {
+                if (data == "false")
+                {
+                    $('#spanRegUsername').text("此帳號可使用").css("color", "blue");
+
+                } else
+                {
+                    $('#spanRegUsername').text("此帳號已有人使用, 請換個帳號").css("color", "red");
+                }
+            });
+        };
+    });
+    //==========================email regex verification==================================
+    $('#inpRegisterEmail').on('blur', () =>
+    {
+        var regEx = /^\w+((-\w+)|(\.\w+))*\@@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+        var resultReg = regEx.test($('#inpRegisterEmail').val());
+        if (resultReg) { $('#spanRegEmail').text("符合要求,請繼續").css("color", "blue"); } else
+        { $('#spanRegEmail').text("格式不對,請重新輸入").css("color", "red"); };
+    });
+    //==================================phone regex verification=============================
+    $('#inpRegisterPhone').on('blur', () =>
+    {
+        var regEx = /^[0]{1}[9]{1}[0-9]{8}$/;
+        var resultReg = regEx.test($('#inpRegisterPhone').val());
+        if (resultReg) { $('#spanRegPhone').text("符合要求,請繼續").css("color", "blue"); } else
+        { $('#spanRegPhone').text("格式不對,請重新輸入").css("color", "red"); };
+    });
+
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

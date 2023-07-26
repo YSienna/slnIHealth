@@ -1,0 +1,176 @@
+﻿@model IEnumerable<prjIHealth.ViewModels.CProductViewModel>
+@*@model IEnumerable<prjIHealth.Models.TProduct>*@
+@using X.PagedList.Mvc.Core
+@using X.PagedList
+
+@{
+    ViewData["Title"] = "ProductList";
+    Layout = "~/Areas/Admin/Admin_Layout.cshtml";
+}
+@section Styles{
+    <link href="/css//PagedList.css" rel="stylesheet" />
+    <style>
+        .btn-light {
+            background-color: #DFEACE !important;
+            color: black;
+        }
+        .btn-success {
+            background-color: #7FAD39;
+            color: white;
+            border: none;
+        }
+        table.table td{
+            vertical-align:middle;
+            text-align:center;
+        }
+        .selectbox{
+            margin-bottom:5%;
+            margin-left:-5%;
+        }
+        #title {
+            font-weight: 800;
+            color: #599e32;
+            margin-left: 20vw;
+            margin-right: 20vw;
+        }
+    </style>
+}
+
+<h2 id="title">產品管理</h2>
+
+
+<hr />
+<div class="container">
+
+    <div class="col-lg-12">
+        <div class="shoping__cart__table">          
+            <div class="col-lg-4" style="display:flex;">
+                <select id="catrgorysearch" name="catrgorysearch" class="custom-select selectbox" style="flex:none;">
+                    <option disabled selected hidden>依類別篩選</option>
+                    <option value="1">乳清蛋白</option>
+                    <option value="2">健康食品</option>
+                    <option value="3">運動用品</option>
+                    <option value="4">男裝</option>
+                    <option value="5">女裝</option>
+                </select>
+                <button style="flex:none;height:40px" class="primary-btn ml-3 btn-success btn" name="btnreset" id="btnreset">清空篩選</button>
+                <a asp-action="ProductCreate" class="btn btn-success ml-3" style="flex:none;height:40px">新增產品</a>
+
+            </div>          
+            <table class="table" style="table-layout: fixed">
+                <thead class="thead-dark">
+                    <tr>
+                        <th class="shoping__product col-lg-3" style="text-align: left; margin-left: auto">
+                            @Html.DisplayNameFor(model => model.FProductName)
+                        </th>
+                        <th class="col-lg-1" style="margin-left:auto">
+                            @Html.DisplayNameFor(model => model.FCategoryId)
+                        </th>
+                        <th class="col-lg-1" style="margin-left:auto">
+                            @Html.DisplayNameFor(model => model.FUnitprice)
+                        </th>
+                        <th class="col-lg-3" style="margin-left:auto">
+                            @Html.DisplayNameFor(model => model.FDescription)
+                        </th>
+                        <th style="margin-left:auto">
+                            @Html.DisplayNameFor(model => model.FVisible)
+                        </th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="ListPro">
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="shoping__cart__item " style="margin-left: auto;vertical-align:middle; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                <img src="~/img/product/@item.FCoverImage" style="width:30%;height:30%;" /> <span>@Html.DisplayFor(modelItem => item.FProductName)</span>
+                            </td>
+                            <td style="margin-left: auto; text-align: center; vertical-align: middle; ">
+                                <input type="hidden" value=" @Html.DisplayFor(modelItem => item.FCategoryId)" id="FCategoryId" name="FCategoryId" />
+                                @Html.DisplayFor(modelItem => item.FCategoryName.FCategoryName)
+                            </td>
+                            <td style="margin-left: auto;vertical-align:middle; ">
+                                @Html.DisplayFor(modelItem => item.FUnitprice)
+                            </td>
+                            <td style="margin-left: auto; vertical-align: middle; "title=" @Html.DisplayFor(modelItem => item.FDescription)">             
+                                @item.FDescription.Substring(0, Math.Min(item.FDescription.Length, 20))
+                            </td>
+                            <td style="margin-left: auto; vertical-align: middle; ">
+                                @Html.DisplayFor(modelItem => item.FVisible)
+                            </td>
+                            <td style="margin-left:auto">
+                                @Html.ActionLink("產品修改", "ProductEdit", new { id = item.FProductId },
+                                 new { @class = "btn btn-light" })                              
+                            </td>
+                            <td style="margin-left:auto">
+                                @Html.ActionLink("圖片檢視", "ProductImgList", new { id = item.FProductId },
+                                new { @class = "btn btn-success" })
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="col-lg-11">                  
+                    <div @*class="product__pagination"*@ style="text-align:center" >
+                        @Html.PagedListPager((IPagedList)ViewBag.OnePageOfPro, page => Url.Action("ProductList", new { page }))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $('#catrgorysearch').on('change', Catrgorychange);
+        $('#btnreset').on('click', resetclick);
+
+        async function Catrgorychange() {
+            $('#ListPro>tr').remove();
+            const changecat = catrgorysearch.options[catrgorysearch.selectedIndex].value;
+            const response = await fetch("@Url.Content("~/Admin/ProductManage/Categoryselect")" + `?id=${changecat}`);
+            const datas = await response.json();
+           /* console.log(datas);*/
+            let tr = '';           
+            for (i = 0; i < datas.length; i++) {
+                let fixdesr = '';
+                if (datas[i].fDescription != null) {
+                    fixdesr = datas[i].fDescription.substr(0,10);
+                }
+
+                tr = `<tr>
+                        <td class="shoping__cart__item" style="margin-left: auto; text-align: left; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;vertical-align: middle;">
+                                <img src="/img/product/${datas[i].fCoverImage}" style="width:30%;height:30%;" /> <span>${datas[i].fProductName}</span>
+                            </td>
+                            <td style="margin-left:auto; text-align:center;vertical-align: middle;">
+                                <input type="hidden" value=" ${datas[i].fCategoryID})" id="fCategoryID" name="fCategoryID" />
+                                <input type="hidden" value=" ${datas[i].fProductID})" id="fProductID" name="fProductID" />
+                                ${datas[i].fCategoryName.fCategoryName}
+                            </td>
+                            <td style="margin-left:auto;vertical-align: middle;">
+                               ${datas[i].fUnitprice}
+                            </td>
+                            <td style="margin-left: auto; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; vertical-align: middle; ">
+                              ${fixdesr}
+                            </td>
+                            <td style="margin-left:auto; vertical-align: middle;">
+                               ${datas[i].fVisible}
+                            </td>
+                            <td style="margin-left:auto;vertical-align: middle;">
+                               <a class="btn btn-light" href="/Admin/ProductManage/ProductEdit/${datas[i].fProductId}">產品修改</a>                             
+                            </td>
+                            <td style="margin-left:auto;vertical-align: middle;">
+                                <a class="btn btn-success" href="/Admin/ProductManage/ProductImgList/${datas[i].fProductId}">檢視圖片</a>
+                            </td>
+                        </tr> `               
+                $('#ListPro').append(tr);             
+            }
+        }
+        //=======================================================================================================================================
+        async function resetclick() {
+            window.location.reload(true);
+        }
+    </script>
+}
